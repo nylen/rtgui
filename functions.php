@@ -304,9 +304,9 @@ function formateta($eta) {
 // Format Completed bytes - total bytes diff
 function completed_bytes_diff($total,$completed ) {
    if ($total > $completed ) {
-      $diff="- ".format_bytes($total-$completed);
+      $diff="".format_bytes($total-$completed); // JCN - change from "- "
    } else {
-      $diff="+ ".format_bytes($completed-$total);
+      $diff="-".format_bytes($completed-$total); // JCN - change from "+ "
    }
    if ($total==$completed) $diff="&nbsp;";
    return $diff;

@@ -111,15 +111,27 @@ if ($_SESSION['tracker_filter']=="") {
 }
 
 // Settings/Add Torrent etc...
-echo "<p><a class='submodal-600-520' href='settings.php'>Settings</a> | <a href=\"javascript:toggleLayer('divadd');\">Add Torrent</a></p>\n";
+//echo "<p><a class='submodal-600-520' href='settings.php'>Settings</a> | <a href=\"javascript:toggleLayer('divadd');\">Add Torrent</a></p>\n";
+echo "<p><a class='submodal-600-520' href='settings.php'>Settings</a> | <a class='submodal-700-500' href='add-torrent.php'>Add Torrent</a></p>\n";
 
 // Hidden Add Torrent form...
-echo "<div id='divadd' class='togglevis' style='width:350px;float:right;' align='right'>";
+// JCN - moved to add-torrent.php
+/*echo "<div id='divadd' class='togglevis' style='width:350px;float:right;' align='right'>";
 echo "<form method='post' action='control.php' enctype='multipart/form-data'>\n";
 echo "URL: <input type=text name='addurl' size=38 maxlength=500 /> <input type='submit' value='Go' /><br/>\n";
 echo "File: <input name='uploadtorrent' type='file' size=25 /> <input type='submit' value='Go' />\n";
+//JCN { allow different torrent types
+echo "<br>Type: \n";
+$types = array("music", "tv", "movies", "private1", "other");
+for($i=0; $i<count($types); $i++) {
+  $value = str_replace("other", "", $types[$i]);
+  $checked = ($value == "video" ? " checked='checked'" : "");
+  echo "<input type=radio name='torrenttype' value='$value' id='torrenttype-$types[$i]'$checked><label for='torrenttype-$types[$i]'>$types[$i]</label>\n";
+}
+echo "\n";
+//JCN }
 echo "</form>\n";
-echo "</div>\n";  // end of divadd div
+echo "</div>\n";  // end of divadd div */
 
 echo "</div>\n";  // end of boxright div
 
