@@ -49,7 +49,7 @@ if ($data) {
          $subdata[$totcount]['control']=($subitem['is_active']==1 ? "stop" : "start" );
          $eta="";
          if ($subitem['down_rate']>0) {
-            $eta=formateta(($subitem['size_bytes']-$subitem['completed_bytes'])/$subitem['down_rate'])." Remaining... ";
+            $eta=format_eta(($subitem['size_bytes']-$subitem['completed_bytes'])/$subitem['down_rate'])." Remaining... ";
          }
          $subdata[$totcount]['name']="<input type='checkbox' name='select[]' value='".$subitem['hash']."' style='checkbox'> <a class='submodal-600-500 $statusstyle' href='view.php?hash=".$subitem['hash']."'>".$subitem['name']."</a>";
          $subdata[$totcount]['message']=$eta.$subitem['message'];

@@ -16,140 +16,61 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
-$execstart=$start=microtime(true);
+$execstart = microtime(true);
 session_start();
 include "config.php";
 include "functions.php";
-import_request_variables("gp","r_");
+import_request_variables("gp", "r_");
 
-// Try using alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/  (see http://code.google.com/p/rtgui/issues/detail?id=19)
+// Try using alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/
+// (see http://code.google.com/p/rtgui/issues/detail?id=19)
 if(!function_exists('xml_parser_create')) {
    include("xmlrpc.inc");
    include("xmlrpc_extension_api.inc");
 }
 
 // Sort out the session variables for sort order, sort key and current view...
-if (!isset($_SESSION['sortkey'])) $_SESSION['sortkey']="name";
-if (isset($r_setsortkey)) $_SESSION['sortkey']=$r_setsortkey;
+$_SESSION['sortkey']        = (isset($r_setsortkey)       ? $r_setsortkey       : "name");
+$_SESSION['sortord']        = (isset($r_setsortord)       ? $r_setsortord       : "asc");
+$_SESSION['view']           = (isset($r_setview)          ? $r_setview          : "main");
+$_SESSION['tracker_filter'] = (isset($r_settrackerfilter) ? $r_settrackerfilter : "");
 
-if (!isset($_SESSION['sortord'])) $_SESSION['sortord']="asc";
-if (isset($r_setsortord)) $_SESSION['sortord']=$r_setsortord;
-
-if (!isset($_SESSION['view'])) $_SESSION['view']="main";
-if (isset($r_setview)) $_SESSION['view']=$r_setview;
-
-if (!isset($_SESSION['tracker_filter'])) $_SESSION['tracker_filter']="";
-if (isset($r_settrackerfilter)) $_SESSION['tracker_filter']=$r_settrackerfilter;
-
-if (isset($r_reload)) unset($_SESSION['lastget']);
-
-if (!isset($_SESSION['refresh'])) $_SESSION['refresh']=$defaultrefresh;
-
-if (!isset($r_debug)) $r_debug=0;
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="shortcut icon" href="favicon.ico" />
-<link rel="stylesheet" type="text/css" href="submodal/subModal.css" />
-<script type="text/javascript" src="submodal/common.js"></script>
-<script type="text/javascript" src="submodal/subModal.js"></script>
-<script type="text/javascript" src="rtgui.js"></script>
-<script type="text/javascript" language="Javascript">
-function start(view,timer) {
-   <?php if (isset($r_reload)) echo "ajax(view);"; ?>
-   ajax(view);
-   setInterval("ajax('"+view+"')",timer)
+if(isset($r_reload)) {
+  unset($_SESSION['lastget']);
 }
-</script>
-<title>rtGui</title>
-<link href="style.css" rel="stylesheet" type="text/css" />
-</head>
-<?php
-echo "<body ".($_SESSION['refresh']!=0 ? "onLoad=\"start('".$_SESSION['view']."',".$_SESSION['refresh'].")\"" : "").">\n";
-echo "<div id='wrap'>\n";
-
-$globalstats=get_global_stats();
-$rates=get_global_rates();
-
-// Title Block...
-echo "<div id=header>\n";
-echo "<h1><a href='index.php?reload=1'>rt<span class=green>gui</span></a></h1><br/>\n";
-
-echo "<div id='boxright'>\n";
-
-// Global upload/download...
-echo "<p>\n";
-echo "Down: <span class='inline download' id='glob_down_rate'>".(format_bytes($rates[0]['ratedown'])=="" ? "0 KB" : format_bytes($rates[0]['ratedown']))."/sec</span> ".($globalstats['download_cap']!=0 ? "<span class='smalltext'>[".format_bytes($globalstats['download_cap'])."]</span>" : "")."&nbsp;&nbsp;&nbsp;\n";
-echo "Up: <span class='inline upload' id='glob_up_rate'>".(format_bytes($rates[0]['rateup'])=="" ? "0 KB" : format_bytes($rates[0]['rateup']))."/sec</span> ".($globalstats['upload_cap']!=0 ? "<span class='smalltext'>[".format_bytes($globalstats['upload_cap'])."]</span>" : "")."\n";
-echo "</p>\n";
-
-if (isset($downloaddir)) {
-   echo "<div id='glob_diskfree'>";
-   echo "<div ".( (round($rates[0]['diskspace']/disk_total_space($downloaddir)*100) <= $alertthresh  )  ? "class='diskalert'"  : ""  ).">\n";
-   echo "Disk Free: ".format_bytes($rates[0]['diskspace'])." / ".format_bytes(disk_total_space($downloaddir))." (".(round($rates[0]['diskspace']/disk_total_space($downloaddir)*100))."%)\n";
-   echo "</div>\n";
-   echo "</div>\n";
+if(!isset($_SESSION['refresh'])) {
+  $_SESSION['refresh'] = $defaultrefresh;
+}
+if(!isset($r_debug)) {
+  $r_debug = 0;
 }
 
-// Select tracker to filter
-//echo "<select name='tracker' onChange=\"window.location='?settrackerfilter='+ this.value;\">";
-//echo "<option value=''>[ Show All ]</option>\n";
-//foreach($tracker_hilite AS $tracker_arr) {
-//   for($i=1;$i<count($tracker_arr);$i++) {
-//      echo "<option value='$tracker_arr[$i]'>".$tracker_arr[$i]."</option>\n";
-//   }
-//}
-//echo "</select>";
+$globalstats = get_global_stats();
+$rates = get_global_rates();
+$global_down_rate = format_bytes($rates[0]['ratedown'], "0 B");
+$global_up_rate = format_bytes($rates[0]['rateup'], "0 B");
+$global_down_limit = format_bytes($globalstats['download_cap'], "unlim");
+$global_up_limit = format_bytes($globalstats['upload_cap'], "unlim");
 
-// Tracker filter
-if ($_SESSION['tracker_filter']=="") {
-   echo "<p>Showing all trackers</p>";
-} else {
-   echo "<p>Showing only <b>".$_SESSION['tracker_filter']."</b> [ <a href='?settrackerfilter='>Show All</a> ] </p>";
-}
+$disk_percent = round($rates[0]['diskspace'] / disk_total_space($downloaddir) * 100);
+$disk_alert_class = ($disk_percent <= $alertthresh ? ' class="diskalert"' : '');
+$disk_free = format_bytes($rates[0]['diskspace']);
+$disk_total = format_bytes(disk_total_space($downloaddir));
 
-// Settings/Add Torrent etc...
-//echo "<p><a class='submodal-600-520' href='settings.php'>Settings</a> | <a href=\"javascript:toggleLayer('divadd');\">Add Torrent</a></p>\n";
-echo "<p><a class='submodal-600-520' href='settings.php'>Settings</a> | <a class='submodal-700-500' href='add-torrent.php'>Add Torrent</a></p>\n";
 
-// Hidden Add Torrent form...
-// JCN - moved to add-torrent.php
-/*echo "<div id='divadd' class='togglevis' style='width:350px;float:right;' align='right'>";
-echo "<form method='post' action='control.php' enctype='multipart/form-data'>\n";
-echo "URL: <input type=text name='addurl' size=38 maxlength=500 /> <input type='submit' value='Go' /><br/>\n";
-echo "File: <input name='uploadtorrent' type='file' size=25 /> <input type='submit' value='Go' />\n";
-//JCN { allow different torrent types
-echo "<br>Type: \n";
-$types = array("music", "tv", "movies", "private1", "other");
-for($i=0; $i<count($types); $i++) {
-  $value = str_replace("other", "", $types[$i]);
-  $checked = ($value == "video" ? " checked='checked'" : "");
-  echo "<input type=radio name='torrenttype' value='$value' id='torrenttype-$types[$i]'$checked><label for='torrenttype-$types[$i]'>$types[$i]</label>\n";
-}
-echo "\n";
-//JCN }
-echo "</form>\n";
-echo "</div>\n";  // end of divadd div */
-
-echo "</div>\n";  // end of boxright div
-
-echo "</div>\n";  // end of header div
-// Title Block End
 
 // Get the list of torrents downloading
-$data=get_full_list($_SESSION['view']);
+$data = get_full_list($_SESSION['view']);
 
 // Get tracker URL for each torrent - this does an RPC query for every torrent - might be heavy on server so you might want to disable in config.php
-if ($displaytrackerurl==TRUE && is_array($data)) {
-   foreach($data as $key=>$item) {
-      $data[$key]['tracker_url']=tracker_url($item['hash']);
+if($displaytrackerurl && is_array($data)) {
+   foreach($data as $key => $item) {
+      $data[$key]['tracker_url'] = tracker_url($item['hash']);
    }
 }
 
 // Sort the list
-if (is_array($data)) {
+if(is_array($data)) {
    if (strtolower($_SESSION['sortord']=="asc")) {
       $sortkey=$_SESSION['sortkey'];
       usort($data,'sort_matches_asc');
@@ -161,101 +82,164 @@ if (is_array($data)) {
    $data=array();
 }
 
-echo "<form action='control.php' method='post' name='control'>";
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="stylesheet" type="text/css" href="submodal/subModal.css" />
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="submodal/common.js"></script>
+<script type="text/javascript" src="submodal/subModal.js"></script>
+<script type="text/javascript" src="rtgui.js"></script>
+<script type="text/javascript" language="Javascript">
+$(function() {
+	setInterval("ajax('<?php echo $_SESSION['view']; ?>')", <?php echo $refresh_interval ?>);
+});
+</script>
+<title>rtGui</title>
+<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="wrap">
 
-// View selection...
-echo "<div id='navcontainer' style='clear:both;'>\n";
+  <div id="header">
+    <h1><a href='index.php?reload=1'>rt<span class=green>gui</span></a></h1><br/>
 
-echo "<ul id='navlist'>\n";
-echo "<li><a ".($_SESSION['view']=="main" ? "id='current'" : "")." href='?setview=main'>All</a></li>\n";
-echo "<li><a ".($_SESSION['view']=="started" ? "id='current'" : "")." href='?setview=started'>Started</a></li>\n";
-echo "<li><a ".($_SESSION['view']=="stopped" ? "id='current'" : "")." href='?setview=stopped'>Stopped</a></li>\n";
-echo "<li><a ".($_SESSION['view']=="complete" ? "id='current'" : "")." href='?setview=complete'>Complete</a></li>\n";
-echo "<li><a ".($_SESSION['view']=="incomplete" ? "id='current'" : "")." href='?setview=incomplete'>Incomplete</a></li>\n";
-echo "<li><a ".($_SESSION['view']=="seeding" ? "id='current'" : "")." href='?setview=seeding'>Seeding</a></li>\n";
-if ($debugtab) {
-   echo "<li><a ".($r_debug==1 ? "id='current'" : "")." href='?setview=main&amp;debug=1'>Debug</a></li>\n";
+    <div id="boxright">
+      <p>
+        Down: 
+        <span class='inline download' id='glob_down_rate'><?php echo $global_down_rate ?>/s</span>
+        <span class='smalltext'>[<?php echo $global_down_limit ?>/s]</span>
+        &nbsp;&nbsp;&nbsp;
+        Up: 
+        <span class='inline upload' id='glob_up_rate'><?php echo $global_up_rate ?>/s</span>
+        <span class='smalltext'>[<?php echo $global_up_limit ?>/s]</span>
+      </p>
+<?php if(isset($downloaddir)) { ?>
+      <div id='glob_diskfree'<?php echo $disk_alert_class ?>>
+        Disk Free: <?php echo $disk_free ?>
+        / <?php echo $disk_total ?>
+        (<?php echo $disk_percent ?>%)
+      </div>
+<?php } ?>
+      <p>
+        <a class="submodal-600-520" href="settings.php">Settings</a>
+        | <a class="submodal-700-500" href="add-torrent.php">Add Torrent</a>
+      </p>
+    </div><!-- id="boxright" -->
+  </div><!-- id="header" -->
+
+<form action='control.php' method='post' name='control'>
+<div id='navcontainer' style='clear:both;'>
+
+<ul id="navlist">
+<?php
+$views = array("All", "Started", "Stopped", "Complete", "Incomplete", "Seeding");
+foreach($views as $v) {
+  $test = ($v == "All" ? "main" : strtolower($v));
+  $id = ($_SESSION['view'] == $test ? ' id="current"' : '');
+  echo "<li><a$id href=\"?setview=$test\">$v</a></li>\n";
 }
-echo "</ul>\n";
-echo "</div>\n";
+if($debugtab) {
+   echo '<li><a'.($r_debug ? ' id="current"' : '')." href=\"?setview=main&amp;debug=1\">Debug</a></li>\n";
+}
+?>
+</ul>
+</div>
 
-echo "<div class ='container'>\n";
-
+<div class ="container">
+<?php
 // The headings, with sort links...
-$uparr="<img src='images/uparrow.gif' height=8 width=5 alt='Descending' />";
-$downarr="<img src='images/downarrow.gif' height=8 width=5 alt='Ascending' />";
+$uparr = '<img src="images/uparrow.gif" height=8 width=5 alt="Ascending" />';
+$downarr = '<img src="images/downarrow.gif" height=8 width=5 alt="Descending" />';
 
-echo "<div class='headcol' style='width:89px;'><a href='?setsortkey=name&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Name</a> ".($_SESSION['sortkey']=="name" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"")."</div>\n";
-echo "<div class='headcol' style='width:89px;'><a href='?setsortkey=status_string&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Status</a> ".($_SESSION['sortkey']=="status_string" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"")."</div>\n";
-echo "<div class='headcol' style='width:89px;'><a href='?setsortkey=percent_complete&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Done</a> ".($_SESSION['sortkey']=="percent_complete" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"")."</div>\n";
-echo "<div class='headcol' style='width:89px;'><a href='?setsortkey=bytes_diff&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Remain</a> ".($_SESSION['sortkey']=="bytes_diff" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"")."</div>\n";
-echo "<div class='headcol' style='width:89px;'><a href='?setsortkey=size_bytes&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Size</a> ".($_SESSION['sortkey']=="size_bytes" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"")."</div>\n";
-echo "<div class='headcol' style='width:89px;'><a href='?setsortkey=down_rate&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Down</a> ".($_SESSION['sortkey']=="down_rate" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"")."</div>\n";
-echo "<div class='headcol' style='width:89px;'><a href='?setsortkey=up_rate&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Up</a> ".($_SESSION['sortkey']=="up_rate" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"")."</div>\n";
-echo "<div class='headcol' style='width:89px;'><a href='?setsortkey=up_total&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Seeded</a> ".($_SESSION['sortkey']=="up_total" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"")."</div>\n";
-echo "<div class='headcol' style='width:89px;'><a href='?setsortkey=ratio&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Ratio</a> ".($_SESSION['sortkey']=="ratio" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"")."</div>\n";
-echo "<div class='headcol' style='width:89px;'><a href='?setsortkey=peers_connected&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Peers</a> ".($_SESSION['sortkey']=="peers_connected" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"")."</div>\n";
-echo "<div class='headcol' style='width:84px;'>";
-echo "<a href='?setsortkey=priority_str&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Pri</a> ".($_SESSION['sortkey']=="priority_str" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"");
-if ($displaytrackerurl==TRUE) {
-   echo "/ <a href='?setsortkey=tracker_url&amp;setsortord=".($_SESSION['sortord']=="asc" ? "desc" : "asc")."'>Trk</a> ".($_SESSION['sortkey']=="tracker_url" ? ($_SESSION['sortord']=="asc" ? "$downarr" : "$uparr") :"");
+$cols = array(
+  'name'             => 'Name',
+  'status_string'    => 'Status',
+  'percent_complete' => 'Done',
+  'bytes_diff'       => 'Remain',
+  'size_bytes'       => 'Size',
+  'down_rate'        => 'Down',
+  'up_rate'          => 'Up',
+  'up_total'         => 'Seeded',
+  'ratio'            => 'Ratio',
+  'peers_connected'  => 'Peers',
+  'priority_str'     => 'Pri',
+  'tracker_url'      => 'Trk',
+);
+
+foreach($cols as $k => $v) {
+  $sort_order = (($_SESSION['sortkey'] == $k xor $_SESSION['sortord'] == 'asc') ? 'asc' : 'desc');
+  $width = ($k == 'priority_str' ? 84 : 89);
+  if($k != 'tracker_url' || !$displaytrackerurl) {
+    echo "<div class=\"headcol\" style=\"width: ${width}px;\">";
+  }
+  echo "<a href=\"?setsortkey=$k&amp;setsortord=$sort_order\">$v</a> ";
+  if($_SESSION['sortkey'] == $k) {
+    echo ($_SESSION['sortord'] == 'asc' ? $uparr : $downarr);
+  }
+  if($k == 'priority_str' && $displaytrackerurl) {
+    echo "/ ";
+  } else {
+    echo "</div>\n";
+  }  
 }
-echo "</div>\n";
-// End of headings
+?>
 
-echo "<div class=spacer></div>\n";
+<div class="spacer"></div>
 
-if ($r_debug==1) {
-   echo "<br><pre>";
-   echo htmlspecialchars(var_dump($data));
-   echo "</pre>";
+<?php
+if($r_debug) {
+  echo "<br><pre>" . htmlspecialchars(var_export($data, true)) . "</pre>\n";
 }
 
 // List the torrents...
-$totcount=0;
-$thisrow="row1";
+$totcount = 0;
+$thisrow = "row1";
 
 foreach($data AS $item) {
-   $displaythis=FALSE;
-   if ($_SESSION['tracker_filter']=="") { 
-      $displaythis=TRUE; 
-   }
-   if (@stristr($item['tracker_url'],$_SESSION['tracker_filter'])==TRUE) {
-      $displaythis=TRUE;
-   }
-   if ($displaythis) {
+   if(!$_SESSION['tracker_filter'] || @stristr($item['tracker_url'],$_SESSION['tracker_filter']) !== false) {
       $totcount++;
       echo "<div class='$thisrow'>\n";
+      
+      $statusstyle = ($item['complete'] ? 'complete' : 'incomplete');
+      $statusstyle .= ($item['is_active'] ? 'active' : 'inactive');
 
-      if ($item['complete']==1) { $statusstyle="complete"; } else { $statusstyle="incomplete"; }
-      if ($item['is_active']==1) { $statusstyle.="active"; } else { $statusstyle.="inactive"; }
-      $eta="";
-      if ($item['down_rate']>0) {
-         $eta=formateta(($item['size_bytes']-$item['completed_bytes'])/$item['down_rate']);
+      $eta = "";
+      if($item['down_rate'] > 0) {
+         $eta = format_eta(($item['size_bytes']-$item['completed_bytes'])/$item['down_rate']);
       }
 
-      echo "<div class='namecol' id='t".$item['hash']."name'>\n";
+      echo "<div class=\"namecol\" id=\"t".$item['hash']."name\">\n";
       // Tracker URL
-      if ($displaytrackerurl==TRUE) {
-         // echo $item['tracker_url'];
-         $urlstyle=$tracker_hilite_default;
+      if($displaytrackerurl) {
+         $urlstyle = $tracker_hilite_default;
          foreach($tracker_hilite as $hilite) {
-            foreach ($hilite as $thisurl) { 
-               if (stristr($item['tracker_url'],$thisurl)==TRUE) { $urlstyle=$hilite[0]; }
+            foreach($hilite as $thisurl) { 
+               if(stristr($item['tracker_url'],$thisurl) !== false) {
+                 $urlstyle = $hilite[0];
+               }
             }
          }
-         echo "<div class='trackerurl' id='tracker' ><a style='color: $urlstyle ;' id='tracker' href='?settrackerfilter=".$item['tracker_url']."'>".$item['tracker_url']."</a>&nbsp;</div>";
+         echo "<div class=\"trackerurl\" id=\"tracker\"><a style=\"color: $urlstyle ;\" id=\"tracker\" href=\"?settrackerfilter=".$item['tracker_url'].'">'.$item['tracker_url'].'</a>&nbsp;</div>';
       }
       
       // Torrent name
-      echo "<input type='checkbox' name='select[]' value='".$item['hash']."'  /> ";
-      echo "<a class='submodal-600-520 $statusstyle' href='view.php?hash=".$item['hash']."'>".htmlspecialchars($item['name'], ENT_QUOTES)."</a>\n";
+      echo "<input type='checkbox' name='select[]' value='" . $item['hash'] . "'  /> ";
+      echo "<a class=\"submodal-600-520 $statusstyle\" href=\"view.php?hash=" . $item['hash'] . "\">";
+      echo htmlspecialchars($item['name'], ENT_QUOTES) . "</a>\n";
       echo "</div>\n";
 
       // message...
-      echo "<div class='errorcol' id='t".$item['hash']."message'>\n";
-      if ($eta!="") echo $eta." Remaining... ";
-      if ($item['message']!="") echo $item['message']."\n";
+      echo "<div class='errorcol' id='t" . $item['hash'] . "message'>\n";
+      if($eta != "") {
+        echo "$eta remaining... ";
+      }
+      if($item['message'] != "") {
+        echo $item['message'] . "\n";
+      }
       echo "</div>\n";
 
       // Stop/start controls...
@@ -279,51 +263,51 @@ foreach($data AS $item) {
       echo "<div class=spacer> </div>\n";
 
       echo "</div>\n"; // end of thisrow div
-      if ($thisrow=="row1") {$thisrow="row2";} else {$thisrow="row1";}
+      $thisrow = ($thisrow == 'row1' ? 'row2' : 'row1');
    }
 }
 
 // Display message if no torrents to list...
-if (!$data || $totcount==0 ) {
-   echo "<div class='row1'>\n";
-   echo "<div class='namecol' align='center'><p>&nbsp;</p>No torrents to display.<p>&nbsp;</p></div>\n";
-   echo "</div>\n";
-}
-
-echo "</div>\n";  // end of container div
-
-// Bulk control...
-echo "<div  class='bottomtab'>";
-echo "<input type='button' value='Select All' onClick='checkAll(this.form)' />\n";
-echo "<input type='button' value='Unselect All' onClick='uncheckAll(this.form)' />\n";
-
-echo "<select name='bulkaction' >\n";
-echo "<optgroup label='With Selected...'>\n";
-echo "<option value='stop'>Stop</option>\n";
-echo "<option value='start'>Start</option>\n";
-echo "<option value='delete'>Delete</option>\n";
-echo "</optgroup>\n";
-echo "<optgroup label='Set Priority...'>\n";
-echo "<option value='pri_high'>High</option>\n";
-echo "<option value='pri_normal'>Normal</option>\n";
-echo "<option value='pri_low'>Low</option>\n";
-echo "<option value='pri_off'>Off</option>\n";
-echo "</optgroup>\n";
-echo "</select>\n";
-echo "<input type='submit' value='Go' />\n";
-echo "</div>";
-
-echo "</form>\n";
-
-// Footer...
-echo "<p>&nbsp;</p>";
-echo "<div align='center' class='smalltext'>\n";
-echo "<a href='http://libtorrent.rakshasa.no/' target='_blank'>rTorrent ".$globalstats['client_version']."/".$globalstats['library_version']."</a> | ";
-echo "<a href='rssfeed.php'>RSS Feed</a> | ";
-echo "Page created in ".$restime=round(microtime(true)-$execstart,3)." secs.<br/>\n";
-echo "<a href='http://rtgui.googlecode.com' target='_blank'>rtGui v0.2.7</a> - by Simon Hall 2007-2008\n";
-echo "</div>\n";
+if(!$data || !$totcount) {
 ?>
+<div class='row1'>
+  <div class='namecol' align='center'><p>&nbsp;</p>No torrents to display.<p>&nbsp;</p></div>
+</div>
+<?php } ?>
+
+</div><!-- id="container" -->
+
+<div class="bottomtab">
+  <input type="button" value="Select All" onClick="checkAll(this.form)" />
+  <input type="button" value="Unselect All" onClick="uncheckAll(this.form)" />
+
+  <select name="bulkaction" >
+  <optgroup label="With Selected...">
+  <option value="stop">Stop</option>
+  <option value="start">Start</option>
+  <option value="delete">Delete</option>
+  </optgroup>
+  <optgroup label="Set Priority...">
+  <option value="pri_high">High</option>
+  <option value="pri_normal">Normal</option>
+  <option value="pri_low">Low</option>
+  <option value="pri_off">Off</option>
+  </optgroup>
+  </select>
+  <input type="submit" value="Go" />
+</div><!-- class="bottomtab" -->
+
+</form>
+
+<p>&nbsp;</p>
+<div align="center" class="smalltext">
+<a href="http://libtorrent.rakshasa.no/" target="_blank">
+  rTorrent <?php echo $globalstats["client_version"] . "/" . $globalstats["library_version"] ?>
+</a>
+<a href="rssfeed.php">RSS Feed</a> | 
+Page created in <?php echo round(microtime(true)-$execstart, 3) ?> secs.<br/>
+<a href="http://rtgui.googlecode.com" target="_blank">rtGui v0.2.7</a> - by Simon Hall 2007-2008
+</div>
 </div>
 </body>
 </html>

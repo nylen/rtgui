@@ -37,9 +37,63 @@ function do_xmlrpc($request) {
 
 // Get full list - retrieve full list of torrents 
 function get_full_list($view) {
-   $request = xmlrpc_encode_request("d.multicall",
-       array($view,"d.get_base_filename=","d.get_base_path=","d.get_bytes_done=","d.get_chunk_size=","d.get_chunks_hashed=","d.get_complete=","d.get_completed_bytes=","d.get_completed_chunks=","d.get_connection_current=","d.get_connection_leech=","d.get_connection_seed=","d.get_creation_date=","d.get_directory=","d.get_down_rate=","d.get_down_total=","d.get_free_diskspace=","d.get_hash=","d.get_hashing=","d.get_ignore_commands=","d.get_left_bytes=","d.get_local_id=","d.get_local_id_html=","d.get_max_file_size=","d.get_message=","d.get_peers_min=","d.get_name=","d.get_peer_exchange=","d.get_peers_accounted=","d.get_peers_complete=","d.get_peers_connected=","d.get_peers_max=","d.get_peers_not_connected=","d.get_priority=","d.get_priority_str=","d.get_ratio=","d.get_size_bytes=","d.get_size_chunks=","d.get_size_files=","d.get_skip_rate=","d.get_skip_total=","d.get_state=","d.get_state_changed=","d.get_tied_to_file=","d.get_tracker_focus=","d.get_tracker_numwant=","d.get_tracker_size=","d.get_up_rate=","d.get_up_total=","d.get_uploads_max=","d.is_active=","d.is_hash_checked=","d.is_hash_checking=","d.is_multi_file=","d.is_open=","d.is_private="));
-   $response = do_xmlrpc($request);
+   $request = xmlrpc_encode_request("d.multicall", array($view,
+		"d.get_base_filename=",
+		"d.get_base_path=",
+		"d.get_bytes_done=",
+		"d.get_chunk_size=",
+		"d.get_chunks_hashed=",
+		"d.get_complete=",
+		"d.get_completed_bytes=",
+		"d.get_completed_chunks=",
+		"d.get_connection_current=",
+		"d.get_connection_leech=",
+		"d.get_connection_seed=",
+		"d.get_creation_date=",
+		"d.get_directory=",
+		"d.get_down_rate=",
+		"d.get_down_total=",
+		"d.get_free_diskspace=",
+		"d.get_hash=",
+		"d.get_hashing=",
+		"d.get_ignore_commands=",
+		"d.get_left_bytes=",
+		"d.get_local_id=",
+		"d.get_local_id_html=",
+		"d.get_max_file_size=",
+		"d.get_message=",
+		"d.get_peers_min=",
+		"d.get_name=",
+		"d.get_peer_exchange=",
+		"d.get_peers_accounted=",
+		"d.get_peers_complete=",
+		"d.get_peers_connected=",
+		"d.get_peers_max=",
+		"d.get_peers_not_connected=",
+		"d.get_priority=",
+		"d.get_priority_str=",
+		"d.get_ratio=",
+		"d.get_size_bytes=",
+		"d.get_size_chunks=",
+		"d.get_size_files=",
+		"d.get_skip_rate=",
+		"d.get_skip_total=",
+		"d.get_state=",
+		"d.get_state_changed=",
+		"d.get_tied_to_file=",
+		"d.get_tracker_focus=",
+		"d.get_tracker_numwant=",
+		"d.get_tracker_size=",
+		"d.get_up_rate=",
+		"d.get_up_total=",
+		"d.get_uploads_max=",
+		"d.is_active=",
+		"d.is_hash_checked=",
+		"d.is_hash_checking=",
+		"d.is_multi_file=",
+		"d.is_open=",
+		"d.is_private="));
+      $response = do_xmlrpc($request);
 
    if (xmlrpc_is_fault($response)) {
        trigger_error("xmlrpc: $response[faultString] ($response[faultCode])");
@@ -259,15 +313,18 @@ function get_global_rates() {
 }
 
 // Format no.bytes nicely...
-function format_bytes($bytes) {
-    if ($bytes==0) return "";
-    $unim = array("B","KB","MB","GB","TB","PB");
-    $c = 0;
-    while ($bytes>=1024) {
-        $c++;
-        $bytes = $bytes/1024;
+function format_bytes($bytes, $zero = "") {
+    if($bytes == 0) {
+      return $zero;
     }
-    return number_format($bytes,($c ? 1 : 0),".",",")." ".$unim[$c];
+    $prefixes = array("B","KB","MB","GB","TB","PB");
+    $i = 0;
+    while($bytes >= 1024) {
+        $i++;
+        $bytes /= 1024;
+    }
+    $prefix = $prefixes[$i];
+    return number_format($bytes, ($i ? 1 : 0), ".", ",") . " $prefix";
 }
 
 // Function to sort second key in array (ascending)
@@ -293,7 +350,7 @@ function percentbar($percent) {
 }
 
 // Format ETA time
-function formateta($eta) {
+function format_eta($eta) {
    if ($eta==0) return "";
    if ($eta<60) return round($eta)." sec".($eta>1 ? "s"  : "");
    if ($eta>=60 && $eta<3600) return round($eta/60)." min".(round($eta/60)>1 ? "s"  : "");

@@ -31,7 +31,7 @@ $downloaddir="/media/htpc/bit.torrents/";
 $alertthresh=15;
 
 // Time between ajax calls - default 5000 (5 secs).   Disable with 0
-$defaultrefresh=5000;  
+$refresh_interval = 2000;
 
 // Display tracker URL for each torrent on main page - you might want to disable this if you run lots (ie 30+ ?) 
 // torrents - To get the tracker URL requires another RPC call for every torrent displayed.  
@@ -39,7 +39,7 @@ $defaultrefresh=5000;
 $displaytrackerurl=TRUE;
 
 // URL to your rtGui installation (used in RSS feed).  Include trailing slash.
-$rtguiurl="http://nylen.tv/rtgui/";
+$rtguiurl="http://".$_SERVER["HTTP_HOST"]."/rtgui/";
 
 // Speeds for the download cap settings dialog.
 $defspeeds=array(5,10,15,20,30,40,50,60,70,80,90,100,125,150,200,250,300,400,500,600,700,800,900,1000,1500,2000,5000,10000);
