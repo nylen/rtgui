@@ -16,45 +16,86 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
-function ajax(view) { 
-   var req = null; 
-   if (window.XMLHttpRequest) {
-      req = new XMLHttpRequest();
-      if (req.overrideMimeType) {
-         req.overrideMimeType('text/plain');
-      }
-   } else if (window.ActiveXObject) {
-      try {
-         req = new ActiveXObject("Msxml2.XMLHTTP");
-      } catch (e) {
-         try {
-            req = new ActiveXObject("Microsoft.XMLHTTP");
-         } catch (e) {}
-      }
-   }
 
-   req.onreadystatechange = function() { 
-      if(req.readyState == 4) {
-         if(req.status == 200) {
-            resp = eval( "(" + req.responseText + ")" );
-            i=0;
-            while (i < resp.total) {
-               div = eval ("resp.change"+i+"['div']");
-               val = eval ("resp.change"+i+"['val']");
-               if (!document.getElementById(div)) {
-                  document.location='index.php?reload=2';
-               }
-               document.getElementById(div).innerHTML  = val;
-               i+=1;
-            }
-         } else {
-            document.write="Javascript Ajax Error: returned status code " + req.status + " " + req.statusText;
-         }	
-      } 
-   }; 
-   req.open("GET", "json.php?view="+view, true); 
-   req.send(null); 
+  
+
+function ajax(view) {
+  $.getJSON("json.php", {'view': view}, function(data) {
+    $('#debug').html(htmlspecialchars(new Date() + ":\n" + JSON.stringify(data, null, 2)));
+    if(data === false) {
+      // No changes
+      $('#debug').append('\n(No changes)');
+      return;
+    }
+    
+    updateHTML(data, false);
+  });
 }
+
+function updateHTML(data, isFirstUpdate) {
+  if(data.torrents) {
+    for(hash in data.torrents) {
+      t = data.torrents[hash];
+    }
+  }
+  for(k in data) {
+    if(k != 'torrents') {
+      // update global items
+      $('#' + k).html(function() {
+        if(updateHandlers[k]) {
+          return updateHandlers[k].call(this, data[k]);
+        } else {
+          return data[k];
+        }
+      });
+    }
+  }
+}
+
+// these functions define how to format numeric items
+var updateHandlers = {
+  total_down_rate: function(b) {
+    return formatBytes(b, '0 B/s', '/s');
+  },
+  total_down_limit: function(b) {
+    return '[' + formatBytes(b, 'unlim', '/s') + ']';
+  },
+  disk_free: formatBytes,
+  disk_total: formatBytes,
+  disk_percent: function(n) {
+    if(n <= diskAlertThreshold) {
+      $(this).parent().addClass('diskalert');
+    } else {
+      $(this).parent().removeClass('diskalert');
+    }
+    return Math.round(n*100)/100 + '%';
+  }
+};
+updateHandlers.total_up_rate  = updateHandlers.total_down_rate;
+updateHandlers.total_up_limit = updateHandlers.total_down_limit;
+
+// format a number of bytes nicely
+function formatBytes(bytes, zero, after) {
+  if(zero === undefined) {
+    zero = '';
+  }
+  if(after === undefined) {
+    after = '';
+  }
+  if(!bytes) {
+    return zero;
+  }
+  var units = ['B','KB','MB','GB','TB','PB'];
+  var i = 0;
+  while(bytes >= 1024) {
+      i++;
+      bytes /= 1024;
+  }
+  return number_format(bytes, (i ? 1 : 0), '.', ',') + ' ' + units[i] + after;
+}
+
+
+// ----------- Original rtGui functions
 
 function checkAll(field) {
    for (i = 0; i < field.length; i++)

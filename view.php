@@ -37,7 +37,7 @@ if (!isset($r_select)) {
 <div class='modal'>
 <?php
 // Get torrent info...  (get all downloads, then filter out just this one by the hash)
-$alltorrents=get_full_list("main");
+$alltorrents=get_all_torrents()['torrents'];
 $thistorrent=array();
 foreach($alltorrents as $torrent) {
    if ($r_hash==$torrent['hash']) $thistorrent=$torrent;
@@ -96,7 +96,7 @@ if ($r_select=="files") {
       echo "<div class='datacol smalltext' style='width:90px;'>".format_bytes($item['get_size_bytes'])."</div>\n";
       echo "<div class='datacol smalltext' style='width:90px;'>";
       echo @round(($item['get_completed_chunks']/$item['get_size_chunks'])*100)." %<br/>\n";
-      echo percentbar(@round((($item['get_completed_chunks']/$item['get_size_chunks'])*100)/2));
+      echo percentbar($item['get_completed_chunks'] / $item['get_size_chunks'] * 100);
       echo "</div>\n";
       echo "<div class='datacol smalltext' style='width:90px;'>".$item['get_completed_chunks']." / ".$item['get_size_chunks']."</div>\n";
       echo "<div class='datacollast smalltext' style='width:90px;'>";
@@ -170,7 +170,7 @@ if ($r_select=="peers") {
       echo ($flags!="" ? "&nbsp;&nbsp;Flags: ".$flags : "");      
       echo "</div>\n";
       echo "<div class='floatright'>";        
-      echo "<div class='datacol smalltext' style='width:90px;'>&nbsp;".$item['get_completed_percent']. "%<br/>".percentbar(@round($item['get_completed_percent'])/2)."</div>\n";
+      echo "<div class='datacol smalltext' style='width:90px;'>&nbsp;".$item['get_completed_percent']. "%<br/>".percentbar($item['get_completed_percent'])."</div>\n";
       echo "<div class='datacol smalltext download' style='width:90px;'>&nbsp;".($item['get_down_rate']>0 ? format_bytes($item['get_down_rate'])."/sec<br/>" : "").format_bytes($item['get_down_total'])."</div>\n";
       echo "<div class='datacol smalltext upload' style='width:90px;'>&nbsp;".($item['get_up_rate']>0 ? format_bytes($item['get_up_rate'])."/sec<br/>" : "").format_bytes($item['get_up_total'])."</div>\n";
       echo "<div class='datacollast smalltext' style='width:90px;'>&nbsp;".($item['get_peer_rate']>0 ? format_bytes($item['get_peer_rate'])."ps<br/>" : "").format_bytes($item['get_peer_total'])."</div>\n";
@@ -223,7 +223,7 @@ if ($r_select=="torrent") {
    echo "<tr class='row1'><td class='datacol' align=right><b>Completed Bytes</b></td><td>".format_bytes($thistorrent['completed_bytes'])."</td></tr>\n";
    echo "<tr class='row2'><td class='datacol' align=right><b>Size</b></td><td>".format_bytes($thistorrent['size_bytes'])."</td></tr>\n";
    echo "<tr class='row1'><td class='datacol' align=right><b>Complete</b></td><td><div class='datacollast'>".$thistorrent['percent_complete']." %<br/>";
-   echo percentbar(@round(($thistorrent['percent_complete']/2)))."</div>";
+   echo percentbar($thistorrent['percent_complete'])."</div>";
    echo "<tr class='row2'><td class='datacol' align=right><b>Down Rate</b></td><td>".format_bytes($thistorrent['down_rate'])."</td></tr>\n";
    echo "<tr class='row1'><td class='datacol' align=right><b>Down Total</b></td><td>".format_bytes($thistorrent['down_total'])."</td></tr>\n";
    echo "<tr class='row2'><td class='datacol' align=right><b>Up Rate</b></td><td>".format_bytes($thistorrent['up_rate'])."</td></tr>\n";

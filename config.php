@@ -31,7 +31,7 @@ $downloaddir="/media/htpc/bit.torrents/";
 $alertthresh=15;
 
 // Time between ajax calls - default 5000 (5 secs).   Disable with 0
-$refresh_interval = 2000;
+$refresh_interval = 5000;
 
 // Display tracker URL for each torrent on main page - you might want to disable this if you run lots (ie 30+ ?) 
 // torrents - To get the tracker URL requires another RPC call for every torrent displayed.  

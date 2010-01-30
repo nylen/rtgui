@@ -26,14 +26,15 @@ if (!isset($_SESSION['refresh'])) $_SESSION['refresh']=$defaultrefresh;
 if (isset($r_setrefresh)) $_SESSION['refresh']=$r_setrefresh;
 
 if (isset($r_setmaxup) || isset($r_setmaxdown)) {
-   $response = do_xmlrpc(xmlrpc_encode_request("set_upload_rate",array("$r_setmaxup")));    
-   $response = do_xmlrpc(xmlrpc_encode_request("set_download_rate",array("$r_setmaxdown")));
+   rtorrent_xmlrpc('set_upload_rate', array($r_setmaxup));
+   rtorrent_xmlrpc('set_download_rate', array($r_setmaxdown));
 }
 
-$globalstats=get_global_stats();
+$download_cap = rtorrent_xmlrpc('get_download_rate');
+$upload_cap = rtorrent_xmlrpc('get_upload_rate');
 
 if (isset($r_submit)) {
-   echo "<script>window.top.location='index.php?reload=1';</script>";
+   //echo "<script>window.top.location='index.php?reload=1';</script>";
    die();
 }
 ?>
@@ -61,12 +62,12 @@ echo "</p>\n";
 echo "<p>&nbsp;</p>";
 echo "<p><label>Download limit:</label>";
 echo "<select name='setmaxdown' class='download'>\n";
-if ( !in_array(($globalstats['download_cap']/1024),$defspeeds) && $globalstats['download_cap']>0 ) echo "<option value='".$globalstats['download_cap']."' selected>".format_bytes($globalstats['download_cap'])."</option>";
-echo "<option value='0' ".($globalstats['download_cap']==0 ? "selected" : "").">-Unlimited-</option>\n";
+if ( !in_array(($download_cap/1024),$defspeeds) && $download_cap>0 ) echo "<option value='".$download_cap."' selected>".format_bytes($download_cap)."</option>";
+echo "<option value='0' ".($download_cap==0 ? "selected" : "").">-Unlimited-</option>\n";
 foreach ($defspeeds AS $i) {
    $x=($i*1024);
    echo "<option value='$x' ";
-   if ($x==$globalstats['download_cap']) echo "selected";
+   if ($x==$download_cap) echo "selected";
    echo ">".format_bytes($x)."</option>\n";
 }
 echo "</select>";
@@ -74,12 +75,12 @@ echo "</p>";
 echo "<p>&nbsp;</p>";
 echo "<p><label for='setmaxup'>Upload limit:</label>";
 echo "<select name='setmaxup' id='setmaxup' class='upload'>\n";
-if ( !in_array(($globalstats['upload_cap']/1024),$defspeeds) && ($globalstats['upload_cap']>0) ) echo "<option value='".$globalstats['upload_cap']."' selected>".format_bytes($globalstats['upload_cap'])."</option>";
-echo "<option value='0' ".($globalstats['upload_cap']==0 ? "selected" : "").">-Unlimited-</option>\n";
+if ( !in_array(($upload_cap/1024),$defspeeds) && ($upload_cap>0) ) echo "<option value='".$upload_cap."' selected>".format_bytes($upload_cap)."</option>";
+echo "<option value='0' ".($upload_cap==0 ? "selected" : "").">-Unlimited-</option>\n";
 foreach ($defspeeds AS $i) {
    $x=($i*1024);
    echo "<option value='$x' ";
-   if ($x==$globalstats['upload_cap']) echo "selected";
+   if ($x==$upload_cap) echo "selected";
    echo ">".format_bytes($x)."</option>\n";
 }
 echo "</select>\n";
