@@ -37,7 +37,9 @@ if (!isset($r_select)) {
 <div class='modal'>
 <?php
 // Get torrent info...  (get all downloads, then filter out just this one by the hash)
-$alltorrents=get_all_torrents()['torrents'];
+$alltorrents = get_all_torrents();
+$alltorrents = $alltorrents['torrents'];
+
 $thistorrent=array();
 foreach($alltorrents as $torrent) {
    if ($r_hash==$torrent['hash']) $thistorrent=$torrent;

@@ -17,10 +17,8 @@
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
 
-  
-
-function ajax(view) {
-  $.getJSON("json.php", {'view': view}, function(data) {
+function updateData() {
+  $.getJSON("json.php", function(data) {
     $('#debug').html(htmlspecialchars(new Date() + ":\n" + JSON.stringify(data, null, 2)));
     if(data === false) {
       // No changes
@@ -64,7 +62,11 @@ var updateHandlers = {
   disk_total: formatBytes,
   disk_percent: function(n) {
     if(n <= diskAlertThreshold) {
-      $(this).parent().addClass('diskalert');
+      if(!$(this).parent().hasClass('diskalert')) {
+        var msg = 'Disk free space in your torrents directory is running low!';
+        window.setTimeout(function() { alert(msg); }, 200);
+        $(this).parent().addClass('diskalert');
+      }
     } else {
       $(this).parent().removeClass('diskalert');
     }

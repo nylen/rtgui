@@ -59,12 +59,12 @@ $_SESSION['last_data'] = $data;
 <script type="text/javascript" src="submodal/subModal.js"></script>
 <script type="text/javascript" src="rtgui.js"></script>
 <script type="text/javascript" language="Javascript">
-var lastTorrentsData = {};
-var torrentsData = <?php echo $data_str; ?>;
+var lastData = {};
+var data = <?php echo $data_str; ?>;
 
 $(function() {
-  updateHTML(torrentsData, true);
-  setInterval(ajax, <?php echo $refresh_interval ?>);
+  updateHTML(data, true);
+  setInterval(updateData, <?php echo $refresh_interval ?>);
 });
 
 var diskAlertThreshold = <?php echo $alertthresh; ?>;
