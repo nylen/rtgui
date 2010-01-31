@@ -57,6 +57,8 @@ $_SESSION['last_data'] = $data;
 <script type="text/javascript" src="php.min.js"></script>
 <script type="text/javascript" src="submodal/common.js"></script>
 <script type="text/javascript" src="submodal/subModal.js"></script>
+<script type="text/javascript" src="functions.js"></script>
+<script type="text/javascript" src="templates.js"></script>
 <script type="text/javascript" src="rtgui.js"></script>
 <script type="text/javascript" language="Javascript">
 var lastData = {};

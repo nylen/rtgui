@@ -119,7 +119,6 @@ function get_all_torrents($view='main') {
     $t['percent_complete'] = $t['completed_bytes'] / $t['size_bytes'] * 100;
     $t['bytes_remaining'] = $t['size_bytes'] - $t['completed_bytes'];
     
-    // TODO: did I get this string right?
     if($t['message'] == 'Tracker: [Tried all trackers.]') {
       $t['message'] = '';
     }
@@ -133,7 +132,7 @@ function get_all_torrents($view='main') {
     if($t['is_active'] == 1 && $t['connection_current'] == 'leech') {
       $t['status'] = 'Leeching';
     }
-    if($t['is_active'] == 1 && $t['complete']==1) {
+    if($t['is_active'] == 1 && $t['complete'] == 1) {
       $t['status'] = 'Seeding';
     }
     if($t['hashing'] > 0) {
