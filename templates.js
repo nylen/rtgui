@@ -91,17 +91,17 @@ function applyTemplate(data, template, key, group) {
 
 var templates = {
   torrent: makeTemplate(
-    '<div class="torrent">',
+    '<div class="torrent" id="t-$hash">',
       '<div class="namecol" id="@name">',
         '<div class="trackerurl" id="@tracker_url">',
-          '<a class="filter" href="#tracker:$tracker_url" style="color: $tracker_color">$tracker_url</a>&nbsp;', // $tracker_color
+          '<a class="filter" href="#tracker:$tracker_url" style="color: $tracker_color">$tracker_url</a>&nbsp;',
         '</div>',
         '<input type="checkbox" name="select[]" value="$hash" />',
-        '<a class="submodal-600-520 $status_class" href="view.php?hash=$hash">$name</a>', // $status_class
+        '<a class="submodal-600-520 $status_class" href="view.php?hash=$hash">$name</a>',
       '</div>',
-      '<div class="errorcol" id="@message">$eta $message</div>', // $eta
+      '<div class="errorcol" id="@message">$eta $message</div>',
       '<div class="datacol" style="width: 89px;">',
-        '<a class="ajax" href="control.php?hash=$hash&amp;cmd=$start_stop_cmd">', // $start_stop_cmd
+        '<a class="ajax" href="control.php?hash=$hash&amp;cmd=$start_stop_cmd">',
           '<img alt="$start_stop_cmd torrent" border="0" src="images/$start_stop_cmd.gif" width="16" height="16" />',
         '</a> ',
         '<a class="ajax confirm" rel="delete" href="control.php?hash=$hash&amp;cmd=delete">',
@@ -111,8 +111,8 @@ var templates = {
           '<img alt="view torrent info" border="0" src="images/view.gif" width="16" height="16" />',
         '</a><br />',
       '</div>',
-      '<div class="datacol" style="width: 89px;" id="@status_string">',
-        '<img alt="torrent status" src="images/$status_class.gif" width="10" height="9" />$status_string', // $status_string
+      '<div class="datacol" style="width: 89px;" id="@status">',
+        '<img alt="torrent status" src="images/$status_class.gif" width="10" height="9" />$status',
       '</div>',
       '<div class="datacol" style="width: 89px;" id="@percent_complete">$</div>',
       '<div class="datacol" style="width: 89px;" id="@bytes_remaining">$</div>',
@@ -121,8 +121,8 @@ var templates = {
       '<div class="datacol" style="width: 89px;" id="@up_rate">$</div>',
       '<div class="datacol" style="width: 89px;" id="@up_total">$</div>',
       '<div class="datacol" style="width: 70px;" id="@ratio">$</div>',
-      '<div class="datacol" style="width: 105px;" id="@peers_summary">$</div>', // $peers_summary
-      '<div class="datacollast" style="width: 70px;" id="@priority_string">$</div>', // $priority_string
+      '<div class="datacol" style="width: 105px;" id="@peers_summary">$</div>',
+      '<div class="datacollast" style="width: 70px;" id="@priority_str">$</div>',
       '<div class="spacer"> </div>',
     '</div>'),
   

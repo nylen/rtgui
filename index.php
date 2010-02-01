@@ -34,6 +34,8 @@ if(!isset($r_debug)) {
   $r_debug = 0;
 }
 
+$_SESSION['trackers'] = array();
+
 // Get the list of torrents downloading
 $data = get_all_torrents();
 
@@ -61,11 +63,10 @@ $_SESSION['last_data'] = $data;
 <script type="text/javascript" src="templates.js"></script>
 <script type="text/javascript" src="rtgui.js"></script>
 <script type="text/javascript" language="Javascript">
-var lastData = {};
-var data = <?php echo $data_str; ?>;
+var torrentsData = <?php echo $data_str; ?>;
 
 $(function() {
-  updateHTML(data, true);
+  updateHTML(torrentsData, torrentsData, true);
   setInterval(updateData, <?php echo $refresh_interval ?>);
 });
 
@@ -133,9 +134,13 @@ if($r_debug) {
 }
 ?>
 
+<div id="torrents">
+
 <div class='row1' id="t-none">
   <div class='namecol' align='center'><p>&nbsp;</p>No torrents to display.<p>&nbsp;</p></div>
 </div>
+
+</div><!-- id="torrents" -->
 
 </div><!-- id="container" -->
 

@@ -43,7 +43,7 @@ function do_xmlrpc($request) {
 
 // Get full list - retrieve full list of torrents 
 function get_all_torrents($view='main') {
-  global $downloaddir;
+  global $downloaddir, $tracker_hilite, $tracker_hilite_default;
   
   $torrents = rtorrent_multicall('d', $view, array(
     'get_base_filename',
@@ -140,11 +140,47 @@ function get_all_torrents($view='main') {
       $t['percent_complete'] = $t['chunks_hashed'] / $t['size_chunks'] * 100;
     }
     
-    if(!$_SESSION['trackers'][$hash]) {
-      $_SESSION['trackers'][$hash] = tracker_url($hash);
+    if($t['complete'] == 1) {
+      $t['status_class'] = 'complete';
+    } else {
+      $t['status_class'] = 'incomplete';
     }
-    $t['tracker_url'] = $_SESSION['trackers'][$hash];
-
+    if($t['is_active'] == 1) {
+      $t['status_class'] .= 'active';
+    } else {
+      $t['status_class'] .= 'inactive';
+    }
+    if($t['down_rate'] > 0) {
+      $t['eta'] = ($t['size_bytes'] - $t['completed_bytes']) / $t['down_rate'];
+    } else {
+      $t['eta'] = 0;
+    }
+    
+    $t['start_stop_cmd'] = ($t['is_active'] == 1 ? 'stop' : 'start');
+    $t['peers_summary'] = array(
+      $t['peers_connected'],
+      $t['peers_not_connected'],
+      $t['peers_complete']
+    );
+    
+    if(!is_array($_SESSION['trackers'][$hash])) {
+      $tracker_info = array();
+      $tracker_info['url'] = tracker_url($hash);
+      $tracker_info['color'] = $tracker_hilite_default;
+      if(is_array($tracker_hilite)) {
+        foreach($tracker_hilite as $hilite) {
+          foreach($hilite as $thisurl) {
+            if(stristr($tracker_info['url'], $thisurl) !== false) {
+              $tracker_info['color'] = $hilite[0];
+            }
+          }
+        }
+      }
+      $_SESSION['trackers'][$hash] = $tracker_info;
+    }
+    $t['tracker_url'] = $_SESSION['trackers'][$hash]['url'];
+    $t['tracker_color'] = $_SESSION['trackers'][$hash]['color'];
+    
     $total_down_rate += $t['down_rate'];
     $total_up_rate += $t['up_rate'];
     
