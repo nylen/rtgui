@@ -24,6 +24,8 @@ import_request_variables("gp","r_");
 if (!isset($r_select)) {
    $r_select="files";
 }
+
+session_start();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -37,8 +39,12 @@ if (!isset($r_select)) {
 <div class='modal'>
 <?php
 // Get torrent info...  (get all downloads, then filter out just this one by the hash)
-$alltorrents = get_all_torrents();
-$alltorrents = $alltorrents['torrents'];
+if(is_array($_SESSION['last_data'])) {
+  $alltorrents = $_SESSION['last_data']['torrents'];
+} else {
+  $alltorrents = get_all_torrents(true);
+}
+session_write_close();
 
 $thistorrent=array();
 foreach($alltorrents as $torrent) {

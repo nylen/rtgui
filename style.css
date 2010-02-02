@@ -112,7 +112,7 @@ form {
   background: #666;
   text-decoration: none;
   font-weight: bold;
-  
+  outline: none;
 }
 
 #navlist li a:link { color: #ccc; }
@@ -122,10 +122,9 @@ form {
   color: #bbb;
   background: #333;
   border-bottom:2px solid #333;
-  padding-top:5px;
 }
 
-#navlist li a#current {
+#navlist li a.current, #navlist li a#current {
   background: #333;
   border: 2px solid #7EA610;
   border-bottom: 2px solid #333;
@@ -133,9 +132,16 @@ form {
   color:#fff;
   padding-top:5px;
 }
+
+#debug {
+  display: none;
+  height: 250px;
+  overflow: auto;
+}
+
 div {
-   margin:0px 0px 0px 0px;
-   padding: 0px;
+   margin: 0;
+   padding: 0;
 }
 div.container {
    margin: 0px 0px 0px 0px;
@@ -221,7 +227,7 @@ div.controls {
 div.controlcontainer {
    text-align:center;
 }
-.trackerurl {
+.tracker {
    float:right;
    font-size:90%;
    margin:2px;

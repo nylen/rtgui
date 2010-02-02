@@ -133,7 +133,7 @@ $referer = parse_url($_SERVER['HTTP_REFERER']);
 $script = basename($referer['path']);
 
 if(empty($r_uploadtorrent) && empty($r_addurl)) { // JCN (wtf is this for anyway?)
-  if($r_cmd == "delete" || !preg_match('@^(index|view|feedread|settings)\\.php$', $script)) {
+  if($r_cmd == "delete" || !preg_match('@^(index|view|feedread|settings)\\.php$@', $script)) {
     $script = 'index.php';
   }
   @header("Location: $script?".$referer['query']);

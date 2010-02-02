@@ -42,9 +42,10 @@ function do_xmlrpc($request) {
 }
 
 // Get full list - retrieve full list of torrents 
-function get_all_torrents($view='main') {
+function get_all_torrents($torrents_only=false, $view='main') {
   global $downloaddir, $tracker_hilite, $tracker_hilite_default;
   
+  // TODO: remove unnecessary items
   $torrents = rtorrent_multicall('d', $view, array(
     'get_base_filename',
     'get_base_path',
@@ -157,20 +158,20 @@ function get_all_torrents($view='main') {
     }
     
     $t['start_stop_cmd'] = ($t['is_active'] == 1 ? 'stop' : 'start');
-    $t['peers_summary'] = array(
-      $t['peers_connected'],
-      $t['peers_not_connected'],
-      $t['peers_complete']
+    $t['peers'] = array(
+      'connected' => $t['peers_connected'],
+      'not_connected' => $t['peers_not_connected'],
+      'complete' => $t['peers_complete']
     );
     
     if(!is_array($_SESSION['trackers'][$hash])) {
       $tracker_info = array();
-      $tracker_info['url'] = tracker_url($hash);
+      $tracker_info['hostname'] = tracker_hostname($hash);
       $tracker_info['color'] = $tracker_hilite_default;
       if(is_array($tracker_hilite)) {
         foreach($tracker_hilite as $hilite) {
           foreach($hilite as $thisurl) {
-            if(stristr($tracker_info['url'], $thisurl) !== false) {
+            if(stristr($tracker_info['hostname'], $thisurl) !== false) {
               $tracker_info['color'] = $hilite[0];
             }
           }
@@ -178,13 +179,19 @@ function get_all_torrents($view='main') {
       }
       $_SESSION['trackers'][$hash] = $tracker_info;
     }
-    $t['tracker_url'] = $_SESSION['trackers'][$hash]['url'];
+    $t['tracker_hostname'] = $_SESSION['trackers'][$hash]['hostname'];
     $t['tracker_color'] = $_SESSION['trackers'][$hash]['color'];
     
     $total_down_rate += $t['down_rate'];
     $total_up_rate += $t['up_rate'];
     
+    // TODO: unset items that are only needed for setting other items
+    
     $torrents[$hash] = $t;
+  }
+  
+  if($torrents_only) {
+    return $torrents;
   }
   
   $data = array(
@@ -278,110 +285,30 @@ function get_peer_list($hash) {
     'is_incoming',
     'is_obfuscated',
     'is_snubbed'
-  )) or array();
+  ));
 }
 
-// Format no.bytes nicely...
-function format_bytes($bytes, $zero="", $after="") {
-    if($bytes == 0) {
-      return $zero;
-    }
-    $units = array('B','KB','MB','GB','TB','PB');
-    $i = 0;
-    while($bytes >= 1024) {
-        $i++;
-        $bytes /= 1024;
-    }
-    $unit = $units[$i];
-    return number_format($bytes, ($i ? 1 : 0), '.', ',') . " $unit$after";
-}
-
-// Function to sort second key in array (ascending)
-function sort_matches_asc($left,$right) {
-  global $sortkey;
-  if(strtolower($left[$sortkey]) == strtolower($right[$sortkey])) {
-    return 0;
-  }
-  return (strtolower($left[$sortkey]) < strtolower($right[$sortkey]) ? -1 : 1);
-}
-
-// Function to sort second key in array (descending)
-function sort_matches_desc($left,$right) {
-  global $sortkey;
-  if(strtolower($left[$sortkey]) == strtolower($right[$sortkey])) {
-    return 0;
-  }
-  return (strtolower($left[$sortkey]) > strtolower($right[$sortkey]) ? -1 : 1);
-}
-
-// Draw the percent bar using a table...
-function percentbar($percent) {
-   $retvar = '<table align="center" border="0" cellspacing="0" cellpadding="1" bgcolor="#666666" width="50"><tr><td align="left">';
-   $retvar .= '<img src="images/percentbar.gif" height="4" width="' . round($percent/2) . '"/></td></tr>';   
-   $retvar .= '</table>';
-   return $retvar;
-}
-
-// Format ETA time
-function format_eta($eta) {
-  if($eta == 0) {
-    return '';
-  } else if($eta < 60) {
-    return round($eta) . ' sec' . ($eta > 1 ? 's' : '');
-  } else if($eta >= 60 && $eta < 3600) {
-    return round($eta/60) . ' min' . (round($eta/60) > 1 ? 's' : '');
-  } else if($eta >= 3600 && $eta < 86400) {
-    return round($eta/3600) . ' hour' . (round($eta/3600) > 1 ? 's' : '');
-  } else if($eta >= 86400) {
-    return round($eta/86400) . ' day' . (round($eta/86400) > 1 ? 's' : '');
-  }
-}
-
-// Format Completed bytes - total bytes diff
-function completed_bytes_diff($total,$completed ) {
-  if($total > $completed ) {
-    return format_bytes($total-$completed);
-  } else if($total == $completed) {
-    return '&nbsp;';
-  } else {
-    return '-' . format_bytes($completed-$total);
-  }
-}
-
-// Return formated (coloured) Tracker URL
-function tracker_url($hash) {
-  global $tracker_hilite, $tracker_hilite_default;
+function tracker_hostname($hash) {
   $response = do_xmlrpc(xmlrpc_encode_request('t.multicall', array($hash, '', 't.get_url=')));
   return @parse_url($response[0][0], PHP_URL_HOST);
 }
 
-// multibyte-safe replacement for wordwrap.
-// (See http://code.google.com/p/rtgui/issues/detail?id=71 - Thanks llamaX)
-function mb_wordwrap($string, $width=75, $break="\n", $cut=false) {
-  if(!$cut) {
-    $regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . ',}\b#U';
-  } else {
-    $regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . '}#';
-  }
-  $string_length = mb_strlen($string, 'UTF-8');
-  $cut_length = ceil($string_length / $width);
-  $i = 1;
-  $return = '';
-  while($i < $cut_length) {
-    preg_match($regexp, $string, $matches);
-    $new_string = $matches[0];
-    $return .= $new_string . $break;
-    $string = substr($string, strlen($new_string));
-    $i++;
-  }
-  return $return . $string;
-}
-
+/** rtorrent_xmlrpc
+ * 
+ * Short function to execute and return an XML-RPC request.
+ * TODO: rename?
+ */
 function rtorrent_xmlrpc($command, $params=array('')) {
   $response = do_xmlrpc(xmlrpc_encode_request($command, $params));
   return (xmlrpc_is_fault($response) ? false : $response);
 }
 
+/** rtorrent_multicall
+ * 
+ * Does a "multicall" request to rtorrent and returns an array of data
+ * items that can be either sequential or associative.  Each data item
+ * is an associative array with the requested variables as keys.
+ */
 function rtorrent_multicall($group, $params, $data_names, $key=null, $remove_get=false) {
   if(!is_array($params)) {
     $params = array($params);
@@ -398,6 +325,7 @@ function rtorrent_multicall($group, $params, $data_names, $key=null, $remove_get
       $key_index = $index;
     }
   }
+  
   $request = xmlrpc_encode_request("$group.multicall", $params);
   $response = do_xmlrpc($request);
   if(xmlrpc_is_fault($response)) {
@@ -417,9 +345,17 @@ function rtorrent_multicall($group, $params, $data_names, $key=null, $remove_get
   }
 }
 
-// Modified from:
-// http://www.php.net/manual/en/function.array-diff-assoc.php#89635
-// Encodes only the state changes in a large data array.
+/** array_compare
+ * 
+ * Modified from: 
+ * http://www.php.net/manual/en/function.array-diff-assoc.php#89635
+ * 
+ * Finds only the differences between two arbitrarily nested data
+ * arrays.  For the output of this function to be suitable for use
+ * with json_encode and jQuery.extend, $before and $after should
+ * not have sequential keys or contain elements that have sequential
+ * keys.  Or, you can pass json_encode the JSON_FORCE_OBJECT flag.
+ */
 function array_compare($before, $after) {
   $diff = false;
   // check all keys in $before (to find changed and deleted items)
@@ -453,4 +389,50 @@ function array_compare($before, $after) {
   }
   return $diff;
 }
+
+
+// ---------- Old functions that should probably go away one day
+
+// multibyte-safe replacement for wordwrap.
+// (See http://code.google.com/p/rtgui/issues/detail?id=71 - Thanks llamaX)
+function mb_wordwrap($string, $width=75, $break="\n", $cut=false) {
+  if(!$cut) {
+    $regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . ',}\b#U';
+  } else {
+    $regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . '}#';
+  }
+  $string_length = mb_strlen($string, 'UTF-8');
+  $cut_length = ceil($string_length / $width);
+  $i = 1;
+  $return = '';
+  while($i < $cut_length) {
+    preg_match($regexp, $string, $matches);
+    $new_string = $matches[0];
+    $return .= $new_string . $break;
+    $string = substr($string, strlen($new_string));
+    $i++;
+  }
+  return $return . $string;
+}
+
+// Format no.bytes nicely...
+function format_bytes($bytes) {
+    if ($bytes==0) return "";
+    $unim = array("B","KB","MB","GB","TB","PB");
+    $c = 0;
+    while ($bytes>=1024) {
+        $c++;
+        $bytes = $bytes/1024;
+    }
+    return number_format($bytes,($c ? 1 : 0),".",",")." ".$unim[$c];
+}
+
+// Draw the percent bar using a table...
+function percentbar($percent) {
+   $retvar="<table align=center border=0 cellspacing=0 cellpadding=1 bgcolor=#666666 width=50><tr><td align=left>";
+   $retvar.="<img src='images/percentbar.gif' height=4 width=".round($percent)." /></td></tr>";   
+   $retvar.="</table>";
+   return $retvar;
+}
+
 ?>

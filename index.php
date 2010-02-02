@@ -20,7 +20,6 @@ $execstart = microtime(true);
 session_start();
 include 'config.php';
 include 'functions.php';
-include 'functions_html.php';
 import_request_variables('gp', 'r_');
 
 // Try using alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/
@@ -61,13 +60,14 @@ $_SESSION['last_data'] = $data;
 <script type="text/javascript" src="submodal/subModal.js"></script>
 <script type="text/javascript" src="functions.js"></script>
 <script type="text/javascript" src="templates.js"></script>
-<script type="text/javascript" src="rtgui.js"></script>
+<script type="text/javascript" src="torrentsList.js"></script>
+<script type="text/javascript" src="index.js"></script>
 <script type="text/javascript" language="Javascript">
 var torrentsData = <?php echo $data_str; ?>;
 
 $(function() {
-  updateHTML(torrentsData, torrentsData, true);
-  setInterval(updateData, <?php echo $refresh_interval ?>);
+  updateTorrentsHTML(torrentsData, torrentsData, true);
+  setInterval(updateTorrentsData, <?php echo $refresh_interval ?>);
 });
 
 var diskAlertThreshold = <?php echo $alertthresh; ?>;
@@ -79,7 +79,7 @@ var diskAlertThreshold = <?php echo $alertthresh; ?>;
 <div id="wrap">
 
   <div id="header">
-    <h1><a href='index.php?reload=1'>rt<span class=green>gui</span></a></h1><br/>
+    <h1><a href='index.php'>rt<span class=green>gui</span></a></h1><br/>
 
     <div id="boxright">
       <p>
@@ -110,29 +110,50 @@ var diskAlertThreshold = <?php echo $alertthresh; ?>;
 
 <ul id="navlist">
 <?php
-$views = array("All", "Started", "Stopped", "Complete", "Incomplete", "Seeding");
+$views = array('All', 'Started', 'Stopped', 'Complete', 'Incomplete', 'Seeding');
 foreach($views as $v) {
-  $test = ($v == "All" ? "main" : strtolower($v));
-  $id = ($_SESSION['view'] == $test ? ' id="current"' : '');
-  echo "<li><a$id href=\"?setview=$test\">$v</a></li>\n";
+  echo "<li><a class=\"view\" href=\"#\" rel=\"$v\">$v</a></li>\n";
 }
 if($debugtab) {
-   echo '<li><a'.($r_debug ? ' id="current"' : '')." href=\"?setview=main&amp;debug=1\">Debug</a></li>\n";
+   echo "<li><a href=\"#\" id=\"debug-tab\">Debug</a></li>\n";
 }
 ?>
 </ul>
 </div>
 
 <div class="container">
-<?php echo get_torrent_headers(); ?>
+<?php
+// Generate header links
+$cols = array(
+  'name'             => 'Name',
+  'status_string'    => 'Status',
+  'percent_complete' => 'Done',
+  'bytes_diff'       => 'Remain',
+  'size_bytes'       => 'Size',
+  'down_rate'        => 'Down',
+  'up_rate'          => 'Up',
+  'up_total'         => 'Seeded',
+  'ratio'            => 'Ratio',
+  'peers'            => 'Peers',
+  'priority_str'     => 'Pri',
+  'tracker_hostname' => 'Trk',
+);
+
+foreach($cols as $k => $v) {
+  $width = ($k == 'priority_str' ? 84 : 89);
+  if($k != 'tracker_hostname') {
+    echo "<div class=\"headcol\" style=\"width: ${width}px;\">";
+  }
+  echo "<a class=\"sort\" href=\"#\" rel=\"$k\">$v</a> ";
+  echo ($k == 'priority_str' ? "/ " : "</div>\n");
+}
+?>
 
 <div class="spacer"></div>
 
-<?php
-if($r_debug) {
-  echo "<br><pre id=\"debug\"></pre>\n";
-}
-?>
+<?php if($debugtab) { ?>
+<pre id="debug"></pre>
+<?php } ?>
 
 <div id="torrents">
 

@@ -1,23 +1,6 @@
-//
-//  This file is part of rtGui.  http://rtgui.googlecode.com/
-//  Copyright (C) 2007-2008 Simon Hall.
-//  Modifications (C) 2010 James Nylen.
-//
-//  rtGui is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  rtGui is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
+// Functions to update torrents list
 
-
-function updateData() {
+function updateTorrentsData() {
   $.getJSON('json.php', function(data, s) {
     if(!data) {
       debug('(No changes)');
@@ -25,16 +8,16 @@ function updateData() {
     }
     debug(JSON.stringify(data, null, 2));
     
-    $.extend(true, torrentsData, data);
-    updateHTML(torrentsData, data, false);
+    $.extend(true, window.torrentsData, data);
+    updateHTML(window.torrentsData, data, false);
   });
 }
 
-function updateHTML(full, changes, isFirstUpdate) {
+function updateTorrentsHTML(full, changes, isFirstUpdate) {
   var dirty = {
     hashesToSort: [],
     hashesToFilter: [],
-    stripes: false,
+    stripes: !!isFirstUpdate,
   };
   
   if(changes.torrents) {
@@ -75,11 +58,8 @@ function updateHTML(full, changes, isFirstUpdate) {
           }
         } else {
           for(varName in changes.torrents[hash]) {
-            var val = changes.torrents[hash][varName];
             var el = $('#t-' + hash + '-' + varName)[0];
-            if(formatHandlers[varName]) {
-              val = formatHandlers[varName].call(el, val);
-            }
+            var val = getFormattedValue(varName, full.torrents[hash][varName], el);
             $(el).html(val);
             checkChangedVars = true;
           }
@@ -95,10 +75,10 @@ function updateHTML(full, changes, isFirstUpdate) {
       // TODO: sort and filter all torrents
     } else {
       for(var i = 0; i < dirty.hashesToSort.length; i++) {
-        // TODO: sort these torrents
+        // TODO: sort these torrents, and set dirty.stripes if needed
       }
       for(var i = 0; i < dirty.hashesToFilter.length; i++) {
-        // TODO: filter these torrents
+        // TODO: filter these torrents, and set dirty.stripes if needed
       }
     }
     
@@ -106,9 +86,9 @@ function updateHTML(full, changes, isFirstUpdate) {
     $('#t-none').css('display', (torrentDivs.length ? 'none' : ''));
     
     // set row classes
-    if(dirty.stripes || dirty.hashesToSort.length || dirty.hashesToFilter.length) {
+    if(dirty.stripes) {
       var row1 = true;
-      $('#torrents div.torrent:visible').each(function() {
+      torrentDivs.each(function() {
         $(this)
         .addClass(row1 ? 'row1' : 'row2')
         .removeClass(row1 ? 'row2' : 'row1');
@@ -120,13 +100,8 @@ function updateHTML(full, changes, isFirstUpdate) {
   // update global items (total speeds, caps, disk space, etc.)
   for(k in changes) {
     if(k != 'torrents') {
-      $('#' + k).html(function() {
-        if(formatHandlers[k]) {
-          return formatHandlers[k].call(this, changes[k]);
-        } else {
-          return changes[k];
-        }
-      });
+      var el = document.getElementById(k);
+      $(el).html(getFormattedValue(k, changes[k], el));
     }
   }
 }
