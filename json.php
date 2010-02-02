@@ -28,7 +28,7 @@ if(@is_array($_SESSION['last_data'])) {
   $last_data = array();
 }
 
-echo json_encode(array_compare($last_data, $data, true));
+echo json_encode(array_compare($last_data, $data));
 
 $_SESSION['last_data'] = $data;
 ?>
