@@ -93,6 +93,7 @@ var templates = {
         '</div>',
         '<input type="checkbox" name="select[]" value="$hash" />',
         '<a class="submodal-600-520 $status_class" href="view.php?hash=$hash">$name</a>',
+        '<span class="creationdate" id="@creation_date">$</span>',
       '</div>',
       '<div class="errorcol" id="@message">$eta $message</div>',
       '<div class="datacol" style="width: 89px;">',
@@ -154,6 +155,10 @@ var formatHandlers = {
     return Math.round(n*100)/100 + '%';
   },
   
+  creation_date: function(ts) {
+    var d = new Date(ts * 1000);
+    return 'added on ' + (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear();
+  },
   eta: function(n) {
     if(!n) {
       return false;
@@ -177,13 +182,13 @@ var formatHandlers = {
             eta += Math.round(n / units[u]);
             break;
           default:
-            return eta.trim();
+            return $.trim(eta);
         }
         eta += u + ' ';
         n %= units[u];
       }
     }
-    return eta.trim();
+    return $.trim(eta);
   },
   message: function(m) {
     return (m ? m : false);
@@ -222,7 +227,7 @@ function getFormattedValue(varName, varValue, el) {
   }
   if(val === false) {
     val = '';
-  } else if(!String.trim(val)) {
+  } else if(!$.trim(String(val))) {
     val = '&nbsp;';
   }
   return String(val);

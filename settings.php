@@ -34,7 +34,7 @@ $download_cap = rtorrent_xmlrpc('get_download_rate');
 $upload_cap = rtorrent_xmlrpc('get_upload_rate');
 
 if (isset($r_submit)) {
-   //echo "<script>window.top.location='index.php?reload=1';</script>";
+   echo "<script>window.top.hideDialog(true);</script>";
    die();
 }
 ?>
@@ -87,7 +87,7 @@ echo "</select>\n";
 echo "</p>\n";
 echo "<p>&nbsp;</p>";
 echo "<p>&nbsp;</p>";
-echo "<p><input type='submit' onclick=\"parent.window.location='index.php';\" value='Cancel' />&nbsp;<input type='submit' name='submit' value='Save' /></p>\n";
+echo "<p><input type='submit' onclick=\"window.top.hideDialog(false);\" value='Cancel' />&nbsp;<input type='submit' name='submit' value='Save' /></p>\n";
 echo "</form>\n";
 ?>
 </div>

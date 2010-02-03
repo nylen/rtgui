@@ -137,6 +137,7 @@ form {
   display: none;
   height: 250px;
   overflow: auto;
+  padding: 0 15px;
 }
 
 div {
@@ -153,6 +154,7 @@ div.container {
 div.namecol {
    width:100%;
    margin: 3px 3px 3px 3px;
+   position: relative;
 }
 div.errorcol {
    margin-left: 2px;
@@ -170,6 +172,12 @@ div.headcol {
    color:#fff;
    background-color:#333;
    margin:0px;
+}
+div.align-right {
+   text-align: right;
+}
+div.align-left {
+   text-align: left;
 }
 div.headcol a, div.headrow a, div.headcollast a {
    color: #fff;
@@ -226,6 +234,15 @@ div.controls {
 }
 div.controlcontainer {
    text-align:center;
+}
+.creationdate {
+   padding-left: 8px;
+   font-size: 80%;
+   color: #777;
+   position: absolute;
+   top: 4px;
+   right: 50px;
+   width: 200px;
 }
 .tracker {
    float:right;

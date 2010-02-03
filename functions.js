@@ -1,7 +1,15 @@
 function debug(msg) {
-  $('#debug').html('<b>' + new Date() + ':</b>\n' + htmlspecialchars(msg));
+  $('#debug:visible').html('<b>' + new Date() + ':</b>\n' + htmlspecialchars(msg));
 }
 
+function hideDialog(doUpdate) {
+  hidePopWin(false);
+  if(doUpdate) {
+    window.clearInterval(window.refreshIntervalID);
+    updateTorrentsData();
+    window.refreshIntervalID = window.setInterval(updateTorrentsData, window.refreshInterval);
+  }
+}
 
 // format a number of bytes nicely
 function formatBytes(bytes, zero, after) {

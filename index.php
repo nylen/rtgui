@@ -40,8 +40,8 @@ $data = get_all_torrents();
 
 // Turn it into JSON and format it somewhat nicely
 $data_str = json_encode($data);
-$data_str = preg_replace('@("[0-9A-F]{40}":)@', "\n\\1", $data_str);
-$data_str = str_replace("}},\"", "}\n},\"", $data_str);
+#$data_str = preg_replace('@("[0-9A-F]{40}":)@', "\n\\1", $data_str);
+#$data_str = str_replace("}},\"", "}\n},\"", $data_str);
 
 // Set the session variable for json.php
 $_SESSION['last_data'] = $data;
@@ -64,13 +64,15 @@ $_SESSION['last_data'] = $data;
 <script type="text/javascript" src="index.js"></script>
 <script type="text/javascript" language="Javascript">
 var torrentsData = <?php echo $data_str; ?>;
+var refreshInterval = <?php echo $refresh_interval; ?>;
+var diskAlertThreshold = <?php echo $alertthresh; ?>;
 
 $(function() {
+  try {
   updateTorrentsHTML(torrentsData, torrentsData, true);
-  setInterval(updateTorrentsData, <?php echo $refresh_interval ?>);
+} catch(x) { alert(x); }
+  window.refreshIntervalID = setInterval(updateTorrentsData, refreshInterval);
 });
-
-var diskAlertThreshold = <?php echo $alertthresh; ?>;
 </script>
 <title>rtGui</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
@@ -124,6 +126,7 @@ if($debugtab) {
 <div class="container">
 <?php
 // Generate header links
+// variable_name     => ColName:width:add-class (default :89px:[none])
 $cols = array(
   'name'             => 'Name',
   'status_string'    => 'Status',
@@ -132,19 +135,24 @@ $cols = array(
   'size_bytes'       => 'Size',
   'down_rate'        => 'Down',
   'up_rate'          => 'Up',
-  'up_total'         => 'Seeded',
-  'ratio'            => 'Ratio',
-  'peers'            => 'Peers',
+  'up_total'         => 'Seeded:94',
+  'ratio'            => 'Ratio:50',
+  'creation_date'    => 'Age:50',
+  'peers'            => 'Peers:68',
   'priority_str'     => 'Pri',
   'tracker_hostname' => 'Trk',
 );
 
 foreach($cols as $k => $v) {
-  $width = ($k == 'priority_str' ? 84 : 89);
-  if($k != 'tracker_hostname') {
-    echo "<div class=\"headcol\" style=\"width: ${width}px;\">";
+  $arr = explode(':', $v);
+  if(count($arr) < 2) {
+    $arr[1] = 89;
   }
-  echo "<a class=\"sort\" href=\"#\" rel=\"$k\">$v</a> ";
+  $class = trim("headcol $arr[2]");
+  if($k != 'tracker_hostname') {
+    echo "<div class=\"$class\" style=\"width: ${arr[1]}px;\">";
+  }
+  echo "<a class=\"sort\" href=\"#\" rel=\"$k\">$arr[0]</a> ";
   echo ($k == 'priority_str' ? "/ " : "</div>\n");
 }
 ?>
@@ -152,7 +160,7 @@ foreach($cols as $k => $v) {
 <div class="spacer"></div>
 
 <?php if($debugtab) { ?>
-<pre id="debug"></pre>
+<pre id="debug">&nbsp;</pre>
 <?php } ?>
 
 <div id="torrents">
