@@ -89,7 +89,7 @@ var templates = {
     '<div class="torrent" id="t-$hash">',
       '<div class="namecol" id="@name">',
         '<div class="tracker" id="@tracker_hostname">',
-          '<a class="filter" href="#tracker:$tracker_hostname" style="color: $tracker_color">$tracker_hostname</a>&nbsp;',
+          '<a class="filter" href="#" rel="tracker:$tracker_hostname" style="color: $tracker_color">$tracker_hostname</a>&nbsp;',
         '</div>',
         '<input type="checkbox" name="select[]" value="$hash" />',
         '<a class="submodal-600-520 $status_class" href="view.php?hash=$hash">$name</a>',
@@ -155,6 +155,9 @@ var formatHandlers = {
   },
   
   eta: function(n) {
+    if(!n) {
+      return false;
+    }
     var eta = '';
     var units = {
       d: 86400,
@@ -181,6 +184,9 @@ var formatHandlers = {
       }
     }
     return eta.trim();
+  },
+  message: function(m) {
+    return (m ? m : false);
   },
   
   percent_complete: function(n) {
@@ -214,7 +220,9 @@ function getFormattedValue(varName, varValue, el) {
   if(formatHandlers[varName]) {
     val = formatHandlers[varName].call(el, varValue);
   }
-  if(!String.trim(val)) {
+  if(val === false) {
+    val = '';
+  } else if(!String.trim(val)) {
     val = '&nbsp;';
   }
   return String(val);

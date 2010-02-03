@@ -9,7 +9,7 @@ function updateTorrentsData() {
     debug(JSON.stringify(data, null, 2));
     
     $.extend(true, window.torrentsData, data);
-    updateHTML(window.torrentsData, data, false);
+    updateTorrentsHTML(window.torrentsData, data, false);
   });
 }
 
