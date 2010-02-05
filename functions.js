@@ -28,7 +28,7 @@ function formatBytes(bytes, zero, after) {
   }
   var units = ['B','KB','MB','GB','TB','PB'];
   var i = 0;
-  while(bytes >= 1024) {
+  while(bytes >= 1000) {
       i++;
       bytes /= 1024;
   }
