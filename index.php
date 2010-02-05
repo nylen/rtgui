@@ -34,14 +34,15 @@ if(!isset($r_debug)) {
 }
 
 $_SESSION['trackers'] = array();
+$_SESSION['dates_added'] = array();
 
 // Get the list of torrents downloading
 $data = get_all_torrents();
 
 // Turn it into JSON and format it somewhat nicely
 $data_str = json_encode($data);
-#$data_str = preg_replace('@("[0-9A-F]{40}":)@', "\n\\1", $data_str);
-#$data_str = str_replace("}},\"", "}\n},\"", $data_str);
+$data_str = preg_replace('@("[0-9A-F]{40}":)@', "\n\\1", $data_str);
+$data_str = str_replace("}},\"", "}\n},\"", $data_str);
 
 // Set the session variable for json.php
 $_SESSION['last_data'] = $data;
@@ -53,6 +54,14 @@ $_SESSION['last_data'] = $data;
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <link rel="stylesheet" type="text/css" href="submodal/subModal.css" />
+<script type="text/javascript">
+// Configuration variables
+var refreshInterval = <?php echo $refresh_interval; ?>;
+var diskAlertThreshold = <?php echo $alertthresh; ?>;
+var useGroups = <?php echo $use_groups ? 1 : 0; ?>;
+var useDateAdded = <?php echo $use_date_added ? 1 : 0; ?>;
+var view = 'main';
+</script>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="json2.min.js"></script>
 <script type="text/javascript" src="php.min.js"></script>
@@ -61,16 +70,12 @@ $_SESSION['last_data'] = $data;
 <script type="text/javascript" src="functions.js"></script>
 <script type="text/javascript" src="templates.js"></script>
 <script type="text/javascript" src="torrentsList.js"></script>
-<script type="text/javascript" src="index.js"></script>
-<script type="text/javascript" language="Javascript">
+<script type="text/javascript" src="events.js"></script>
+<script type="text/javascript">
 var torrentsData = <?php echo $data_str; ?>;
-var refreshInterval = <?php echo $refresh_interval; ?>;
-var diskAlertThreshold = <?php echo $alertthresh; ?>;
 
 $(function() {
-  try {
   updateTorrentsHTML(torrentsData, torrentsData, true);
-} catch(x) { alert(x); }
   window.refreshIntervalID = setInterval(updateTorrentsData, refreshInterval);
 });
 </script>
@@ -101,35 +106,48 @@ $(function() {
       </div>
 <?php } ?>
       <p>
-        <a class="submodal-600-520" href="settings.php">Settings</a>
+        Showing <span id="t-count-visible">??</span> 
+        of <span id="t-count-all">??</span> torrents
+        | <a class="submodal-600-520" href="settings.php">Settings</a>
         | <a class="submodal-700-500" href="add-torrent.php">Add Torrent</a>
       </p>
     </div><!-- id="boxright" -->
   </div><!-- id="header" -->
 
 <form action="control.php" method="post" name="control">
-<div id="navcontainer" style="clear:both;">
+<div id="navcontainer">
+
+<div id="filters-container">
+  <span id="filters-label">Filter torrents:</span>
+  <input type="text" id="filters" value="" />
+  <a href="#" id="clear-filters"><img src="images/cross.gif" /></a>
+</div>
 
 <ul id="navlist">
 <?php
 $views = array('All', 'Started', 'Stopped', 'Complete', 'Incomplete', 'Seeding');
-foreach($views as $v) {
-  echo "<li><a class=\"view\" href=\"#\" rel=\"$v\">$v</a></li>\n";
+foreach($views as $name) {
+  $view = ($name == 'All' ? 'main' : strtolower($name));
+  echo "<li><a class=\"view\" href=\"#\" rel=\"$view\">$name</a></li>\n";
 }
 if($debugtab) {
    echo "<li><a href=\"#\" id=\"debug-tab\">Debug</a></li>\n";
 }
 ?>
 </ul>
+
 </div>
 
 <div class="container">
+
+<div id="torrents-header">
 <?php
 // Generate header links
 // variable_name     => ColName:width:add-class (default :89px:[none])
 $cols = array(
-  'name'             => 'Name',
-  'status_string'    => 'Status',
+  'name'             => 'Name:99',
+  'group'            => 'Grp',
+  'status_string'    => 'Status:79',
   'percent_complete' => 'Done',
   'bytes_diff'       => 'Remain',
   'size_bytes'       => 'Size',
@@ -137,26 +155,29 @@ $cols = array(
   'up_rate'          => 'Up',
   'up_total'         => 'Seeded:94',
   'ratio'            => 'Ratio:50',
-  'creation_date'    => 'Age:50',
+  'date_added'       => 'Age:50',
   'peers'            => 'Peers:68',
   'priority_str'     => 'Pri',
   'tracker_hostname' => 'Trk',
 );
 
 foreach($cols as $k => $v) {
+  if($k == 'group' && !$use_groups) {
+    continue;
+  }
   $arr = explode(':', $v);
   if(count($arr) < 2) {
     $arr[1] = 89;
   }
   $class = trim("headcol $arr[2]");
-  if($k != 'tracker_hostname') {
+  if($k != 'tracker_hostname' && $k != 'group') {
     echo "<div class=\"$class\" style=\"width: ${arr[1]}px;\">";
   }
   echo "<a class=\"sort\" href=\"#\" rel=\"$k\">$arr[0]</a> ";
-  echo ($k == 'priority_str' ? "/ " : "</div>\n");
+  echo ($k == 'priority_str' || ($k == 'name' && $use_groups) ? "/ " : "</div>\n");
 }
 ?>
-
+</div>
 <div class="spacer"></div>
 
 <?php if($debugtab) { ?>
@@ -202,8 +223,9 @@ foreach($cols as $k => $v) {
    / lib <?php echo rtorrent_xmlrpc('system.library_version'); ?>
 </a> | 
 <a href="rssfeed.php">RSS Feed</a> | 
-Page created in <?php echo round(microtime(true) - $execstart, 3) ?> secs.<br/>
-<a href="http://rtgui.googlecode.com" target="_blank">rtGui v0.2.7</a> - by Simon Hall 2007-2008
+Page created in <?php echo round(microtime(true) - $execstart, 3) ?> secs.<br />
+Based on <a href="http://rtgui.googlecode.com" target="_blank">rtGui v0.2.7</a> - by Simon Hall 2007-2008<br />
+Modifications by James Nylen 2010
 </div>
 </div>
 </body>

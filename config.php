@@ -33,11 +33,6 @@ $alertthresh=15;
 // Time between ajax calls - default 5000 (5 secs).   Disable with 0
 $refresh_interval = 5000;
 
-// Display tracker URL for each torrent on main page - you might want to disable this if you run lots (ie 30+ ?) 
-// torrents - To get the tracker URL requires another RPC call for every torrent displayed.  
-// If it's disabled, it only requires one RPC call to list all the torrents.
-$displaytrackerurl=TRUE;
-
 // URL to your rtGui installation (used in RSS feed).  Include trailing slash.
 $rtguiurl="http://".$_SERVER["HTTP_HOST"]."/rtgui/";
 
@@ -66,5 +61,26 @@ $tracker_hilite[]=array("#436101","already.be");
 $feeds[]=array("ibiblio.org","http://torrent.ibiblio.org/feed.php?blockid=3",0);
 $feeds[]=array("etree","http://bt.etree.org/rss/bt_etree_org.rdf",0);
 $feeds[]=array("Utwente","http://borft.student.utwente.nl/%7Emike/oo/bt.rss",1);
+
+
+/* Define whether to use torrent groups.  A torrent group should split your torrents
+ * up into categories, and should not change over the lifetime of the torrent.  A
+ * good use case for torrent groups is if you have rTorrent watching several folders
+ * for .torrent files, and putting the downloads in separate places.  The provided
+ * get_torrent_group() function will handle that situation.
+ */
+$use_groups = true;
+function get_torrent_group($t) {
+  return basename(dirname($t['tied_to_file']));
+}
+
+$use_date_added = true;
+/* Get the creation date of the .torrent file, and use it as the date added.  If rTorrent
+ * is running on another PC, you can define the get_local_torrent_path($path) function to
+ * change remote paths into local paths.
+ */
+function get_local_torrent_path($path) {
+  return str_replace('/media/bit.torrents/', '/media/htpc/bit.torrents/', $path);
+}
 
 ?>

@@ -93,7 +93,8 @@ var templates = {
         '</div>',
         '<input type="checkbox" name="select[]" value="$hash" />',
         '<a class="submodal-600-520 $status_class" href="view.php?hash=$hash">$name</a>',
-        '<span class="creationdate" id="@creation_date">$</span>',
+        (useGroups ? '<span class="group">(<a class="filter" href="#" id="@group" rel="group:$group">$group</a>)</span>' : ''),
+        (useDateAdded ? '<span class="date-added" id="@date_added">$</span>' : ''),
       '</div>',
       '<div class="errorcol" id="@message">$eta $message</div>',
       '<div class="datacol" style="width: 89px;">',
@@ -117,7 +118,7 @@ var templates = {
       '<div class="datacol" style="width: 89px;" id="@up_rate">$</div>',
       '<div class="datacol" style="width: 89px;" id="@up_total">$</div>',
       '<div class="datacol" style="width: 70px;" id="@ratio">$</div>',
-      '<div class="datacol" style="width: 105px;" id="@peers">$</div>',
+      '<div class="datacol" style="width: 105px;" id="@peers_summary">$</div>',
       '<div class="datacollast" style="width: 70px;" id="@priority_str">$</div>',
       '<div class="spacer"> </div>',
     '</div>'),
@@ -155,7 +156,7 @@ var formatHandlers = {
     return Math.round(n*100)/100 + '%';
   },
   
-  creation_date: function(ts) {
+  date_added: function(ts) {
     var d = new Date(ts * 1000);
     return 'added on ' + (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear();
   },
@@ -214,8 +215,9 @@ var formatHandlers = {
   ratio: function(n) {
     return Math.round(n/10)/100;
   },
-  peers: function(p) {
-    return p.connected + '/' + p.not_connected + ' (' + p.complete + ')';
+  peers_summary: function(s) {
+    var arr = s.split(',');
+    return parseInt(arr[0]) + '/' + parseInt(arr[1]) + ' (' + parseInt(arr[2]) + ')';
   },
   
 };

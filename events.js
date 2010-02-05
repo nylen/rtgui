@@ -23,9 +23,8 @@ $(function() {
   $('#debug-tab').click(function() {
     var dbg = $('#debug:visible').length;
     $(this).attr('class', dbg ? '' : 'current');
-    $('#debug')
-    .html(dbg ? '&nbsp;' : 'Please wait...')
-    .css('display', dbg ? 'none' : 'block');
+    $('#debug').css('display', dbg ? 'none' : 'block');
+    debug('Waiting for refresh...');
     return false;
   });
   

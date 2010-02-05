@@ -43,7 +43,8 @@ function do_xmlrpc($request) {
 
 // Get full list - retrieve full list of torrents 
 function get_all_torrents($torrents_only=false, $view='main') {
-  global $downloaddir, $tracker_hilite, $tracker_hilite_default;
+  global $downloaddir, $use_groups, $use_date_added;
+  global $tracker_hilite, $tracker_hilite_default;
   
   // TODO: remove unnecessary items
   $torrents = rtorrent_multicall('d', $view, array(
@@ -110,6 +111,9 @@ function get_all_torrents($torrents_only=false, $view='main') {
   if(!is_array($_SESSION['trackers'])) {
     $_SESSION['trackers'] = array();
   }
+  if($use_date_added && !is_array($_SESSION['dates_added'])) {
+    $_SESSION['dates_added'] = array();
+  }
   $total_down_rate = 0;
   $total_up_rate = 0;
   foreach($torrents as $hash => $t) {
@@ -158,10 +162,9 @@ function get_all_torrents($torrents_only=false, $view='main') {
     }
     
     $t['start_stop_cmd'] = ($t['is_active'] == 1 ? 'stop' : 'start');
-    $t['peers'] = array(
-      'connected' => $t['peers_connected'],
-      'not_connected' => $t['peers_not_connected'],
-      'complete' => $t['peers_complete']
+    # Format peers_summary to keep the client side sorting routine as simple as possible
+    $t['peers_summary'] = sprintf('%03d,%03d,%03d',
+      $t['peers_connected'], $t['peers_not_connected'], $t['peers_complete']
     );
     
     if(!is_array($_SESSION['trackers'][$hash])) {
@@ -182,12 +185,71 @@ function get_all_torrents($torrents_only=false, $view='main') {
     $t['tracker_hostname'] = $_SESSION['trackers'][$hash]['hostname'];
     $t['tracker_color'] = $_SESSION['trackers'][$hash]['color'];
     
+    if($use_groups) {
+      $t['group'] = get_torrent_group($t);
+    }
+    
+    if($use_date_added) {
+      if(!array_key_exists($t['hash'], $_SESSION['dates_added'])) {
+        $_SESSION['dates_added'][$t['hash']] = filemtime(get_local_torrent_path($t['tied_to_file']));
+      }
+      $t['date_added'] = $_SESSION['dates_added'][$t['hash']];
+    }
+    
     $total_down_rate += $t['down_rate'];
     $total_up_rate += $t['up_rate'];
     
     // TODO: unset items that are only needed for setting other items
     
     $torrents[$hash] = $t;
+
+if(
+$t['hash'] != 'BDD3B6E23FAD1162FBC8715091E9D271C16DCCB1' &&
+$t['hash'] != '574BE305F929A43E8514D20F4AD3BBE25DA92B50' &&
+$t['hash'] != 'C9AD76C84656F241E45E487BFF9CF261441111DF' &&
+$t['hash'] != 'AC1E12B23F5BA8CD865B99B620ABCA1BEA9EAA5E' &&
+$t['hash'] != 'A0CD6C476E7327FB027A24D3A1537B1BEBBC4A05' &&
+$t['hash'] != '7089C8A0DEFC4E4BDFB982C4C7F6C95924D62F72' &&
+$t['hash'] != '718841905D0ACE1F90BE6CF399F8CF01CF00993B' &&
+$t['hash'] != '2AAB1BD3573A90E3300D627D0848DEA7E5CEDE53' &&
+$t['hash'] != 'A9AD96B4D961B6A254D92C306589436AF6E9AD2B' &&
+$t['hash'] != '0B1F55631824BA1112B7BFC49AD09C8EBC0EE7C7' &&
+$t['hash'] != '63432A2E03901AB949D3A98A4A21B1FACF5969F0' &&
+$t['hash'] != 'FA6DF293ADBC6B328D23CF5539244A4D7B4FB3F8' &&
+$t['hash'] != 'DFCE850F7B9EF443B91AD5210BBDEBB6839FB9BD' &&
+$t['hash'] != 'B7016B9FE7796FC4406F5958C3297B8A48F0D9D7' &&
+$t['hash'] != 'B61FE3506D63651745DFBB32AAF86360CC94836C' &&
+$t['hash'] != '46C1BE3F937CFD29DB118FA95649CB668059CD1B' &&
+$t['hash'] != '9A3DD4909039325322CDF6F44057623E194B61D5' &&
+$t['hash'] != '945B92F11633BC4E8CBADE5EF4154D80C10D816B' &&
+$t['hash'] != 'B44E94BE485281996ECF2DA23ADC784121E4EAA9' &&
+$t['hash'] != '800B03CAF68041CEEB37E068033F9F165A9BBD98' &&
+$t['hash'] != 'B8B5887706054D2F68D9AEEA82DAC88F741294AE' &&
+$t['hash'] != '00AB2EDFD9E95825A90589F9801376F737429877' &&
+$t['hash'] != 'B940928271A21C829438CD762E40BA0F403BA5A4' &&
+$t['hash'] != 'B3D96D98D6C98DB58BC97EEBEF231F18497E75F6' &&
+$t['hash'] != 'DF5CEBD2CF4EDBCAF73787847AC6B3E08845BA1D' &&
+$t['hash'] != '7544E67A9A870AAB81432FFC596276E793271BB7' &&
+$t['hash'] != '0680F91EF65D018F63362A6BBFBA45661273F749' &&
+$t['hash'] != '5CF4F168BF8AD1C47092145F89A0795C9D3F49D5' &&
+$t['hash'] != '8069CD28D3394989FC47E0529284CA0697DFEB2A' &&
+$t['hash'] != '6C7B6EA0CAC1FA15DE17347174F3CCADBECF8621' &&
+$t['hash'] != 'B9F2C7BC86FB149B989B6F6DA19EC1A2315CC27F' &&
+$t['hash'] != '1C44F5117B523B82EAB696BA743BF44A0A5D46E6' &&
+$t['hash'] != '500649BBECB5BF7DE8DB503FC58FBDAAABB6EB12' &&
+$t['hash'] != '020A921986B62306F36C1DC83AE0066D430FB525' &&
+$t['hash'] != 'C457E3F4C3FF0AE665DD7A2CA5107B8E6C3FFBD1' &&
+$t['hash'] != '3F9AADA584AD6F20B17D72448BCD06F7810EBD16' &&
+$t['hash'] != 'F8A676F8E0A9A1F82DD6B340C7B1196FD9619CE9' &&
+$t['hash'] != 'DC06B99C7C75A2298C7E9D51CD1EA31B34403300' &&
+$t['hash'] != '44F0710F4F7B043FB7B438598DB6D53860A14D4A' &&
+$t['hash'] != 'BFB5C6C773253DEC1294C5794423CA88BEFB8C55' &&
+$t['hash'] != '06905E68CCF1EF9986101CF581C79F7311209CD4' &&
+$t['hash'] != '11B530C9D9BE2B5F92D148850306EDD3E31CD217' &&
+$t['hash'] != 'AEC60A058DA7913B6656990DEEAF82C6151243D4') {
+unset($torrents[$hash]);
+}
+
   }
   
   if($torrents_only) {
