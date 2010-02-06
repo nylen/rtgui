@@ -108,11 +108,8 @@ function get_all_torrents($torrents_only=false, $view='main') {
     return false;
   }
 
-  if(!is_array($_SESSION['trackers'])) {
-    $_SESSION['trackers'] = array();
-  }
-  if($use_date_added && !is_array($_SESSION['dates_added'])) {
-    $_SESSION['dates_added'] = array();
+  if(!is_array($_SESSION['persistent'])) {
+    $_SESSION['persistent'] = array();
   }
   $total_down_rate = 0;
   $total_up_rate = 0;
@@ -167,33 +164,39 @@ function get_all_torrents($torrents_only=false, $view='main') {
       $t['peers_connected'], $t['peers_not_connected'], $t['peers_complete']
     );
     
-    if(!is_array($_SESSION['trackers'][$hash])) {
-      $tracker_info = array();
-      $tracker_info['hostname'] = tracker_hostname($hash);
-      $tracker_info['color'] = $tracker_hilite_default;
+    // make is_active actually mean what it says
+    $t['is_active'] = (($t['down_rate'] + $t['up_rate']) ? 1 : 0);
+    
+    if(is_array($_SESSION['persistent'][$hash])) {
+      $s = $_SESSION['persistent'][$hash];
+    } else {
+      $s = array();
+      $s['tracker_hostname'] = tracker_hostname($hash);
+      $s['tracker_color'] = $tracker_hilite_default;
       if(is_array($tracker_hilite)) {
         foreach($tracker_hilite as $hilite) {
           foreach($hilite as $thisurl) {
-            if(stristr($tracker_info['hostname'], $thisurl) !== false) {
-              $tracker_info['color'] = $hilite[0];
+            if(stristr($s['tracker_hostname'], $thisurl) !== false) {
+              $s['tracker_color'] = $hilite[0];
             }
           }
         }
       }
-      $_SESSION['trackers'][$hash] = $tracker_info;
-    }
-    $t['tracker_hostname'] = $_SESSION['trackers'][$hash]['hostname'];
-    $t['tracker_color'] = $_SESSION['trackers'][$hash]['color'];
-    
-    if($use_groups) {
-      $t['group'] = get_torrent_group($t);
-    }
-    
-    if($use_date_added) {
-      if(!array_key_exists($t['hash'], $_SESSION['dates_added'])) {
-        $_SESSION['dates_added'][$t['hash']] = filemtime(get_local_torrent_path($t['tied_to_file']));
+      if($use_groups) {
+        $s['group'] = get_torrent_group($t);
       }
-      $t['date_added'] = $_SESSION['dates_added'][$t['hash']];
+      if($use_date_added) {
+        $s['date_added'] = filemtime(get_local_torrent_path($t['tied_to_file']));
+      }
+      $_SESSION['persistent'][$hash] = $s;
+    }
+    $t['tracker_hostname'] = $s['tracker_hostname'];
+    $t['tracker_color'] = $s['tracker_color'];
+    if($use_groups) {
+      $t['group'] = $s['group'];
+    }
+    if($use_date_added) {
+      $t['date_added'] = $s['date_added'];
     }
     
     $total_down_rate += $t['down_rate'];

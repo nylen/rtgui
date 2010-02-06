@@ -93,8 +93,8 @@ var templates = {
         '</div>',
         '<input type="checkbox" name="select[]" value="$hash" />',
         '<a class="submodal-600-520 $status_class" href="view.php?hash=$hash">$name</a>',
-        (useGroups ? '<span class="group">(<a class="filter" href="#" id="@group" rel="group:$group">$group</a>)</span>' : ''),
-        (useDateAdded ? '<span class="date-added" id="@date_added">$</span>' : ''),
+        (config.useGroups ? '<span class="group">(<a class="filter" href="#" id="@group" rel="group:$group">$group</a>)</span>' : ''),
+        (config.useDateAdded ? '<span class="date-added" id="@date_added">$</span>' : ''),
       '</div>',
       '<div class="errorcol" id="@message">$eta $message</div>',
       '<div class="datacol" style="width: 89px;">',
@@ -144,7 +144,7 @@ var formatHandlers = {
   disk_free: formatBytes,
   disk_total: formatBytes,
   disk_percent: function(n) {
-    if(n <= diskAlertThreshold) {
+    if(n <= config.diskAlertThreshold) {
       if(!$(this).parent().hasClass('diskalert')) {
         var msg = 'Disk free space in your torrents directory is running low!';
         window.setTimeout(function() { alert(msg); }, 200);

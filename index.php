@@ -33,8 +33,7 @@ if(!isset($r_debug)) {
   $r_debug = 0;
 }
 
-$_SESSION['trackers'] = array();
-$_SESSION['dates_added'] = array();
+$_SESSION['persistent'] = array();
 
 // Get the list of torrents downloading
 $data = get_all_torrents();
@@ -56,11 +55,18 @@ $_SESSION['last_data'] = $data;
 <link rel="stylesheet" type="text/css" href="submodal/subModal.css" />
 <script type="text/javascript">
 // Configuration variables
-var refreshInterval = <?php echo $refresh_interval; ?>;
-var diskAlertThreshold = <?php echo $alertthresh; ?>;
-var useGroups = <?php echo $use_groups ? 1 : 0; ?>;
-var useDateAdded = <?php echo $use_date_added ? 1 : 0; ?>;
-var view = 'main';
+var config = {
+  refreshInterval: <?php echo $refresh_interval; ?>,
+  diskAlertThreshold: <?php echo $alertthresh; ?>,
+  useGroups: <?php echo $use_groups ? 1 : 0; ?>,
+  useDateAdded: <?php echo $use_date_added ? 1 : 0; ?>,
+};
+var current = {
+  view: 'main',
+  filters: {},
+  sortVar: null,
+  sortDesc: false,
+}
 </script>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="json2.min.js"></script>
@@ -69,14 +75,13 @@ var view = 'main';
 <script type="text/javascript" src="submodal/subModal.js"></script>
 <script type="text/javascript" src="functions.js"></script>
 <script type="text/javascript" src="templates.js"></script>
-<script type="text/javascript" src="torrentsList.js"></script>
 <script type="text/javascript" src="events.js"></script>
 <script type="text/javascript">
-var torrentsData = <?php echo $data_str; ?>;
+var data = <?php echo $data_str; ?>;
 
 $(function() {
-  updateTorrentsHTML(torrentsData, torrentsData, true);
-  window.refreshIntervalID = setInterval(updateTorrentsData, refreshInterval);
+  updateTorrentsHTML(data, true);
+  current.refreshIntervalID = setInterval(updateTorrentsData, config.refreshInterval);
 });
 </script>
 <title>rtGui</title>
@@ -125,7 +130,7 @@ $(function() {
 
 <ul id="navlist">
 <?php
-$views = array('All', 'Started', 'Stopped', 'Complete', 'Incomplete', 'Seeding');
+$views = array('All', 'Started', 'Stopped', 'Active', 'Inactive', 'Complete', 'Incomplete', 'Seeding');
 foreach($views as $name) {
   $view = ($name == 'All' ? 'main' : strtolower($name));
   echo "<li><a class=\"view\" href=\"#\" rel=\"$view\">$name</a></li>\n";
@@ -145,23 +150,25 @@ if($debugtab) {
 // Generate header links
 // variable_name     => ColName:width:add-class (default :89px:[none])
 $cols = array(
-  'name'             => 'Name:99',
-  'group'            => 'Grp',
-  'status_string'    => 'Status:79',
-  'percent_complete' => 'Done',
-  'bytes_diff'       => 'Remain',
-  'size_bytes'       => 'Size',
-  'down_rate'        => 'Down',
-  'up_rate'          => 'Up',
-  'up_total'         => 'Seeded:94',
-  'ratio'            => 'Ratio:50',
-  'date_added'       => 'Age:50',
-  'peers'            => 'Peers:68',
-  'priority_str'     => 'Pri',
-  'tracker_hostname' => 'Trk',
+  '+name'             => 'Name:99',
+  '+group'            => 'Grp',
+  '+status'           => 'Status:79',
+  '+percent_complete' => 'Done',
+  '-bytes_remaining'  => 'Remain',
+  '+size_bytes'       => 'Size',
+  '-down_rate'        => 'Down',
+  '-up_rate'          => 'Up',
+  '+up_total'         => 'Seeded:94',
+  '+ratio'            => 'Ratio:50',
+  '-date_added'       => 'Age:50',
+  '-peers_summary'    => 'Peers:68',
+  '+priority_str'     => 'Pri',
+  '+tracker_hostname' => 'Trk',
 );
 
 foreach($cols as $k => $v) {
+  $order = ($k[0] == '+' ? 'asc' : 'desc');
+  $k = substr($k, 1);
   if($k == 'group' && !$use_groups) {
     continue;
   }
@@ -173,8 +180,8 @@ foreach($cols as $k => $v) {
   if($k != 'tracker_hostname' && $k != 'group') {
     echo "<div class=\"$class\" style=\"width: ${arr[1]}px;\">";
   }
-  echo "<a class=\"sort\" href=\"#\" rel=\"$k\">$arr[0]</a> ";
-  echo ($k == 'priority_str' || ($k == 'name' && $use_groups) ? "/ " : "</div>\n");
+  echo "<a class=\"sort\" href=\"#\" rel=\"$k:$order\">$arr[0]</a>";
+  echo ($k == 'priority_str' || ($k == 'name' && $use_groups) ? "/" : "</div>\n");
 }
 ?>
 </div>

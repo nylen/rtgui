@@ -28,5 +28,19 @@ $(function() {
     return false;
   });
   
-  
+  $('#torrents-header a.sort').click(function() {
+    var arr = $(this).attr('rel').split(':');
+    if(arr[0] == current.sortVar) {
+      current.sortDesc = !current.sortDesc;
+    } else {
+      current.sortVar = arr[0];
+      current.sortDesc = (arr[1] == 'desc');
+    }
+    $('#torrents-header a.sort')
+    .removeClass('sort-asc')
+    .removeClass('sort-desc');
+    $(this).addClass(current.sortDesc ? 'sort-desc' : 'sort-asc');
+    sortAll();
+    return false;
+  });
 });

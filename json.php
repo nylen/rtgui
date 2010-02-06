@@ -17,8 +17,8 @@
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
 session_start();
-include "config.php";
-include "functions.php";
+include 'config.php';
+include 'functions.php';
 
 $view = $_GET['view'];
 if(!$view) $view = 'main';

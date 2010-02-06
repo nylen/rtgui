@@ -10,9 +10,9 @@ function hideDialog(doUpdate) {
 }
 
 function updateTorrentsNow() {
-  window.clearInterval(window.refreshIntervalID);
+  window.clearInterval(current.refreshIntervalID);
   updateTorrentsData();
-  window.refreshIntervalID = window.setInterval(updateTorrentsData, window.refreshInterval);
+  current.refreshIntervalID = window.setInterval(updateTorrentsData, config.refreshInterval);
 }
 
 // format a number of bytes nicely
@@ -41,22 +41,23 @@ function formatBytes(bytes, zero, after) {
 // Functions to update torrents list
 
 function updateTorrentsData() {
-  $.getJSON('json.php', {view: window.view}, function(data, s) {
-    if(!data) {
+  $.getJSON('json.php', function(changes) {
+    if(!changes) {
       debug('(No changes)');
       return;
     }
-    debug(JSON.stringify(data, null, 2));
+    debug(JSON.stringify(changes, null, 2));
     
-    $.extend(true, window.torrentsData, data);
-    updateTorrentsHTML(window.torrentsData, data, false);
+    $.extend(true, window.data, changes);
+    updateTorrentsHTML(changes, false);
   });
 }
 
-function updateTorrentsHTML(full, changes, isFirstUpdate) {
+function updateTorrentsHTML(changes, isFirstUpdate) {
   var dirty = {
-    hashesToSort: [],
-    hashesToFilter: [],
+    toSort: [],
+    toFilter: [],
+    toCheckView: [],
     stripes: !!isFirstUpdate,
   };
   
@@ -65,12 +66,13 @@ function updateTorrentsHTML(full, changes, isFirstUpdate) {
     for(hash in changes.torrents) {
       if(changes.torrents[hash] === null) {
         // A torrent was removed
-        delete full.torrents[hash];
-        $('#t-' + hash).remove();
+        delete window.data.torrents[hash];
+        delete current.visible[hash];
+        $('#' + hash).remove();
         dirty.stripes = true;
       } else {
         var mustRewriteHTML = false;
-        if(isFirstUpdate || !full.torrents[hash]) {
+        if(isFirstUpdate || !window.data.torrents[hash]) {
           mustRewriteHTML = true;
         }
         if(!mustRewriteHTML) {
@@ -83,46 +85,60 @@ function updateTorrentsHTML(full, changes, isFirstUpdate) {
         }
         var checkChangedVars = false;
         if(mustRewriteHTML) {
-          var html = applyTemplate(full.torrents[hash], templates.torrent, hash, 't');
-          var container = $('#t-' + hash + '-container');
+          var html = applyTemplate(window.data.torrents[hash], templates.torrent, hash, 't');
+          var container = $('#' + hash);
           if(container.length) {
             dirty.stripes = true;
             container.html(html);
             checkChangedVars = true;
           } else {
             $('#torrents').append(
-              '<div class="torrent-container" id="t-' + hash + '-container">\n'
+              '<div class="torrent-container" id="' + hash + '">\n'
               + html + '\n</div>\n\n');
-            dirty.hashesToSort.push(hash);
-            dirty.hashesToFilter.push(hash);
+            if(!isFirstUpdate) {
+              dirty.toCheckView.push(hash);
+              dirty.toSort.push(hash);
+              dirty.toFilter.push(hash);
+            }
           }
         } else {
           for(varName in changes.torrents[hash]) {
             var el = $('#t-' + hash + '-' + varName)[0];
-            var val = getFormattedValue(varName, full.torrents[hash][varName], el);
+            var val = getFormattedValue(varName, window.data.torrents[hash][varName], el);
             $(el).html(val);
             checkChangedVars = true;
           }
         }
         if(checkChangedVars) {
           for(varName in changes.torrents[hash]) {
-            // TODO: check if varName is part of filters or sort keys, and add to dirty.hashesTo*
+            if(viewHandlers.varsToCheck[varName]) {
+              dirty.toCheckView.push(hash);
+            }
+            if(current.filters[varName] !== undefined) {
+              dirty.toFilter.push(hash);
+            }
+            if(current.sortVar == varName) {
+              dirty.toSort.push(hash);
+            }
           }
         }
       }
     }
     if(isFirstUpdate) {
-      // TODO: sort and filter all torrents
+      sortAll();
     } else {
-      for(var i = 0; i < dirty.hashesToSort.length; i++) {
-        // TODO: sort these torrents, and set dirty.stripes if needed
+      for(var h in dirty.toCheckView) {
+        
       }
-      for(var i = 0; i < dirty.hashesToFilter.length; i++) {
+      for(var h in dirty.toFilter) {
         // TODO: filter these torrents, and set dirty.stripes if needed
+      }
+      for(var h in dirty.toSort) {
+        // TODO: sort these torrents, and set dirty.stripes if needed
       }
     }
     
-    var torrentDivsAll = $('#torrents div.torrent');
+    var torrentDivsAll = $('#torrents>div.torrent-container');
     var torrentDivsVisible = torrentDivsAll.filter(':visible');
     $('#t-none').css('display', (torrentDivsVisible.length ? 'none' : ''));
     $('#t-count-visible').html(torrentDivsVisible.length);
@@ -130,13 +146,7 @@ function updateTorrentsHTML(full, changes, isFirstUpdate) {
     
     // set row classes
     if(dirty.stripes) {
-      var row1 = true;
-      torrentDivsVisible.each(function() {
-        $(this)
-        .addClass(row1 ? 'row1' : 'row2')
-        .removeClass(row1 ? 'row2' : 'row1');
-        row1 = !row1;
-      });
+      resetStripes(torrentDivsVisible);
     }
   }
   
@@ -150,6 +160,88 @@ function updateTorrentsHTML(full, changes, isFirstUpdate) {
 }
 
 
+
+var viewHandlers = {
+  varsToCheck: {
+    state: 1,
+    is_active: 1,
+    complete: 1,
+  },
+  
+  'main': function(t) {
+    return true;
+  },
+  'started': function(t) {
+    return t.state;
+  },
+  'stopped': function(t) {
+    return !t.state;
+  },
+  'active': function(t) {
+    return t.is_active;
+  },
+  'inactive': function(t) {
+    return !t.is_active;
+  },
+  'complete': function(t) {
+    return t.complete;
+  },
+  'incomplete': function(t) {
+    return !t.complete;
+  },
+  'seeding': function(t) {
+    return t.complete && t.state;
+  },
+}
+
+
+function sortAll() {
+  if(!current.sortVar) {
+    return;
+  }
+  var els = $('#torrents>div.torrent-container').toArray();
+  sortElements(els);
+  $(els).each(function() {
+    $('#torrents').append(this);
+  });
+  resetStripes();
+}
+
+function sortSome(hashes) {
+  if(!hashes.length) {
+    return;
+  }
+  var els = [];
+  for(var h in hashes) {
+    els.push(document.getElementById(h));
+  }
+  sortElements(els);
+  
+}
+
+function sortElements(arr) {
+  var cmp = (current.sortDesc ? -1 : 1);
+  arr.sort(function(a, b) {
+    var va = window.data.torrents[a.id][current.sortVar];
+    var vb = window.data.torrents[b.id][current.sortVar];
+    if(va.toLowerCase) va = va.toLowerCase();
+    if(vb.toLowerCase) vb = vb.toLowerCase();
+    return (va < vb ? -cmp : (va > vb ? cmp : 0));
+  });
+}
+
+function resetStripes(torrentDivsVisible) {
+  if(!torrentDivsVisible) {
+    torrentDivsVisible = $('#torrents>div.torrent-container:visible');
+  }
+  var row1 = true;
+  torrentDivsVisible.each(function() {
+    $(this)
+    .addClass(row1 ? 'row1' : 'row2')
+    .removeClass(row1 ? 'row2' : 'row1');
+    row1 = !row1;
+  });
+}
 
 
 // ----------- Original rtGui functions

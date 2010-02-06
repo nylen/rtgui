@@ -141,6 +141,18 @@ form {
   padding-top: 5px;
 }
 
+
+#torrents-header a.sort {
+  padding: 0 7px;
+  outline: none;
+}
+#torrents-header a.sort-asc {
+  background: url('images/downarrow.gif') no-repeat center right;
+}
+#torrents-header a.sort-desc {
+  background: url('images/uparrow.gif') no-repeat center right;
+}
+
 #filters-container {
   position: absolute;
   bottom: 0;
