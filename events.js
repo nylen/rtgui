@@ -22,7 +22,7 @@
 $(function() {
   $('#debug-tab').click(function() {
     var dbg = $('#debug:visible').length;
-    $(this).attr('class', dbg ? '' : 'current');
+    $(this)[dbg ? 'removeClass' : 'addClass']('current');
     $('#debug').css('display', dbg ? 'none' : 'block');
     debug('Waiting for refresh...');
     return false;
@@ -36,11 +36,11 @@ $(function() {
       current.sortVar = arr[0];
       current.sortDesc = (arr[1] == 'desc');
     }
-    $('#torrents-header a.sort')
-    .removeClass('sort-asc')
-    .removeClass('sort-desc');
+    $('#torrents-header a.sort').attr('class', 'sort');
     $(this).addClass(current.sortDesc ? 'sort-desc' : 'sort-asc');
-    sortAll();
+    if(sortTorrents(null, arr.length > 2)) {
+      resetStripes();
+    }
     return false;
   });
 });

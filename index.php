@@ -33,6 +33,7 @@ if(!isset($r_debug)) {
   $r_debug = 0;
 }
 
+// Reset saved torrents data (if any)
 $_SESSION['persistent'] = array();
 
 // Get the list of torrents downloading
@@ -71,8 +72,9 @@ var current = {
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="json2.min.js"></script>
 <script type="text/javascript" src="php.min.js"></script>
-<script type="text/javascript" src="submodal/common.js"></script>
+<!-- <script type="text/javascript" src="submodal/common.js"></script>
 <script type="text/javascript" src="submodal/subModal.js"></script>
+<!- - <script type="text/javascript" src="mergesort.js"></script> TODO: ensure sort is stable -->
 <script type="text/javascript" src="functions.js"></script>
 <script type="text/javascript" src="templates.js"></script>
 <script type="text/javascript" src="events.js"></script>
@@ -91,7 +93,7 @@ $(function() {
 <div id="wrap">
 
   <div id="header">
-    <h1><a href='index.php'>rt<span class=green>gui</span></a></h1><br/>
+    <h1><a href='.'>rt<span class=green>gui</span></a></h1><br/>
 
     <div id="boxright">
       <p>
@@ -113,8 +115,8 @@ $(function() {
       <p>
         Showing <span id="t-count-visible">??</span> 
         of <span id="t-count-all">??</span> torrents
-        | <a class="submodal-600-520" href="settings.php">Settings</a>
-        | <a class="submodal-700-500" href="add-torrent.php">Add Torrent</a>
+        | <a class="dialog" rel="600:520" href="settings.php">Settings</a>
+        | <a class="dialog" rel="700:500" href="add-torrent.php">Add Torrent</a>
       </p>
     </div><!-- id="boxright" -->
   </div><!-- id="header" -->
@@ -123,7 +125,7 @@ $(function() {
 <div id="navcontainer">
 
 <div id="filters-container">
-  <span id="filters-label">Filter torrents:</span>
+  <span id="filters-label">Filter:</span>
   <input type="text" id="filters" value="" />
   <a href="#" id="clear-filters"><img src="images/cross.gif" /></a>
 </div>
@@ -150,17 +152,17 @@ if($debugtab) {
 // Generate header links
 // variable_name     => ColName:width:add-class (default :89px:[none])
 $cols = array(
-  '+name'             => 'Name:99',
+  '+name!'            => 'Name:99',
   '+group'            => 'Grp',
   '+status'           => 'Status:79',
   '+percent_complete' => 'Done',
   '-bytes_remaining'  => 'Remain',
-  '+size_bytes'       => 'Size',
+  '+size_bytes!'      => 'Size',
   '-down_rate'        => 'Down',
   '-up_rate'          => 'Up',
-  '+up_total'         => 'Seeded:94',
-  '+ratio'            => 'Ratio:50',
-  '-date_added'       => 'Age:50',
+  '+up_total!'        => 'Seeded:94',
+  '+ratio!'           => 'Ratio:50',
+  '-date_added!'      => 'Age:50',
   '-peers_summary'    => 'Peers:68',
   '+priority_str'     => 'Pri',
   '+tracker_hostname' => 'Trk',
@@ -169,6 +171,12 @@ $cols = array(
 foreach($cols as $k => $v) {
   $order = ($k[0] == '+' ? 'asc' : 'desc');
   $k = substr($k, 1);
+  $reorder = '';
+  if(substr($k, strlen($k)-1) == '!') {
+    $reorder = ':true';
+    $k = substr($k, 0, strlen($k)-1);
+  }
+  
   if($k == 'group' && !$use_groups) {
     continue;
   }
@@ -176,11 +184,12 @@ foreach($cols as $k => $v) {
   if(count($arr) < 2) {
     $arr[1] = 89;
   }
+  $vis = ($k == 'date_added' && !$use_date_added ? ' visibility: hidden;' : '');
   $class = trim("headcol $arr[2]");
   if($k != 'tracker_hostname' && $k != 'group') {
-    echo "<div class=\"$class\" style=\"width: ${arr[1]}px;\">";
+    echo "<div class=\"$class\" style=\"width: ${arr[1]}px;$vis\">";
   }
-  echo "<a class=\"sort\" href=\"#\" rel=\"$k:$order\">$arr[0]</a>";
+  echo "<a class=\"sort\" href=\"#\" rel=\"$k:$order$reorder\">$arr[0]</a>";
   echo ($k == 'priority_str' || ($k == 'name' && $use_groups) ? "/" : "</div>\n");
 }
 ?>

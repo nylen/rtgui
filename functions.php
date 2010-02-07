@@ -190,6 +190,7 @@ function get_all_torrents($torrents_only=false, $view='main') {
       }
       $_SESSION['persistent'][$hash] = $s;
     }
+    
     $t['tracker_hostname'] = $s['tracker_hostname'];
     $t['tracker_color'] = $s['tracker_color'];
     if($use_groups) {
