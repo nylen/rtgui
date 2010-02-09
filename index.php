@@ -72,9 +72,10 @@ var current = {
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="json2.min.js"></script>
 <script type="text/javascript" src="php.min.js"></script>
-<!-- <script type="text/javascript" src="submodal/common.js"></script>
-<script type="text/javascript" src="submodal/subModal.js"></script>
-<!- - <script type="text/javascript" src="mergesort.js"></script> TODO: ensure sort is stable -->
+<!-- TODO: redo dialog boxes to use jQuery
+<script type="text/javascript" src="submodal/common.js"></script>
+<script type="text/javascript" src="submodal/subModal.js"></script> -->
+<script type="text/javascript" src="patience_sort.js"></script>
 <script type="text/javascript" src="functions.js"></script>
 <script type="text/javascript" src="templates.js"></script>
 <script type="text/javascript" src="events.js"></script>

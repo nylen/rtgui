@@ -230,6 +230,7 @@ function sortTorrents(torrentDivsAll, reorderAll) {
     }
     
     // identify sorted runs in the original list
+    // TODO: change this to finding the longest increasing subsequence
     var lastPos = -1;
     var run = {
       pos: 0,
