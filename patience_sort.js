@@ -43,7 +43,7 @@ function patienceSort(list, cmp, subseqOnly) {
    */
   var piles = [[{
     item: list[0],
-    backPtr: null,
+    backPtr: null
   }]];
   var nItems = list.length;
   
@@ -55,7 +55,7 @@ function patienceSort(list, cmp, subseqOnly) {
      */
     var card = {
       item: list[i],
-      backPtr: null,
+      backPtr: null
     };
     
     /* optimize for a common case (often, the list is mostly sorted,

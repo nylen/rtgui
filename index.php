@@ -60,13 +60,13 @@ var config = {
   refreshInterval: <?php echo $refresh_interval; ?>,
   diskAlertThreshold: <?php echo $alertthresh; ?>,
   useGroups: <?php echo $use_groups ? 1 : 0; ?>,
-  useDateAdded: <?php echo $use_date_added ? 1 : 0; ?>,
+  useDateAdded: <?php echo $use_date_added ? 1 : 0; ?>
 };
 var current = {
   view: 'main',
   filters: {},
   sortVar: null,
-  sortDesc: false,
+  sortDesc: false
 }
 </script>
 <script type="text/javascript" src="jquery.js"></script>
@@ -79,6 +79,10 @@ var current = {
 <script type="text/javascript" src="functions.js"></script>
 <script type="text/javascript" src="templates.js"></script>
 <script type="text/javascript" src="events.js"></script>
+<!--[if lt IE 8]>
+<link rel="stylesheet" type="text/css" href="ie.css" />
+<script type="text/javascript" src="ie.js"></script>
+<![endif]-->
 <script type="text/javascript">
 var data = <?php echo $data_str; ?>;
 
@@ -95,7 +99,14 @@ $(function() {
 
   <div id="header">
     <h1><a href='.'>rt<span class=green>gui</span></a></h1><br/>
-
+    <!--[if lt IE 8]>
+      <span id="ie">
+        Please, go get a
+        <a href="http://www.google.com/chrome">real</a>
+        <a href="http://www.mozilla.com/firefox">browser</a>...
+      </span>
+    <![endif]-->
+    
     <div id="boxright">
       <p>
         Down: 
@@ -153,9 +164,9 @@ if($debugtab) {
 // Generate header links
 // variable_name     => ColName:width:add-class (default :89px:[none])
 $cols = array(
-  '+name!'            => 'Name:99',
+  '+name!'            => 'Name:104',
   '+group'            => 'Grp',
-  '+status'           => 'Status:79',
+  '+status'           => 'Status:74',
   '+percent_complete' => 'Done',
   '-bytes_remaining'  => 'Remain',
   '+size_bytes!'      => 'Size',

@@ -1,20 +1,55 @@
 function makeTemplate() {
   var str = $(arguments).toArray().join('\n');
-  var arr = str.split(/([@\$])([a-z0-9_-]*)/i);
   var markers = {
     id: '@',
-    value: '$',
+    value: '$'
   };
+  
+  var arr = [];
+  if($.browser.msie) {
+    // I hate you
+    var state = 0, name = '';
+    for(var i = 0; i < str.length; i++) {
+      var c = str.charAt(i);
+      for(var k in markers) {
+        if(markers[k] == c) {
+          state = 2;
+          if(name) {
+            arr.push(name);
+            name = '';
+          }
+          arr.push(c);
+        }
+      }
+      if(state == 1) {
+        if(/[a-z0-9_-]/i.test(c)) {
+          name += c;
+        } else {
+          state = 0;
+          arr.push(name);
+          name = c;
+        }
+      } else if(state == 2) {
+        state = 1;
+      } else {
+        name += c;
+      }
+    }
+    arr.push(name);
+    
+  } else {
+    arr = str.split(/([@\$])([a-z0-9_-]*)/i);
+  }
   
   var template = {
     before: arr[0],
     substitutions: [],
-    mustRewriteHTML: {},
+    mustRewriteHTML: {}
   };
   
   var i = 1;
   for(k in markers) {
-    if(str[0] == markers[k]) {
+    if(str.charAt(0) == markers[k]) {
       i = 0;
       template.before = '';
     }
@@ -31,7 +66,7 @@ function makeTemplate() {
       }
     }
     if(!thisSubstitution.type) {
-      throw 'Invalid template (Type marker not found)';
+      error('Invalid template (Type marker not found)');
     }
     thisSubstitution.varName = arr[i++];
     if(thisSubstitution.varName) {
@@ -44,8 +79,7 @@ function makeTemplate() {
         template.mustRewriteHTML[thisSubstitution.varName] = false;
       }
       if(!lastVarName) {
-        // Set a Firebug breakpoint here if this error occurs
-        throw 'Invalid template (Variable name not found)';
+        error('Invalid template (Variable name not found)');
       }
     }
     lastVarName = thisSubstitution.varName;
@@ -82,7 +116,6 @@ function applyTemplate(data, template, key, group) {
   
   return html;
 }
-
 
 var templates = {
   torrent: makeTemplate(
@@ -121,7 +154,7 @@ var templates = {
       '<div class="datacol" style="width: 105px;" id="@peers_summary">$</div>',
       '<div class="datacollast" style="width: 70px;" id="@priority_str">$</div>',
       '<div class="spacer"> </div>',
-    '</div>'),
+    '</div>')
   
   
 };
@@ -169,7 +202,7 @@ var formatHandlers = {
       d: 86400,
       h: 3600,
       m: 60,
-      s: 1,
+      s: 1
     };
     var unitsFound = 0;
     for(u in units) {
@@ -218,7 +251,7 @@ var formatHandlers = {
   peers_summary: function(s) {
     var arr = s.split(',');
     return parseInt(arr[0]) + '/' + parseInt(arr[1]) + ' (' + parseInt(arr[2]) + ')';
-  },
+  }
   
 };
 

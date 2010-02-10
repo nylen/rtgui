@@ -1,0 +1,18 @@
+/* IE users can't have nice things */
+.row1, .row2 {
+  background-color: white !important;
+  border-color: white !important;
+}
+
+#ie {
+  font-style: italic;
+  position: absolute;
+  top: 50px;
+  left: 150px;
+}
+
+#filters-container {
+  position: absolute;
+  top: 0px;
+  bottom: default;
+}

@@ -30,7 +30,9 @@ $(function() {
   
   $('#torrents-header a.sort').click(function() {
     var arr = $(this).attr('rel').split(':');
+    var reversing = false;
     if(arr[0] == current.sortVar) {
+      reversing = true;
       current.sortDesc = !current.sortDesc;
     } else {
       current.sortVar = arr[0];
@@ -38,7 +40,7 @@ $(function() {
     }
     $('#torrents-header a.sort').attr('class', 'sort');
     $(this).addClass(current.sortDesc ? 'sort-desc' : 'sort-asc');
-    if(sortTorrents(null, arr.length > 2)) {
+    if(sortTorrents(null, arr.length > 2 && reversing)) {
       resetStripes();
     }
     return false;

@@ -3,7 +3,7 @@
   
   function assert(cond) {
     if(!cond) {
-      throw 'Assert failed (debug me!)';
+      throw new Error('Assert failed (debug me!)');
     }
   }
   
@@ -74,7 +74,7 @@
       slowest: function(a, b) {
         var slowdown = randomArray(3);
         return getDefaultComparer()(a, b);
-      },
+      }
     };
     
     var trials = 200, len = 200, swaps = 10;
@@ -91,7 +91,6 @@
       }
       var d2 = new Date();
       for(var i=0; i<trials; i++) {
-        a = mostlySortedArray(len, swaps);
         patienceSort(data[i], cs[c], true);
       }
       var d3 = new Date();

@@ -2,6 +2,13 @@ function debug(msg) {
   $('#debug:visible').html('<b>' + new Date() + ':</b>\n' + htmlspecialchars(msg));
 }
 
+function error(msg) {
+  if($.browser.msie) {
+    alert('Error: ' + msg);
+  }
+  throw new Error(msg);
+}
+
 function hideDialog(doUpdate) {
   hidePopWin(false);
   if(doUpdate) {
@@ -58,7 +65,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     toSort: [],
     toFilter: [],
     toCheckView: [],
-    stripes: !!isFirstUpdate,
+    stripes: !!isFirstUpdate
   };
   
   if(changes.torrents) {
@@ -172,7 +179,7 @@ var viewHandlers = {
   varsToCheck: {
     state: 1,
     is_active: 1,
-    complete: 1,
+    complete: 1
   },
   
   'main': function(t) {
@@ -198,7 +205,7 @@ var viewHandlers = {
   },
   'seeding': function(t) {
     return t.complete && t.state;
-  },
+  }
 }
 
 
@@ -214,101 +221,62 @@ function sortTorrents(torrentDivsAll, reorderAll) {
   var els = torrentDivsAll.toArray();
   var len = els.length;
   
+  for(var i = 0; i < len; i++) {
+    // set the before-sort position to ensure a stable sort
+    window.data.torrents[els[i].id].pos = i;
+  }
+  
+  var toMove = [];
+  var elsSorted = null;
+  
   if(reorderAll) {
-    els.sort(getSortComparator());
+    els.sort(getTorrentsComparer());
+    elsSorted = els;
     
   } else {
-    var before = [];
-    var after = {};
+    var result = patienceSort(els, getTorrentsComparer());
+    elsSorted = result.sorted;
     
-    for(var i = 0; i < len; i++) {
-      before.push(els[i].id);
-    }
-    els.sort(getSortComparator());
-    for(var i = 0; i < len; i++) {
-      after[els[i].id] = i;
-    }
-    
-    // identify sorted runs in the original list
-    // TODO: change this to finding the longest increasing subsequence
-    var lastPos = -1;
-    var run = {
-      pos: 0,
-      entries: [],
-    };
-    for(var i = 0; i < len; i++) {
-      var thisHash = before[i];
-      var thisPos = after[thisHash];
-      var entry = {
-        hash: thisHash,
-        pos: thisPos,
-        after: (thisPos ? els[thisPos - 1].id : 't-none'),
-      };
-      if(thisPos != lastPos + 1 && lastPos != -1) {
-        // end the current run and start a new one
-        runs.push(run);
-        run = {
-          pos: i,
-          entries: [],
-        };
-      }
-      lastPos = thisPos;
-      run.entries.push(entry);
-    }
-    runs.push(run);
-    
-    if(runs.length <= 1) {
+    if(result.subseq.length == len) {
       // the list was already sorted
       return false;
     }
-  }
     
-  if(reorderAll || runs.length >= els.length / 1.5) {
-    // almost everything was reordered, so just reorder everything
+    // figure out which divs to move, and where
+    toMove = new Array(len - result.subseq.length);
+    if(toMove.length >= len - 5) {
+      /* if we can avoid 5 or more moves, do it; otherwise, just
+       * reorder everything
+       */
+      reorderAll = true;
+    } else {
+      var iSubseq = 0, subseqLen = result.subseq.length;
+      var iToMove = 0, after = 't-none';
+      for(var i = 0; i < len; i++) {
+        var item = result.sorted[i];
+        if(iSubseq < subseqLen && item.id == result.subseq[iSubseq].id) {
+          iSubseq++;
+        } else {
+          toMove[iToMove++] = {
+            after: after,
+            item: item
+          };
+        }
+        after = item.id;
+      }
+    }
+  }
+  
+  if(reorderAll) {
+    // [almost] everything was reordered, so just reorder everything
     var t = $('#torrents');
-    $(els).each(function() {
+    $(elsSorted).each(function() {
       t.append(this);
     });
-    
   } else {
-    // choose which divs to move
-    var runsByPos = {};
-    for(var i = 0; i < runs.length; i++) {
-      runsByPos[runs[i].pos] = runs[i];
-    }
-    var runsByLength = runs;
-    runsByLength.sort(function(a, b) {
-      var c = a.entries.length - b.entries.length;
-      return (c ? c : a.pos - b.pos);
-    });
-    
-    var toMove = [];
-    for(var i in runsByLength) {
-      toMove = toMove.concat(runsByLength[i].entries);
-      delete runsByPos[runsByLength[i].pos];
-      
-      var isSorted = true;
-      var lastPos = -1;
-      for(var thisPos in runsByPos) {
-        if(lastPos != -1) {
-          var lastEntries = runsByPos[lastPos].entries;
-          if(lastEntries[lastEntries.length - 1].pos > runsByPos[thisPos].entries[0].pos - 1) {
-            isSorted = false;
-            break;
-          }
-        }
-        lastPos = thisPos;
-      }
-      if(isSorted) {
-        break;
-      }
-    }
-    
-    toMove.sort(function(a, b) {
-      return a.pos - b.pos;
-    });    
     for(var i = 0; i < toMove.length; i++) {
-      $('#' + toMove[i].hash).insertAfter('#' + toMove[i].after);
+      var move = toMove[i];
+      $('#' + move.after).after(move.item);
     }
   }
   
@@ -323,18 +291,20 @@ function sortSome(hashes) {
   for(var h in hashes) {
     els.push(document.getElementById(h));
   }
-  els.sort(sortComparator());
+  //els.sort(sortComparator());
   
 }
 
-function getSortComparator() {
+function getTorrentsComparer() {
   var cmp = (current.sortDesc ? -1 : 1);
   return function(a, b) {
-    var va = window.data.torrents[a.id][current.sortVar];
-    var vb = window.data.torrents[b.id][current.sortVar];
+    var ta = window.data.torrents[a.id];
+    var tb = window.data.torrents[b.id];
+    var va = ta[current.sortVar];
+    var vb = tb[current.sortVar];
     if(va.toLowerCase) va = va.toLowerCase();
     if(vb.toLowerCase) vb = vb.toLowerCase();
-    return (va < vb ? -cmp : (va > vb ? cmp : 0));
+    return (va < vb ? -cmp : (va > vb ? cmp : ta.pos - tb.pos));
   };
 }    
 
