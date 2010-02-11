@@ -93,10 +93,10 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
         }
         var checkChangedVars = false;
         if(mustRewriteHTML) {
+          dirty.stripes = true;
           var html = applyTemplate(window.data.torrents[hash], templates.torrent, hash, 't');
           var container = $('#' + hash);
           if(container.length) {
-            dirty.stripes = true;
             container.html(html);
             checkChangedVars = true;
           } else {
@@ -163,7 +163,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     
     // set row classes
     if(dirty.stripes) {
-      resetStripes(dirty.mustSort ? null : torrentDivsVisible);
+      resetStripes();
     }
   }
   
