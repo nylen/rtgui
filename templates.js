@@ -8,37 +8,38 @@ function makeTemplate() {
   var arr = [];
   if($.browser.msie) {
     // I hate you
-    var state = 0, name = '';
+    var state = 0, token = '';
     for(var i = 0; i < str.length; i++) {
       var c = str.charAt(i);
       for(var k in markers) {
         if(markers[k] == c) {
           state = 2;
-          if(name) {
-            arr.push(name);
-            name = '';
+          if(token) {
+            arr.push(token);
+            token = '';
           }
           arr.push(c);
         }
       }
       if(state == 1) {
         if(/[a-z0-9_-]/i.test(c)) {
-          name += c;
+          token += c;
         } else {
           state = 0;
-          arr.push(name);
-          name = c;
+          arr.push(token);
+          token = c;
         }
       } else if(state == 2) {
         state = 1;
       } else {
-        name += c;
+        token += c;
       }
     }
-    arr.push(name);
+    arr.push(token);
     
   } else {
     arr = str.split(/([@\$])([a-z0-9_-]*)/i);
+    // Wasn't that easy?  Too easy.
   }
   
   var template = {
