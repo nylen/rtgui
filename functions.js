@@ -100,6 +100,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
             container.html(html);
             checkChangedVars = true;
           } else {
+            window.data.torrents[hash].visible = true;
             html =
               '<div class="torrent-container" id="' + hash + '">\n'
               + html + '\n</div>\n\n';
@@ -107,7 +108,6 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
               firstHTML += html;
             } else {
               $('#torrents').append(html);
-              data.torrents[hash].visible = true;
               dirty.toCheckView.push(hash);
               dirty.toFilter.push(hash);
               dirty.mustSort = true;
@@ -146,7 +146,6 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     
     if(isFirstUpdate) {
       // dirty.stripes is already true
-      window.data.torrents[hash].visible = true;
       updateVisibleTorrents(torrentDivsAll, true);
       sortTorrents(torrentDivsAll);
     } else {
