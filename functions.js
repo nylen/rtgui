@@ -62,11 +62,12 @@ function updateTorrentsData() {
 
 function updateTorrentsHTML(changes, isFirstUpdate) {
   var dirty = {
-    toSort: [],
+    mustSort: !!isFirstUpdate,
     toFilter: [],
     toCheckView: [],
     stripes: !!isFirstUpdate
   };
+  var firstHTML = '';
   
   if(changes.torrents) {
     // One or more torrents changed
@@ -99,13 +100,16 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
             container.html(html);
             checkChangedVars = true;
           } else {
-            $('#torrents').append(
+            html =
               '<div class="torrent-container" id="' + hash + '">\n'
-              + html + '\n</div>\n\n');
-            if(!isFirstUpdate) {
+              + html + '\n</div>\n\n';
+            if(isFirstUpdate) {
+              firstHTML += html;
+            } else {
+              $('#torrents').append(html);
               dirty.toCheckView.push(hash);
-              dirty.toSort.push(hash);
               dirty.toFilter.push(hash);
+              dirty.mustSort = true;
             }
           }
         } else {
@@ -125,42 +129,41 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
               dirty.toFilter.push(hash);
             }
             if(current.sortVar == varName) {
-              dirty.toSort.push(hash);
+              dirty.mustSort = true;
             }
           }
         }
       }
     }
     
+    if(isFirstUpdate) {
+      $('#torrents').append(firstHTML);
+    }
+    
     var torrentDivsAll = $('#torrents>div.torrent-container');
-    var torrentDivsVisible = torrentDivsAll.filter(':visible');
-    $('#t-none').css('display', (torrentDivsVisible.length ? 'none' : ''));
-    $('#t-count-visible').html(torrentDivsVisible.length);
     $('#t-count-all').html(torrentDivsAll.length);
     
     if(isFirstUpdate) {
       // dirty.stripes is already true
-      sortTorrents(torrentDivsAll, true);
+      window.data.torrents[hash].visible = true;
+      updateVisibleTorrents(torrentDivsAll, true);
+      sortTorrents(torrentDivsAll);
     } else {
-      for(var h in dirty.toCheckView) {
-        
+      var opts = {
+        filter: dirty.toFilter,
+        checkView: dirty.toCheckView
+      };
+      if(updateVisibleTorrents(torrentDivsAll, opts)) {
+        dirty.stripes = true;
       }
-      for(var h in dirty.toFilter) {
-        // TODO: filter these torrents, and set dirty.stripes if needed
-      }
-      for(var h in dirty.toSort) {
-        // TODO: need to pass a list of torrent divs to sort?
-        // If not then use "dirty.mustSort = true"
-        if(sortTorrents(torrentDivsAll)) {
-          dirty.stripes = true;
-        }
-        break;
+      if(dirty.mustSort && sortTorrents(torrentDivsAll)) {
+        dirty.stripes = true;
       }
     }
     
     // set row classes
     if(dirty.stripes) {
-      resetStripes(dirty.toSort.length ? null : torrentDivsVisible);
+      resetStripes(dirty.mustSort ? null : torrentDivsVisible);
     }
   }
   
@@ -177,9 +180,9 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
 
 var viewHandlers = {
   varsToCheck: {
-    state: 1,
-    is_active: 1,
-    complete: 1
+    state: true,
+    is_active: true,
+    complete: true
   },
   
   'main': function(t) {
@@ -227,13 +230,16 @@ function sortTorrents(torrentDivsAll, reorderAll) {
   }
   
   var toMove = [];
+  var anyVisibleMoved = false;
   var elsSorted = null;
   
   if(reorderAll) {
+    
     els.sort(getTorrentsComparer());
     elsSorted = els;
     
   } else {
+    
     var result = patienceSort(els, getTorrentsComparer());
     elsSorted = result.sorted;
     
@@ -245,11 +251,14 @@ function sortTorrents(torrentDivsAll, reorderAll) {
     // figure out which divs to move, and where
     toMove = new Array(len - result.subseq.length);
     if(toMove.length >= len - 5) {
+      
       /* if we can avoid 5 or more moves, do it; otherwise, just
        * reorder everything
        */
       reorderAll = true;
+      
     } else {
+      
       var iSubseq = 0, subseqLen = result.subseq.length;
       var iToMove = 0, after = 't-none';
       for(var i = 0; i < len; i++) {
@@ -257,6 +266,9 @@ function sortTorrents(torrentDivsAll, reorderAll) {
         if(iSubseq < subseqLen && item.id == result.subseq[iSubseq].id) {
           iSubseq++;
         } else {
+          if(!anyVisibleMoved && data.torrents[item.id].visible) {
+            anyVisibleMoved = true;
+          }
           toMove[iToMove++] = {
             after: after,
             item: item
@@ -280,19 +292,75 @@ function sortTorrents(torrentDivsAll, reorderAll) {
     }
   }
   
-  return true;
+  return reorderAll || anyVisibleMoved;
 }
 
-function sortSome(hashes) {
-  if(!hashes.length) {
-    return;
+function updateVisibleTorrents(torrentDivsAll, ids) {
+  if(!torrentDivsAll) {
+    torrentDivsAll = $('#torrents>div.torrent-container');
   }
-  var els = [];
-  for(var h in hashes) {
-    els.push(document.getElementById(h));
+  var isFirstUpdate = false;
+  if(ids === true) {
+    isFirstUpdate = true;
+    ids = null;
   }
-  //els.sort(sortComparator());
+  var anyChanged = false;
   
+  var actions = {
+    checkView: function(id) {
+      return viewHandlers[current.view](data.torrents[id]);
+    },
+    filter: function(id) {
+      for(var f in current.filters) {
+        // TODO: fill in filtering logic (return false if no match)
+      }
+      return true;
+    }
+  };
+  
+  var canStop = true;
+  var checkAll = {}, indices = {};
+  for(var a in actions) {
+    checkAll[a] = (!ids || (ids[a] && !$.isArray(ids[a])));
+    if(checkAll[a] || (ids && ids[a] && ids[a].length)) {
+      canStop = false;
+    }
+    indices[a] = 0;
+  }
+  
+  if(canStop) {
+    return false;
+  }
+  
+  torrentDivsAll.each(function() {
+    var checkState = false, shouldShow = true;
+    
+    for(var a in actions) {
+      if(checkAll[a] || (ids[a] && ids[a][indices[a]] == this.id)) {
+        checkState = true;
+        indices[a]++;
+        if(shouldShow && !actions[a](this.id)) {
+          shouldShow = false;
+          break;
+        }
+      }
+    }
+    
+    if(checkState && shouldShow != data.torrents[this.id].visible) {
+      anyChanged = true;
+      $(this).css('display', shouldShow ? '' : 'none');
+      data.torrents[this.id].visible = shouldShow;
+    }
+  });
+  
+  if(anyChanged || isFirstUpdate) {
+    var torrentDivsVisible = torrentDivsAll.filter(function() {
+      return data.torrents[this.id].visible;
+    });
+    $('#t-none').css('display', (torrentDivsVisible.length ? 'none' : ''));
+    $('#t-count-visible').html(torrentDivsVisible.length);
+  }
+  return anyChanged;
 }
 
 function getTorrentsComparer() {
@@ -310,7 +378,9 @@ function getTorrentsComparer() {
 
 function resetStripes(torrentDivsVisible) {
   if(!torrentDivsVisible) {
-    torrentDivsVisible = $('#torrents>div.torrent-container:visible');
+    torrentDivsVisible = $('#torrents>div.torrent-container').filter(function() {
+      return data.torrents[this.id].visible;
+    });;
   }
   var row1 = true;
   torrentDivsVisible.each(function() {
@@ -321,6 +391,40 @@ function resetStripes(torrentDivsVisible) {
   });
 }
 
+function setCurrentSort(sortInfo, obj) {
+  if(!obj) {
+    obj = $('#torrents-header a.sort[rel=' + sortInfo + ']');
+  }
+  var arr = sortInfo.split(':');
+  var reversing = false;
+  if(arr[0] == current.sortVar) {
+    reversing = true;
+    current.sortDesc = !current.sortDesc;
+  } else {
+    current.sortVar = arr[0];
+    current.sortDesc = (arr[1] == 'desc');
+  }
+  $('#torrents-header a.sort').attr('class', 'sort');
+  obj.addClass(current.sortDesc ? 'sort-desc' : 'sort-asc');
+  if(sortTorrents(null, arr.length > 2 && reversing)) {
+    resetStripes();
+  }
+}
+
+function setCurrentView(viewName, obj) {
+  if(current.view == viewName) {
+    return;
+  }
+  if(!obj) {
+    obj = $('#navlist a.view[rel=' + viewName + ']');
+  }
+  current.view = viewName;
+  $('#navlist a.view').attr('class', 'view');
+  obj.addClass('current');
+  if(updateVisibleTorrents()) {
+    resetStripes();
+  }
+}
 
 // ----------- Original rtGui functions
 

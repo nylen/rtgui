@@ -60,19 +60,20 @@ var config = {
   refreshInterval: <?php echo $refresh_interval; ?>,
   diskAlertThreshold: <?php echo $alertthresh; ?>,
   useGroups: <?php echo $use_groups ? 1 : 0; ?>,
-  useDateAdded: <?php echo $use_date_added ? 1 : 0; ?>
+  useDateAdded: <?php echo $use_date_added ? 1 : 0; ?> 
 };
 var current = {
   view: 'main',
   filters: {},
   sortVar: null,
   sortDesc: false
-}
+};
 </script>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="json2.min.js"></script>
 <script type="text/javascript" src="php.min.js"></script>
 <!-- TODO: redo dialog boxes to use jQuery
+http://stackoverflow.com/questions/210637/jquery-thickbox-or-similar-to-show-iframe/210654#210654
 <script type="text/javascript" src="submodal/common.js"></script>
 <script type="text/javascript" src="submodal/subModal.js"></script> -->
 <script type="text/javascript" src="patience_sort.js"></script>
@@ -147,7 +148,8 @@ $(function() {
 $views = array('All', 'Started', 'Stopped', 'Active', 'Inactive', 'Complete', 'Incomplete', 'Seeding');
 foreach($views as $name) {
   $view = ($name == 'All' ? 'main' : strtolower($name));
-  echo "<li><a class=\"view\" href=\"#\" rel=\"$view\">$name</a></li>\n";
+  $class = ($name == 'All' ? 'view current' : 'view');
+  echo "<li><a class=\"$class\" href=\"#\" rel=\"$view\">$name</a></li>\n";
 }
 if($debugtab) {
    echo "<li><a href=\"#\" id=\"debug-tab\">Debug</a></li>\n";
@@ -169,7 +171,7 @@ $cols = array(
   '+status'           => 'Status:74',
   '+percent_complete' => 'Done',
   '-bytes_remaining'  => 'Remain',
-  '+size_bytes!'      => 'Size',
+  '-size_bytes!'      => 'Size',
   '-down_rate'        => 'Down',
   '-up_rate'          => 'Up',
   '+up_total!'        => 'Seeded:94',
