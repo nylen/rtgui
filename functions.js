@@ -107,6 +107,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
               firstHTML += html;
             } else {
               $('#torrents').append(html);
+              data.torrents[hash].visible = true;
               dirty.toCheckView.push(hash);
               dirty.toFilter.push(hash);
               dirty.mustSort = true;
