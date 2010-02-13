@@ -8,11 +8,8 @@
     display: none;
     
     position: fixed;
-    top: 17%;
+    top: 50%;
     left: 50%;
-    
-    margin-left: -300px;
-    width: 600px;
     
     background-color: #EEE;
     color: #333;
@@ -33,5 +30,5 @@
      For valid CSS, use a conditional include instead */
 * html .jqmWindow {
      position: absolute;
-     top: expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(17 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');
+     top: expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(50 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');
 }

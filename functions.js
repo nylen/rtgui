@@ -10,10 +10,18 @@ function error(msg) {
 }
 
 function showDialog(url, width, height) {
+  var w = parseInt(width), h = parseInt(height);
+  var px = function(n) {
+    return Math.round(n) + 'px';
+  };
   $('#dialog')
   .html('<iframe src="' + htmlspecialchars(url) + '" />')
-  .width(parseInt(width)).height(parseInt(height))
-  .jqmShow();
+  .css({
+    width: px(w),
+    height: px(h),
+    marginLeft: px(-w/2),
+    marginTop: px(-h/2)
+  }).jqmShow();
 }
 
 function hideDialog(doUpdate) {
