@@ -37,4 +37,10 @@ $(function() {
     setCurrentView($(this).attr('rel'), $(this));
     return false;
   });
+  
+  $('a.dialog').live('click', function() {
+    var dims = $(this).attr('rel').split(':');
+    showDialog($(this).attr('href'), dims[0], dims[1]);
+    return false;
+  });
 });

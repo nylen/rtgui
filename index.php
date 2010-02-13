@@ -53,7 +53,7 @@ $_SESSION['last_data'] = $data;
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
-<link rel="stylesheet" type="text/css" href="submodal/subModal.css" />
+<link rel="stylesheet" type="text/css" href="jqModal.css" />
 <script type="text/javascript">
 // Configuration variables
 var config = {
@@ -70,6 +70,7 @@ var current = {
 };
 </script>
 <script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jqModal.js"></script>
 <script type="text/javascript" src="json2.min.js"></script>
 <script type="text/javascript" src="php.min.js"></script>
 <!-- TODO: redo dialog boxes to use jQuery
@@ -88,6 +89,7 @@ http://stackoverflow.com/questions/210637/jquery-thickbox-or-similar-to-show-ifr
 var data = <?php echo $data_str; ?>;
 
 $(function() {
+  $('#dialog').jqm();
   updateTorrentsHTML(data, true);
   current.refreshIntervalID = setInterval(updateTorrentsData, config.refreshInterval);
 });
@@ -99,7 +101,7 @@ $(function() {
 <div id="wrap">
 
   <div id="header">
-    <h1><a href='.'>rt<span class=green>gui</span></a></h1><br/>
+    <h1><a href="./">rt<span class=green>gui</span></a></h1><br/>
     <!--[if lt IE 8]>
       <span id="ie">
         Please, go get a
@@ -158,6 +160,8 @@ if($debugtab) {
 </ul>
 
 </div>
+
+<div id="dialog" class="jqmWindow"></div>
 
 <div class="container">
 

@@ -9,8 +9,15 @@ function error(msg) {
   throw new Error(msg);
 }
 
+function showDialog(url, width, height) {
+  $('#dialog')
+  .html('<iframe src="' + htmlspecialchars(url) + '" />')
+  .width(parseInt(width)).height(parseInt(height))
+  .jqmShow();
+}
+
 function hideDialog(doUpdate) {
-  hidePopWin(false);
+  $('#dialog').jqmHide();
   if(doUpdate) {
     updateTorrentsNow();
   }

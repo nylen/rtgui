@@ -142,6 +142,19 @@ form {
 }
 
 
+#dialog {
+  padding: 6px;
+  background: #fff;
+}
+
+#dialog iframe {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-width: 0;
+}
+
+
 #torrents-header a.sort {
   padding: 0 7px;
   outline: none;
