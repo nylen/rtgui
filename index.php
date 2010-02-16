@@ -17,7 +17,7 @@
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
 $execstart = microtime(true);
-session_start();
+if(!$_SESSION) session_start();
 include 'config.php';
 include 'functions.php';
 import_request_variables('gp', 'r_');
@@ -66,17 +66,14 @@ var current = {
   view: 'main',
   filters: {},
   sortVar: null,
-  sortDesc: false
+  sortDesc: false,
+  error: false
 };
 </script>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="jqModal.js"></script>
 <script type="text/javascript" src="json2.min.js"></script>
 <script type="text/javascript" src="php.min.js"></script>
-<!-- TODO: redo dialog boxes to use jQuery
-http://stackoverflow.com/questions/210637/jquery-thickbox-or-similar-to-show-iframe/210654#210654
-<script type="text/javascript" src="submodal/common.js"></script>
-<script type="text/javascript" src="submodal/subModal.js"></script> -->
 <script type="text/javascript" src="patience_sort.js"></script>
 <script type="text/javascript" src="functions.js"></script>
 <script type="text/javascript" src="templates.js"></script>
@@ -99,9 +96,11 @@ $(function() {
 </head>
 <body>
 <div id="wrap">
+  <div id="error"></div>
 
   <div id="header">
-    <h1><a href="./">rt<span class=green>gui</span></a></h1><br/>
+  
+    <h1 id="title"><a href="./">rt<span class=green>gui</span></a></h1><br/>
     <!--[if lt IE 8]>
       <span id="ie">
         Please, go get a

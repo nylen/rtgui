@@ -16,16 +16,15 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
-$execstart=$start=microtime(true);
-include "functions.php";
-include "config.php";
-import_request_variables("gp","r_");
+if(!$_SESSION) session_start();
+include 'config.php';
+include 'functions.php';
+import_request_variables('gp', 'r_');
 
 if (!isset($r_select)) {
-   $r_select="files";
+  $r_select = 'files';
 }
 
-session_start();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

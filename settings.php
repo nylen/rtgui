@@ -16,11 +16,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
-session_start();
-$execstart=$start=microtime(true);
-include "functions.php";
-include "config.php";
-import_request_variables("gp","r_");
+if(!$_SESSION) session_start();
+include 'config.php';
+include 'functions.php';
+import_request_variables('gp', 'r_');
 
 if (!isset($_SESSION['refresh'])) $_SESSION['refresh']=$defaultrefresh;
 if (isset($r_setrefresh)) $_SESSION['refresh']=$r_setrefresh;

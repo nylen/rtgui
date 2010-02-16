@@ -23,6 +23,10 @@ if(!function_exists('xml_parser_create')) {
   include('xmlrpc_extension_api.inc');
 }
 
+if(function_exists('on_page_requested')) {
+  on_page_requested();
+}
+
 function do_xmlrpc($request) {
   global $rpc_connect;
   $context = stream_context_create(array(
@@ -164,8 +168,7 @@ function get_all_torrents($torrents_only=false, $view='main') {
       $t['peers_connected'], $t['peers_not_connected'], $t['peers_complete']
     );
     
-    // make is_active actually mean what it says
-    $t['is_active'] = (($t['down_rate'] + $t['up_rate']) ? 1 : 0);
+    $t['is_transferring'] = (($t['down_rate'] + $t['up_rate']) ? 1 : 0);
     
     if(is_array($_SESSION['persistent'][$hash])) {
       $s = $_SESSION['persistent'][$hash];
@@ -186,7 +189,11 @@ function get_all_torrents($torrents_only=false, $view='main') {
         $s['group'] = get_torrent_group($t);
       }
       if($use_date_added) {
-        $s['date_added'] = filemtime(get_local_torrent_path($t['tied_to_file']));
+        $fn = $t['tied_to_file'];
+        if(function_exists('get_local_torrent_path')) {
+          $fn = get_local_torrent_path($fn);
+        }
+        $s['date_added'] = filemtime($fn);
       }
       $_SESSION['persistent'][$hash] = $s;
     }
@@ -448,7 +455,7 @@ function format_bytes($bytes) {
 // Draw the percent bar using a table...
 function percentbar($percent) {
    $retvar="<table align=center border=0 cellspacing=0 cellpadding=1 bgcolor=#666666 width=50><tr><td align=left>";
-   $retvar.="<img src='images/percentbar.gif' height=4 width=".round($percent)." /></td></tr>";   
+   $retvar.="<img src='images/percentbar.gif' height=4 width=".round($percent/2)." /></td></tr>";   
    $retvar.="</table>";
    return $retvar;
 }

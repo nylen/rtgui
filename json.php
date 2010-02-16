@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
-session_start();
+if(!$_SESSION) session_start();
 include 'config.php';
 include 'functions.php';
 

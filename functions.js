@@ -63,7 +63,20 @@ function formatBytes(bytes, zero, after) {
 // Functions to update torrents list
 
 function updateTorrentsData() {
-  $.getJSON('json.php', function(changes) {
+  $.get('json.php', function(d) {
+    var changes = false;
+    try {
+      changes = JSON.parse(d);
+    } catch(_) {
+      $('#error').html(current.error = d).show();
+      return false;
+    }
+    
+    if(current.error) {
+      current.error = false;
+      $('#error').hide();
+    }
+    
     if(!changes) {
       debug('(No changes)');
       return;
@@ -196,7 +209,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
 var viewHandlers = {
   varsToCheck: {
     state: true,
-    is_active: true,
+    is_transferring: true,
     complete: true
   },
   
@@ -210,10 +223,10 @@ var viewHandlers = {
     return !t.state;
   },
   'active': function(t) {
-    return t.is_active;
+    return t.is_transferring;
   },
   'inactive': function(t) {
-    return !t.is_active;
+    return !t.is_transferring;
   },
   'complete': function(t) {
     return t.complete;

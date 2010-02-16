@@ -16,8 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
-include 'functions.php';
 include 'config.php';
+include 'functions.php';
 import_request_variables('gp', 'r_');
 
 // Bulk stop/start/delete torrents...

@@ -67,18 +67,24 @@ form {
   text-align: left;
 }
 
+#error {
+  display: none;
+  color: red;
+}
+
 #header {
   position: relative;
   height: 100px;
 }
-#header h1 {
+
+#header #title {
   position: absolute;
   margin: 0; padding: 0;
   font: bolder 5.1em Tahoma, Arial, Sans-serif;
   letter-spacing: -5px;
   top: 0; left: 0px;
-
 }
+
 #header a:hover {
   text-decoration: none;
 }
@@ -304,10 +310,9 @@ span.group {
 .date-added {
   font-size: 80%;
   color: #777;
-  position: absolute;
-  top: 4px;
-  right: 50px;
-  width: 200px;
+  margin-top: 3px;
+  float: right;
+  width: 170px;
 }
 .tracker {
   float: right;

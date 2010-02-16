@@ -83,4 +83,25 @@ function get_local_torrent_path($path) {
   return str_replace('/media/bit.torrents/', '/media/htpc/bit.torrents/', $path);
 }
 
+/* Define a function that will be run every time a page is requested.  It can be used to
+ * check if rTorrent is running, or to mount the rTorrent directories if rTorrent is
+ * running on another machine.
+ */
+function on_page_requested() {
+  if(!$_SESSION) session_start();
+  if(!$_SESSION['mounted']) {
+    exec('mount | grep //htpc/bit.torrents && mount | grep //htpc/rtorrent || sudo mount-htpc 2>&1', $out, $err);
+    if($err) {
+      die('<h1>Could not mount rTorrent directories</h1><pre>' . implode("\n", $out) . '</pre>');
+    }
+    $_SESSION['mounted'] = true;
+  }
+  $s = @fsockopen('htpc', 5202, $err, $errstr, 1);
+  if($err) {
+    die("<h1>rTorrent does not appear to be running</h1><pre>$errstr</pre>");
+  } else {
+    fclose($s);
+  }
+}
+
 ?>
