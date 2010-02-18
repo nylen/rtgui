@@ -100,7 +100,7 @@ $(function() {
 
   <div id="header">
   
-    <h1 id="title"><a href="./">rt<span class=green>gui</span></a></h1><br/>
+    <h1><a href="./">rt<span class=green>gui</span></a></h1><br/>
     <!--[if lt IE 8]>
       <span id="ie">
         Please, go get a

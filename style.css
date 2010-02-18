@@ -77,7 +77,7 @@ form {
   height: 100px;
 }
 
-#header #title {
+#header h1 {
   position: absolute;
   margin: 0; padding: 0;
   font: bolder 5.1em Tahoma, Arial, Sans-serif;
@@ -310,9 +310,10 @@ span.group {
 .date-added {
   font-size: 80%;
   color: #777;
-  margin-top: 3px;
-  float: right;
-  width: 170px;
+  position: absolute;
+  top: 4px;
+  right: 50px;
+  width: 200px;
 }
 .tracker {
   float: right;
