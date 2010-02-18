@@ -71,6 +71,7 @@ var current = {
 };
 </script>
 <script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jquery.form.js"></script>
 <script type="text/javascript" src="jqModal.js"></script>
 <script type="text/javascript" src="json2.min.js"></script>
 <script type="text/javascript" src="php.min.js"></script>
@@ -135,7 +136,7 @@ $(function() {
     </div><!-- id="boxright" -->
   </div><!-- id="header" -->
 
-<form action="control.php" method="post" name="control">
+<form action="control.php" method="post" name="control" id="control-form">
 <div id="navcontainer">
 
 <div id="filters-container">

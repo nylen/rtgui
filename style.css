@@ -25,6 +25,7 @@ body {
 }
 a {
   text-decoration: none;
+  outline: none;
   color: #17399C;
 }
 a:hover {
@@ -88,6 +89,7 @@ form {
 #header a:hover {
   text-decoration: none;
 }
+
 #header #boxright {
   float: right;
   display: block;
@@ -122,7 +124,6 @@ form {
   background: #666;
   text-decoration: none;
   font-weight: bold;
-  outline: none;
 }
 
 #navlist li a:link {
@@ -163,7 +164,6 @@ form {
 
 #torrents-header a.sort {
   padding: 0 7px;
-  outline: none;
 }
 #torrents-header a.sort-asc {
   background: url('images/downarrow.gif') no-repeat center right;
@@ -227,7 +227,7 @@ div.errorcol {
   margin-left: 2px;
   font-size: 80%;
   color: #999;
-  margin: 3px 3px 1px 3px;
+  margin: 3px 3px 1px 24px;
 }
 
 div.headcol {

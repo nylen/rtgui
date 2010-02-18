@@ -38,9 +38,37 @@ $(function() {
     return false;
   });
   
+  $('#control-form').ajaxForm(function() {
+    $('#control-form input[type=checkbox]').attr('checked', false);
+    updateTorrentsNow();
+  });
+  
+  $('div.torrent-container').live('click', function(e) {
+    $(this).find('input[type=checkbox]').not(e.target)
+    .attr('checked', function() {
+      return !this.checked;
+    });
+  });
+  
   $('a.dialog').live('click', function() {
     var dims = $(this).attr('rel').split(':');
     showDialog($(this).attr('href'), dims[0], dims[1]);
+    return false;
+  });
+  
+  $('a.ajax').live('click', function() {
+    var stdMessage = 'Are you sure you want to remove this torrent';
+    var messages = {
+      'delete': stdMessage + '?  Its data will not be deleted.',
+      'purge': stdMessage + ' torrent AND delete its data?'
+    };
+    if($(this).hasClass('confirm')
+    && !confirm(messages[$(this).attr('rel')])) {
+      return false;
+    }
+    $.get($(this).attr('href'), function(d) {
+      updateTorrentsNow();
+    });
     return false;
   });
 });

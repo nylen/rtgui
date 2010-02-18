@@ -102,8 +102,6 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     for(hash in changes.torrents) {
       if(changes.torrents[hash] === null) {
         // A torrent was removed
-        delete window.data.torrents[hash];
-        delete current.visible[hash];
         $('#' + hash).remove();
         dirty.stripes = true;
       } else {
@@ -125,7 +123,11 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
           var html = applyTemplate(window.data.torrents[hash], templates.torrent, hash, 't');
           var container = $('#' + hash);
           if(container.length) {
+            var checked = $('#t-' + hash + '-checkbox').attr('checked');
             container.html(html);
+            if(checked) {
+              $('#t-' + hash + '-checkbox').attr('checked', true);
+            }
             checkChangedVars = true;
           } else {
             window.data.torrents[hash].visible = true;

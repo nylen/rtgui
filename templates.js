@@ -125,12 +125,12 @@ var templates = {
         '<div class="tracker" id="@tracker_hostname">',
           '<a class="filter" href="#" rel="tracker:$tracker_hostname" style="color: $tracker_color">$tracker_hostname</a>&nbsp;',
         '</div>',
-        '<input type="checkbox" name="select[]" value="$hash" />',
+        '<input type="checkbox" name="select[]" id="@checkbox" value="$hash" />',
         '<a class="dialog $status_class" rel="600:520" href="view.php?hash=$hash">$name</a>',
         (config.useGroups ? '<span class="group">(<a class="filter" href="#" id="@group" rel="group:$group">$group</a>)</span>' : ''),
         (config.useDateAdded ? '<span class="date-added" id="@date_added">$</span>' : ''),
       '</div>',
-      '<div class="errorcol" id="@message">$eta $message</div>',
+      '<div class="errorcol"><span id="@eta">$</span> <span id="@message">$</span></div>',
       '<div class="datacol" style="width: 89px;">',
         '<a class="ajax" href="control.php?hash=$hash&amp;cmd=$start_stop_cmd">',
           '<img alt="$start_stop_cmd torrent" border="0" src="images/$start_stop_cmd.gif" width="16" height="16" />',
@@ -231,7 +231,7 @@ var formatHandlers = {
   
   percent_complete: function(n) {
     return [
-      n + '%<br />',
+      Math.round(n*10)/10 + '%<br />',
       '<table align="center" border="0" cellspacing="0" cellpadding="1" bgcolor="#666666" width="50"><tr>',
         '<td align="left"><img src="images/percentbar.gif" height="4" width="' + Math.round(n/2) + '"/></td>',
       '</tr></table>'
