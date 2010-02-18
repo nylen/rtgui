@@ -1,6 +1,11 @@
 (function() {
-  // A couple of helper functions
+  // A few helper functions
   
+  function log() {
+    var msg = Array.prototype.slice.call(arguments).join(' ');
+    document.write('<div>' + msg + '</div>\n');
+  }
+
   function assert(cond) {
     if(!cond) {
       throw new Error('Assert failed (debug me!)');
@@ -19,7 +24,7 @@
   function mostlySortedArray(n, r) {
     var arr = new Array(n);
     for(var i=0; i<n; i++) {
-      arr[i] = n;
+      arr[i] = i;
     }
     for(var i=0; i<r; i++) {
       var x = Math.floor(Math.random()*n);
@@ -67,7 +72,7 @@
   // Benchmark vs. Array.sort()
   (function() {
     var cs = {
-      default: undefined,
+      'default': undefined,
       slower: function(a, b) {
         return getDefaultComparer()(a, b);
       },
@@ -77,14 +82,17 @@
       }
     };
     
-    var trials = 200, len = 200, swaps = 10;
-    console.log('trials=',trials, 'len=',len, 'swaps=',swaps);
-    var data = new Array(trials);
-    for(var i=0; i<trials; i++) {
-      data[i] = mostlySortedArray(len, swaps);
-    }
+    var mob = (navigator.userAgent.indexOf('Mobile') >= 0);
+    
+    var trials = mob?50:500, len = 50, swaps = 10;
+    log('trials=',trials, 'len=',len, 'swaps=',swaps);
     
     for(var c in cs) {
+      var data = new Array(trials);
+      for(var i=0; i<trials; i++) {
+        data[i] = mostlySortedArray(len, swaps);
+      }
+      
       var d1 = new Date();
       for(var i=0; i<trials; i++) {
         patienceSort(data[i], cs[c]);
@@ -94,18 +102,20 @@
         patienceSort(data[i], cs[c], true);
       }
       var d3 = new Date();
-      if(cs[c]) {
-        for(var i=0; i<trials; i++) {
-          data[i].sort(cs[c]);
-        }
-      } else {
+      if(c == 'default') {
         for(var i=0; i<trials; i++) {
           data[i].sort();
         }
+      } else {
+        for(var i=0; i<trials; i++) {
+          data[i].sort(cs[c]);
+        }
       }
       var d4 = new Date();
-      console.log('cmp=',c, 'patience=',d2-d1, 'subseq=',d3-d2, 'stock=',d4-d3, 'diff=',(d2-d1)-(d4-d2));
+      log('cmp=',c, 'patience=',d2-d1, 'subseq=',d3-d2, 'stock=',d4-d3, 'diff=',(d2-d1)-(d4-d2));
     }
   })();
+    
+  document.close();
   
 })();
