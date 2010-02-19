@@ -22,38 +22,40 @@ import_request_variables('gp', 'r_');
 
 // Bulk stop/start/delete torrents...
 if(isset($r_bulkaction) && is_array($r_select)) {
-   foreach($r_select as $hash) {
+  foreach($r_select as $hash) {
+    if($hash) {
       switch($r_bulkaction) {
-         case 'stop':
-         $response = do_xmlrpc(xmlrpc_encode_request('d.stop', array($hash)));
-         break;
-         
-         case 'start':
-         $response = do_xmlrpc(xmlrpc_encode_request('d.start', array($hash)));
-         break;
-         
-         case 'delete':
-         $response = do_xmlrpc(xmlrpc_encode_request('d.erase', array($hash)));
-         break;
-         
-         case 'pri_high':
-         $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($hash, 3)));
-         break;
-         
-         case 'pri_normal':
-         $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($hash, 2)));
-         break;
-         
-         case 'pri_low':
-         $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($hash, 1)));
-         break;
-         
-         case 'pri_off':
-         $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($hash, 0)));
-         break;
+        case 'stop':
+          $response = do_xmlrpc(xmlrpc_encode_request('d.stop', array($hash)));
+          break;
+
+        case 'start':
+          $response = do_xmlrpc(xmlrpc_encode_request('d.start', array($hash)));
+          break;
+
+        case 'delete':
+          $response = do_xmlrpc(xmlrpc_encode_request('d.erase', array($hash)));
+          break;
+
+        case 'pri_high':
+          $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($hash, 3)));
+          break;
+
+        case 'pri_normal':
+          $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($hash, 2)));
+          break;
+
+        case 'pri_low':
+          $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($hash, 1)));
+          break;
+
+        case 'pri_off':
+          $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($hash, 0)));
+          break;
       }
-   }
-   $r_cmd = '';
+    }
+  }
+  $r_cmd = '';
 }
 
 
@@ -132,6 +134,12 @@ switch($r_cmd) {
 $referer = parse_url($_SERVER['HTTP_REFERER']);
 $script = basename($referer['path']);
 
+
+if(!$r_ajax) {
+  if(!$_SESSION) session_start();
+  $_SESSION['must_get_all'] = true;
+  @header("Location: " . $_SERVER['HTTP_REFERER']);
+}
 /*if(empty($r_uploadtorrent) && empty($r_addurl)) { // JCN (wtf is this for anyway?)
   if($r_cmd == "delete" || !preg_match('@^(index|view|feedread|settings)\\.php$@', $script)) {
     $script = 'index.php';

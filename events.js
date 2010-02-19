@@ -38,9 +38,28 @@ $(function() {
     return false;
   });
   
-  $('#control-form').ajaxForm(function() {
-    $('#control-form input[type=checkbox]').attr('checked', false);
-    updateTorrentsNow();
+  $('#control-form').ajaxForm({
+    beforeSubmit: function(formData, form, options) {
+      // don't submit invisible checked torrents
+      for(var i = 0; i < formData.length; i++) {
+        var t = window.data.torrents[formData[i].value];
+        if(t && !t.visible) {
+          formData[i].value = '';
+        }
+      }
+      formData.push({
+        name: 'ajax',
+        value: true
+      });
+    },
+    success: function() {
+      $('div.torrent-container').each(function() {
+        if(window.data.torrents[this.id].visible) {
+          $('#t-' + this.id + '-checkbox').attr('checked', false);
+        }
+      });
+      updateTorrentsNow();
+    }
   });
   
   $('div.torrent-container').live('click', function(e) {
@@ -66,7 +85,7 @@ $(function() {
     && !confirm(messages[$(this).attr('rel')])) {
       return false;
     }
-    $.get($(this).attr('href'), function(d) {
+    $.post($(this).attr('href'), {ajax: true}, function(d) {
       updateTorrentsNow();
     });
     return false;

@@ -38,17 +38,24 @@ if (!isset($r_select)) {
 <div class='modal'>
 <?php
 // Get torrent info...  (get all downloads, then filter out just this one by the hash)
-if(is_array($_SESSION['last_data'])) {
+if(is_array($_SESSION['last_data']) && !$_SESSION['must_get_all']) {
   $alltorrents = $_SESSION['last_data']['torrents'];
 } else {
+  $_SESSION['must_get_all'] = false;
   $alltorrents = get_all_torrents(true);
 }
 session_write_close();
 
-$thistorrent=array();
+$thistorrent = false;
 foreach($alltorrents as $torrent) {
    if ($r_hash==$torrent['hash']) $thistorrent=$torrent;
 }
+
+if(!$thistorrent) {
+  // probably the current torrent was just deleted
+  die('<script>top.hideDialog(true);</script></div></body></html>');
+}
+
 if ($thistorrent['complete']==1) { $statusstyle="complete"; } else { $statusstyle="incomplete"; }
 if ($thistorrent['is_active']==1) { $statusstyle.="active"; } else { $statusstyle.="inactive"; }
 
@@ -61,7 +68,7 @@ if ($thistorrent['is_active']==1) {
 } else {
    echo "<input type=button value='Start' class='buttonstart' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=start\"' />\n";
 }
-echo "<input type=button value='Delete' class='buttondel' onClick='if (confirm(\"Delete torrent - are you sure? (This will not delete data from disk)\")) parent.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=delete\"' />\n";
+echo "<input type=button value='Delete' class='buttondel' onClick='if (confirm(\"Delete torrent - are you sure? (This will not delete data from disk)\")) window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=delete\"' />\n";
 echo "<input type=button value='Hash check' class='buttonhashcheck' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=hashcheck\"' />\n";
 echo "<input type=button value='Refresh' class='buttonrefresh' onClick='window.location=\"view.php?select=$r_select&amp;hash=".$thistorrent['hash']."\"' />\n";
 
@@ -211,7 +218,7 @@ if ($r_select=="torrent") {
    echo "<div class='container' style='width:550px'>\n";
    echo "<table border=0 cellspacing=0 cellpadding=5 class='maintable' width='100%'>\n";
    echo "<tr class='row2'><td class='datacol' align=right><b>Name</b></td><td><span class='torrenttitle $statusstyle'>".mb_wordwrap($thistorrent['name'],60,"<br/>\n",TRUE)."</span></td></tr>\n";
-   echo "<tr class='row1'><td class='datacol' align=right><b>Status</b></td><td><img src='images/".$statusstyle.".gif' width=10 height=9 alt='Status' /> ".$thistorrent['status_string']."</td></tr>\n";
+   echo "<tr class='row1'><td class='datacol' align=right><b>Status</b></td><td><img src='images/".$statusstyle.".gif' width=10 height=9 alt='Status' /> ".$thistorrent['status']."</td></tr>\n";
 
    echo "<tr class='row2'><td class='datacol' align=right><b>Priority</b></td><td>";
    echo "<form action='control.php' method='post'>";
