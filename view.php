@@ -114,7 +114,7 @@ if ($r_select=="files") {
       echo "</div>\n";
       echo "<div class='datacol smalltext' style='width:90px;'>".$item['get_completed_chunks']." / ".$item['get_size_chunks']."</div>\n";
       echo "<div class='datacollast smalltext' style='width:90px;'>";
-      echo "<select name='set_fpriority[$index]' class='smalltext'>\n";
+      echo "<select name='set_fpriority[$index]' class='mediumtext'>\n";
       echo "<option value='0' ".($item['get_priority']==0 ? "selected" : "").">Off</option>\n";
       echo "<option value='1' ".($item['get_priority']==1 ? "selected" : "").">Normal</option>\n";
       echo "<option value='2' ".($item['get_priority']==2 ? "selected" : "").">High</option>\n";

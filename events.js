@@ -53,20 +53,36 @@ $(function() {
       });
     },
     success: function() {
-      $('div.torrent-container').each(function() {
-        if(window.data.torrents[this.id].visible) {
-          $('#t-' + this.id + '-checkbox').attr('checked', false);
-        }
-      });
+      $('div.torrent-container input[type=checkbox]')
+      .attr('checked', false);
       updateTorrentsNow();
     }
   });
   
   $('div.torrent-container').live('click', function(e) {
-    $(this).find('input[type=checkbox]').not(e.target)
-    .attr('checked', function() {
+    var thisHash = this.id;
+    var $thisCheckbox = $(this).find('input[type=checkbox]');
+    $thisCheckbox.not(e.target).attr('checked', function() {
       return !this.checked;
     });
+    if(e.shiftKey && current.lastHash) {
+      var thisPos = window.data.torrents[thisHash].pos;
+      var lastPos = window.data.torrents[current.lastHash].pos;
+      var d = (thisPos > lastPos ? 1 : -1);
+      var checked = $thisCheckbox.attr('checked');
+      for(var p = lastPos; p != thisPos; p += d) {
+        $('#t-' + current.torrentHashes[p] + '-checkbox')
+        .attr('checked', checked);
+      }
+    }
+    $thisCheckbox[0].focus();
+    current.lastHash = thisHash;
+  });
+  
+  $('.select-all, .unselect-all').click(function() {
+    $('div.torrent-container input[type=checkbox]')
+    .attr('checked', $(this).hasClass('select-all'));
+    return false;
   });
   
   $('a.dialog').live('click', function() {

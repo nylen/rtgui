@@ -50,57 +50,56 @@ function get_all_torrents($torrents_only=false, $view='main') {
   global $downloaddir, $use_groups, $use_date_added;
   global $tracker_hilite, $tracker_hilite_default;
   
-  // TODO: remove unnecessary items
   $torrents = rtorrent_multicall('d', $view, array(
-    'get_base_filename',
-    'get_base_path',
-    'get_bytes_done',
-    'get_chunk_size',
-    'get_chunks_hashed',
+    #'get_base_filename',
+    #'get_base_path',
+    #'get_bytes_done',
+    'get_chunk_size', # only needed to set other items
+    'get_chunks_hashed', # only needed to set other items
     'get_complete',
     #'get_completed_bytes', # overflows 32-bit int (must calculate)
     'get_completed_chunks',
-    'get_connection_current',
-    'get_connection_leech',
-    'get_connection_seed',
-    'get_creation_date',
+    'get_connection_current', # only needed to set other items
+    #'get_connection_leech',
+    #'get_connection_seed',
+    #'get_creation_date',
     'get_directory',
     'get_down_rate',
     'get_down_total',
-    #'get_free_diskspace', # unnecessary, and clutters diffs
+    #'get_free_diskspace',
     'get_hash',
-    'get_hashing',
-    'get_ignore_commands',
-    'get_left_bytes',
-    'get_local_id',
-    'get_local_id_html',
-    'get_max_file_size',
+    'get_hashing', # only needed to set other items
+    #'get_ignore_commands',
+    #'get_left_bytes',
+    #'get_local_id',
+    #'get_local_id_html',
+    #'get_max_file_size',
     'get_message',
-    'get_peers_min',
+    #'get_peers_min',
     'get_name',
-    'get_peer_exchange',
-    'get_peers_accounted',
+    #'get_peer_exchange',
+    #'get_peers_accounted',
     'get_peers_complete',
     'get_peers_connected',
-    'get_peers_max',
+    #'get_peers_max',
     'get_peers_not_connected',
     'get_priority',
     'get_priority_str',
     'get_ratio',
     #'get_size_bytes', # overflows 32-bit int (must calculate)
-    'get_size_chunks',
-    'get_size_files',
-    'get_skip_rate',
-    'get_skip_total',
+    'get_size_chunks', # only needed to set other items
+    #'get_size_files',
+    #'get_skip_rate',
+    #'get_skip_total',
     'get_state',
     'get_state_changed',
     'get_tied_to_file',
-    'get_tracker_focus',
-    'get_tracker_numwant',
-    'get_tracker_size',
+    #'get_tracker_focus',
+    #'get_tracker_numwant',
+    #'get_tracker_size',
     'get_up_rate',
     #'get_up_total', # overflows 32-bit int (must calculate)
-    'get_uploads_max',
+    #'get_uploads_max',
     'is_active',
     'is_hash_checked',
     'is_hash_checking',
@@ -210,7 +209,12 @@ function get_all_torrents($torrents_only=false, $view='main') {
     $total_down_rate += $t['down_rate'];
     $total_up_rate += $t['up_rate'];
     
-    // TODO: unset items that are only needed for setting other items
+    // unset items that are oly needed for setting other items
+    unset($t['chunk_size']);
+    unset($t['chunks_hashed']);
+    unset($t['connection_current']);
+    unset($t['hashing']);
+    unset($t['size_chunks']);
     
     $torrents[$hash] = $t;
   }

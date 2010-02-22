@@ -130,7 +130,7 @@ $(function() {
       <p>
         Showing <span id="t-count-visible">??</span> 
         of <span id="t-count-all">??</span> torrents
-        | <a class="dialog" rel="600:520" href="settings.php">Settings</a>
+        | <a class="dialog" rel="400:300" href="settings.php">Settings</a>
         | <a class="dialog" rel="700:500" href="add-torrent.php">Add Torrent</a>
       </p>
     </div><!-- id="boxright" -->
@@ -229,21 +229,21 @@ foreach($cols as $k => $v) {
 </div><!-- id="container" -->
 
 <div class="bottomtab">
-  <input type="button" value="Select All" onClick="checkAll(this.form)" />
-  <input type="button" value="Unselect All" onClick="uncheckAll(this.form)" />
+  <input type="button" class="select-all" value="Select All" />
+  <input type="button" class="unselect-all" value="Unselect All" />
 
   <select name="bulkaction" >
-  <optgroup label="With Selected...">
-  <option value="stop">Stop</option>
-  <option value="start">Start</option>
-  <option value="delete">Delete</option>
-  </optgroup>
-  <optgroup label="Set Priority...">
-  <option value="pri_high">High</option>
-  <option value="pri_normal">Normal</option>
-  <option value="pri_low">Low</option>
-  <option value="pri_off">Off</option>
-  </optgroup>
+    <optgroup label="With Selected...">
+      <option value="stop">Stop</option>
+      <option value="start">Start</option>
+      <option value="delete">Delete</option>
+    </optgroup>
+    <optgroup label="Set Priority...">
+      <option value="pri_high">High</option>
+      <option value="pri_normal">Normal</option>
+      <option value="pri_low">Low</option>
+      <option value="pri_off">Off</option>
+    </optgroup>
   </select>
   <input type="submit" value="Go" />
 </div><!-- class="bottomtab" -->

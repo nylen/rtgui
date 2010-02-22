@@ -10,7 +10,8 @@ function error(msg) {
 }
 
 function showDialog(url, width, height) {
-  var w = parseInt(width), h = parseInt(height);
+  var w = Math.min(parseInt(width),  $(window).width()  - 40);
+  var h = Math.min(parseInt(height), $(window).height() - 40);
   var px = function(n) {
     return Math.round(n) + 'px';
   };
@@ -93,7 +94,8 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     mustSort: !!isFirstUpdate,
     toFilter: [],
     toCheckView: [],
-    stripes: !!isFirstUpdate
+    stripes: !!isFirstUpdate,
+    positions: !!isFirstUpdate
   };
   var firstHTML = '';
   
@@ -104,6 +106,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
         // A torrent was removed
         $('#' + hash).remove();
         dirty.stripes = true;
+        dirty.positions = true;
       } else {
         var mustRewriteHTML = false;
         if(isFirstUpdate || !window.data.torrents[hash]) {
@@ -141,6 +144,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
               dirty.toCheckView.push(hash);
               dirty.toFilter.push(hash);
               dirty.mustSort = true;
+              dirty.positions = true;
             }
           }
         } else {
@@ -175,7 +179,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     $('#t-count-all').html(torrentDivsAll.length);
     
     if(isFirstUpdate) {
-      // dirty.stripes is already true
+      // dirty.stripes, dirty.positions are already true
       updateVisibleTorrents(torrentDivsAll, true);
       sortTorrents(torrentDivsAll);
     } else {
@@ -188,12 +192,28 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
       }
       if(dirty.mustSort && sortTorrents(torrentDivsAll)) {
         dirty.stripes = true;
+        dirty.positions = true;
       }
     }
     
     // set row classes
     if(dirty.stripes) {
       resetStripes();
+    }
+    
+    // update current positions
+    if(dirty.positions) {
+      var i = 0;
+      current.torrentHashes = [];
+      $('#torrents>div.torrent-container').each(function() {
+        if(window.data.torrents[this.id].visible) {
+          current.torrentHashes[i] = this.id;
+          window.data.torrents[this.id].pos = i;
+          i++;
+        } else {
+          window.data.torrents[this.id].pos = -1;
+        }
+      });
     }
   }
   
@@ -256,7 +276,7 @@ function sortTorrents(torrentDivsAll, reorderAll) {
   
   for(var i = 0; i < len; i++) {
     // set the before-sort position to ensure a stable sort
-    window.data.torrents[els[i].id].pos = i;
+    window.data.torrents[els[i].id].sortPos = i;
   }
   
   var toMove = [];
@@ -402,7 +422,7 @@ function getTorrentsComparer() {
     var vb = tb[current.sortVar];
     if(va.toLowerCase) va = va.toLowerCase();
     if(vb.toLowerCase) vb = vb.toLowerCase();
-    return (va < vb ? -cmp : (va > vb ? cmp : ta.pos - tb.pos));
+    return (va < vb ? -cmp : (va > vb ? cmp : ta.sortPos - tb.sortPos));
   };
 }    
 
