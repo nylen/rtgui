@@ -25,7 +25,7 @@
 	height: expression(this.parentNode.offsetHeight+'px');
 }
 
-/* Fixed posistioning emulation for IE6
+/* Fixed positioning emulation for IE6
      Star selector used to hide definition from browsers other than IE6
      For valid CSS, use a conditional include instead */
 * html .jqmWindow {

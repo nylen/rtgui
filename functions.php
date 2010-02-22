@@ -209,7 +209,7 @@ function get_all_torrents($torrents_only=false, $view='main') {
     $total_down_rate += $t['down_rate'];
     $total_up_rate += $t['up_rate'];
     
-    // unset items that are oly needed for setting other items
+    // unset items that are only needed for setting other items
     unset($t['chunk_size']);
     unset($t['chunks_hashed']);
     unset($t['connection_current']);
