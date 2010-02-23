@@ -50,7 +50,6 @@ if (isset($r_submit)) {
 <?php
 echo "<form method='post' action='settings.php'>\n";
 echo "<h3>Settings</h3>";
-echo "<p>&nbsp;</p>";
 echo "<p><label for='setrefresh'>Refresh interval:</label>";
 echo "<select name='setrefresh' id='setrefresh'>\n";
 foreach (array(0=>"Off",2000=>"2 secs",5000=>"5 secs",10000=>"10 secs",20000=>"20 secs",30000=>"30 secs",60000=>"1 min",300000=>"5 mins",60000=>"10 mins") as $ms=>$txt) {

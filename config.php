@@ -16,8 +16,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
-// Connect string for your local RPC/rTorrent connection:
-$rpc_connect="http://htpc/RPC2";
+// Connection information for your local RPC/rTorrent connection:
+$scgi_host = 'htpc';
+$scgi_port = 5202;
+// To connect to a local socket:
+// $scgi_local = '/path/to/socket/file';
+$scgi_timeout = 5; // seconds
+
 
 // rtorrent 'watch' directory (used for upload torrent)
 #$watchdir="/media/smb/WORKGROUP/HTPC/bit.torrents/";
@@ -70,6 +75,8 @@ $feeds[]=array("Utwente","http://borft.student.utwente.nl/%7Emike/oo/bt.rss",1);
  * get_torrent_group() function will handle that situation.
  */
 $use_groups = true;
+$all_groups = array('tv', 'movies');
+$default_group = 'tv';
 function get_torrent_group($t) {
   return basename(dirname($t['tied_to_file']));
 }
@@ -95,12 +102,6 @@ function on_page_requested() {
       die('<h1>Could not mount rTorrent directories</h1><pre>' . implode("\n", $out) . '</pre>');
     }
     $_SESSION['mounted'] = true;
-  }
-  $s = @fsockopen('htpc', 5202, $err, $errstr, 1);
-  if($err) {
-    die("<h1>rTorrent does not appear to be running</h1><pre>$errstr</pre>");
-  } else {
-    fclose($s);
   }
 }
 

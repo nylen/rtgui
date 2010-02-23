@@ -77,40 +77,6 @@ if(isset($r_set_tpriority)) {
    $r_cmd = "";
 }
 
-//JCN { enable different watch directories
-$this_watchdir = $watchdir;
-if(!empty($r_torrenttype)) $this_watchdir .= "$r_torrenttype/";
-//} JCN
-
-
-// Add torrent URL...
-// JCN - just make this do a wget / curl to the right place (with authentication)
-if(!empty($r_addurl)) { // JCN - use empty() instead of isset()
-   echo "<pre>";
-   system("wget --content-disposition --no-check-certificate --load-cookies=cookies.txt -P '$this_watchdir' '$r_addurl' 2>&1");
-   //echo "</pre>\n<script>window.setTimeout(\"location.href='index.php';\", 2000);</script>";
-   #die('Adding torrent by URL is not implemented yet.  <a href="index.php">Continue</a>'); // JCN
-   //global $load_start;
-   /*if ($load_start) // JCN - no don't
-     $response = do_xmlrpc(xmlrpc_encode_request("load_start",array("$r_addurl")));
-   else
-     $response = do_xmlrpc(xmlrpc_encode_request("load",array("$r_addurl")));//*/
-}
-
-// Upload torrent file...
-if(isset($r_uploadtorrent)) {
-   if($_FILES['uploadtorrent']['name'] != "") {
-      $tmpfile = $_FILES['uploadtorrent']['name'];
-      if (move_uploaded_file($_FILES['uploadtorrent']['tmp_name'], $this_watchdir.basename($_FILES['uploadtorrent']['name']))) {
-         //JCN - don't send start request to rtorrent - let the folder watch pick it up
-         //$response = do_xmlrpc(xmlrpc_encode_request('load_start',array($watchdir.basename($_FILES['uploadtorrent']['name']))));
-         header('Location: index.php');
-      } else {
-         echo 'Error moving file - check permissions etc!  <a href=index.php>Continue</a>.\n';
-      }
-      die();
-   }
-}
 
 // Move torrent dir
 if(isset($r_newdir)) {
@@ -131,19 +97,11 @@ switch($r_cmd) {
       $response = do_xmlrpc(xmlrpc_encode_request('d.check_hash', array($r_hash)));
       break;
 }
-$referer = parse_url($_SERVER['HTTP_REFERER']);
-$script = basename($referer['path']);
-
 
 if(!$r_ajax) {
   if(!$_SESSION) session_start();
   $_SESSION['must_get_all'] = true;
+  session_write_close();
   @header("Location: " . $_SERVER['HTTP_REFERER']);
 }
-/*if(empty($r_uploadtorrent) && empty($r_addurl)) { // JCN (wtf is this for anyway?)
-  if($r_cmd == "delete" || !preg_match('@^(index|view|feedread|settings)\\.php$@', $script)) {
-    $script = 'index.php';
-  }
-  @header("Location: $script?".$referer['query']);
-}*/
 ?>

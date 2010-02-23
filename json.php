@@ -20,9 +20,7 @@ if(!$_SESSION) session_start();
 include 'config.php';
 include 'functions.php';
 
-$view = $_GET['view'];
-if(!$view) $view = 'main';
-$data = get_all_torrents(false, $view);
+$data = get_all_torrents(false);
 
 if(@is_array($_SESSION['last_data'])) {
   $last_data = $_SESSION['last_data'];

@@ -419,6 +419,25 @@ span.group {
   font-weight: bold;
 }
 
+.modal h3 {
+  margin-bottom: 1.5em;
+}
+table#upload-form {
+  width: 100%;
+}
+#upload-form td {
+  vertical-align: middle;
+}
+#upload-form td.left {
+  width: 8em;
+}
+#upload-form td.input textarea, #upload-form td.input input {
+  width: 100%;
+}
+#upload-form label {
+  margin-right: 1em;
+}
+
 /* FeedReader styles */
 .feedtitle {
   margin-top: 5px;

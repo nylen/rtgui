@@ -27,21 +27,19 @@ if(function_exists('on_page_requested')) {
   on_page_requested();
 }
 
+if($scgi_local) {
+  $scgi_host = "unix://$scgi_local";
+  $scgi_port = null;
+}
+
 function do_xmlrpc($request) {
-  global $rpc_connect;
-  $context = stream_context_create(array(
-    'http' => array(
-      'method'  => 'POST',
-      'header'  => 'Content-Type: text/xml',
-      'content' => $request
-    )
-  ));
-  if($file = @file_get_contents($rpc_connect, false, $context)) {
-    $file=str_replace('i8', 'double', $file);
-    $file = utf8_encode($file); 
-    return xmlrpc_decode($file);
+  global $scgi_host, $scgi_port, $scgi_timeout;
+  if($response = scgi_send($scgi_host, $scgi_port, $request, $scgi_timeout)) {
+    $response = parse_http_response($response);
+    $content = str_replace('i8', 'double', $response[1]);
+    return xmlrpc_decode(utf8_encode($content));
   } else {
-    die ('ERROR: Cannot connect to rtorrent');
+    die('<h1>ERROR: Cannot connect to rtorrent</h1>');
   }
 }
 
@@ -417,6 +415,55 @@ function array_compare($before, $after) {
     }
   }
   return $diff;
+}
+
+// from http://snipplr.com/view/17242/parse-http-response/
+function parse_http_response($string) {
+  $headers = array();
+  $content = '';
+  $str = strtok($string, "\n");
+  $h = null;
+  while ($str !== false) {
+    if($h and trim($str) === '') {                
+      $h = false;
+      continue;
+    }
+    if($h !== false and false !== strpos($str, ':')) {
+      $h = true;
+      list($headername, $headervalue) = explode(':', trim($str), 2);
+      $headername = strtolower($headername);
+      $headervalue = ltrim($headervalue);
+      if(isset($headers[$headername])) {
+        $headers[$headername] .= ',' . $headervalue;
+      } else {
+        $headers[$headername] = $headervalue;
+      }
+    }
+    if($h === false) {
+      $content .= $str."\n";
+    }
+    $str = strtok("\n");
+  }
+  return array($headers, trim($content));
+}
+
+// from source code of rutorrent
+function scgi_send($host, $port, $data, $timeout=5) {
+  $result = '';
+  $contentlength = strlen($data);
+  if($contentlength > 0) {
+    $socket = @fsockopen($host, $port, $errno, $errstr, $timeout);
+    if($socket) {
+      $reqheader = "CONTENT_LENGTH\x00$contentlength\x00SCGI\x001\x00";
+      $tosend = strlen($reqheader) . ":$reqheader,$data";
+      @fputs($socket, $tosend);
+      while(!feof($socket)) {
+        $result .= @fread($socket, 4096);
+      }
+      fclose($socket);
+    }
+  }
+  return $result;
 }
 
 
