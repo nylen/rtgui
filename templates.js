@@ -247,7 +247,7 @@ var formatHandlers = {
   },
   up_total: formatBytes,
   ratio: function(n) {
-    return Math.round(n/10)/100;
+    return number_format(n/1000, 2);
   },
   peers_summary: function(s) {
     var arr = s.split(',');

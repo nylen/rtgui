@@ -245,7 +245,7 @@ if ($r_select=="torrent") {
    echo "<tr class='row2'><td class='datacol' align=right><b>Peers connected</b></td><td>".$thistorrent['peers_connected']."</td></tr>\n";
    echo "<tr class='row1'><td class='datacol' align=right><b>Peers not connected</b></td><td>".$thistorrent['peers_not_connected']."</td></tr>\n";
    echo "<tr class='row2'><td class='datacol' align=right><b>Peers complete</b></td><td>".$thistorrent['peers_complete']."</td></tr>\n";
-   echo "<tr class='row1'><td class='datacol' align=right><b>Ratio</b></td><td>".@round(($thistorrent['ratio']/1000),2)." %</td></tr>\n";
+   echo "<tr class='row1'><td class='datacol' align=right><b>Ratio</b></td><td>".number_format(($thistorrent['ratio']/1000),2)."</td></tr>\n";
    echo "</table>\n";
    echo "</div>\n";
    echo "<div class='bottomthin' style='width:552px;'> </div>\n";
