@@ -1,14 +1,6 @@
 <?php
-if(!$_SESSION) session_start();
 include 'config.php';
 include 'functions.php';
-import_request_variables('gp', 'r_');
-
-if($r_add) {
-  
-  die();
-}
-
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -17,22 +9,23 @@ if($r_add) {
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jquery.MultiFile.js"></script>
 </head>
 
 <body>
 <div class="modal">
-<h3>Add torrent(s)</h3>
+<h3>Add torrent(s) - step 1 of 2</h3>
 
-<form method="post" action="add-torrent.php">
-<input type="hidden" name="add" value="true" />
+<form method="post" enctype="multipart/form-data" action="add-torrents-2.php">
 <table id="upload-form">
   <tr>
     <td class="left">Paste URL(s):</td>
-    <td class="right input"><textarea name="addurl" rows="5"></textarea></td>
+    <td class="right input"><textarea name="add_urls" rows="5"></textarea></td>
   </tr>
   <tr>
-    <td class="left">Upload file:</td>
-    <td class="right input"><input name="uploadtorrent" type="file" /></td>
+    <td class="left">Upload file(s):</td>
+    <td class="right input"><input name="add_files" type="file" class="multi" accept="torrent" /></td>
   </tr>
 <?php if($use_groups) { ?>
   <tr>
@@ -49,7 +42,7 @@ if($r_add) {
 <?php } ?>
   <tr>
     <td class="left"></td>
-    <td class="right"><input type="submit" value="Add torrent(s)" /></td>
+    <td class="right"><input type="submit" value="Next step" /></td>
   </tr>
 </table>
 </form>
