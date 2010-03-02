@@ -10,6 +10,7 @@ include 'functions.php';
 <title>rtGui</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jquery.form.js"></script>
 <script type="text/javascript" src="jquery.MultiFile.js"></script>
 </head>
 
@@ -17,7 +18,8 @@ include 'functions.php';
 <div class="modal">
 <h3>Add torrent(s) - step 1 of 2</h3>
 
-<form method="post" enctype="multipart/form-data" action="add-torrents-2.php">
+<form method="post" enctype="multipart/form-data" action="add-torrents.php">
+<input type="hidden" name="action" value="list" />
 <table id="upload-form">
   <tr>
     <td class="left">Paste URL(s):</td>
@@ -25,7 +27,7 @@ include 'functions.php';
   </tr>
   <tr>
     <td class="left">Upload file(s):</td>
-    <td class="right input"><input name="add_files" type="file" class="multi" accept="torrent" /></td>
+    <td class="right input"><input name="add_files[]" type="file" class="multi" accept="torrent" /></td>
   </tr>
 <?php if($use_groups) { ?>
   <tr>

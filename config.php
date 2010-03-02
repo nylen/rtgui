@@ -68,6 +68,13 @@ $feeds[]=array("etree","http://bt.etree.org/rss/bt_etree_org.rdf",0);
 $feeds[]=array("Utwente","http://borft.student.utwente.nl/%7Emike/oo/bt.rss",1);
 
 
+// Netscape-format cookies file to be used when downloading .torrent files
+$cookies_file = 'cookies.txt';
+
+// Temporary directory to be used for adding .torrent files
+$tmp_add_dir = 'tmp';
+
+
 /* Define whether to use torrent groups.  A torrent group should split your torrents
  * up into categories, and should not change over the lifetime of the torrent.  A
  * good use case for torrent groups is if you have rTorrent watching several folders

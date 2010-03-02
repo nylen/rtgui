@@ -131,7 +131,7 @@ $(function() {
         Showing <span id="t-count-visible">??</span> 
         of <span id="t-count-all">??</span> torrents
         | <a class="dialog" rel="400:300" href="settings.php">Settings</a>
-        | <a class="dialog" rel="700:500" href="add-torrents-1.php">Add torrent(s)</a>
+        | <a class="dialog" rel="700:500" href="add-torrents-form.php">Add torrent(s)</a>
       </p>
     </div><!-- id="boxright" -->
   </div><!-- id="header" -->
