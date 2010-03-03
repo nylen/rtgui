@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
+
 // Connection information for your local RPC/rTorrent connection:
 $scgi_host = 'htpc';
 $scgi_port = 5202;
@@ -25,11 +26,9 @@ $scgi_timeout = 5; // seconds
 
 
 // rtorrent 'watch' directory (used for upload torrent)
-#$watchdir="/media/smb/WORKGROUP/HTPC/bit.torrents/";
 $watchdir="/media/htpc/bit.torrents/";
 
 // Path to report disk usage
-#$downloaddir="/media/smb/WORKGROUP/HTPC/bit.torrents/";
 $downloaddir="/media/htpc/bit.torrents/";
 
 // Threshold for disk usage alert (%)
@@ -48,7 +47,7 @@ $defspeeds=array(5,10,15,20,30,40,50,60,70,80,90,100,125,150,200,250,300,400,500
 $load_start=TRUE;
 
 // Enable debug tabs
-$debugtab=TRUE;
+#$debugtab=TRUE;
 
 // Tracker colour hilighting...
 // Format is array(hexcolour, URL, URL, ...) The URL is a string to match identifiy tracker URL

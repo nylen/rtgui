@@ -50,16 +50,11 @@ function process_torrent_data($content, $filename) {
   $files = $torrent->content();
   $scrape = $torrent->scrape(null, null, 3);
   
-  $_SESSION['to_add_data'][$hash] = array(
-    'files' => $files,
-    'content' => $content,
-    'filename' => $filename
-  );
-  
-  return array(
+  return $_SESSION['to_add_data'][$hash] = array(
     'hash' => $hash,
-    'files' => $files,
-    'scrape' => $scrape,
+    'name' => $torrent->name(),
+    'files' => $torrent->content(),
+    'scrape' => $torrent->scrape(null, null, 3),
     'filename' => $filename
   );
 }
@@ -68,7 +63,7 @@ import_request_variables('gp', 'r_');
 
 switch($r_action) {
   
-  case 'list':
+  case 'get_list':
     $to_add = array();
     
     if($r_add_urls) {

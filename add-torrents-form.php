@@ -19,7 +19,7 @@ include 'functions.php';
 <h3>Add torrent(s) - step 1 of 2</h3>
 
 <form method="post" enctype="multipart/form-data" action="add-torrents.php">
-<input type="hidden" name="action" value="list" />
+<input type="hidden" name="action" value="get_list" />
 <table id="upload-form">
   <tr>
     <td class="left">Paste URL(s):</td>
