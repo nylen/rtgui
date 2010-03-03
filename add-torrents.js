@@ -6,12 +6,10 @@ $(function() {
       ));
     },
     success: function(d) {
-      // work around bug in jquery.form.js (TODO: report this)
-      d = d.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
-      
       $('img.loading').remove();
       
-      var files = JSON.parse(d);
+      // work around bug in jquery.form.js (TODO: fix this)
+      var files = JSON.parse(base64_decode(d));
       if(!files.length) {
         alert('Please specify one or more torrents to add.');
         return false;

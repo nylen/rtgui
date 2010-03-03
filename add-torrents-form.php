@@ -14,6 +14,7 @@ include 'functions.php';
 <script type="text/javascript" src="jquery.form.js"></script>
 <script type="text/javascript" src="jquery.MultiFile.js"></script>
 <script type="text/javascript" src="json2.min.js"></script>
+<script type="text/javascript" src="php.min.js"></script>
 <script type="text/javascript" src="add-torrents.js"></script>
 </head>
 

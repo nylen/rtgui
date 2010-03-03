@@ -65,7 +65,7 @@ function process_torrent_data($content, $filename, $create_file=true) {
   $filename = "$tmp_add_dir/$filename";
   if($create_file) {
     $filename = get_filename_no_clobber($filename);
-    file_put_contents($content, $filename);
+    file_put_contents($filename, $content);
   }
     
   return $_SESSION['to_add_data'][$hash] = array(
@@ -133,7 +133,7 @@ switch($r_action) {
     }
     error_reporting($err_level);
     
-    print json_encode($to_add);
+    print base64_encode(json_encode($to_add));
     
     break;
   
