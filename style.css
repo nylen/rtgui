@@ -426,7 +426,7 @@ span.group {
   display: none;
 }
 
-.modal h3 {
+.modal h3, .modal h4 {
   margin-bottom: 1.5em;
 }
 table#upload-form {
@@ -443,6 +443,60 @@ table#upload-form {
 }
 #upload-form label {
   margin-right: 1em;
+}
+
+#to-add {
+  margin-bottom: 2em;
+}
+#to-add .add-torrent {
+  position: relative;
+}
+#to-add .add-torrent-striped {
+  background-color: #ddd;
+}
+#to-add .add-torrent .name {
+  padding: 3px 0 3px 25px;
+  line-height: 18px;
+  vertical-align: middle;
+}
+#to-add .add-torrent .name .toggle-container {
+  color: #222;
+  padding-right: 4px;
+  font-size: 80%;
+  position: relative;
+  top: -1px;
+}
+#to-add .add-torrent .name .toggle {
+  font-family: Courier, monospace;
+  font-size: 150%;
+  margin: 0 -2px;
+}
+#to-add .add-torrent .error {
+  color: #900B09;
+}
+#to-add .add-torrent .ok {
+  color: green;
+  cursor: pointer;
+}
+#to-add .add-torrent .ok:hover {
+  text-decoration: underline;
+}
+#to-add .add-torrent .left {
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  width: 16px;
+  height: 16px;
+}
+#to-add .add-torrent div.file {
+  padding-left: 21px;
+}
+#to-add .add-torrent div.file:hover, #to-add .add-torrent div.name:hover {
+  background-color: #eee;
+}
+#to-add .add-torrent div.file label {
+  position: relative;
+  top: -2px;
 }
 
 /* FeedReader styles */

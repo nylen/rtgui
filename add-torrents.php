@@ -1,4 +1,5 @@
 <?php
+
 if(!$_SESSION) session_start();
 include 'config.php';
 include 'functions.php';
@@ -40,22 +41,39 @@ function json_error($msg) {
   die(json_encode(array('error' => $msg)));
 }
 
-function process_torrent_data($content, $filename) {
+function get_filename_no_clobber($filename) {
+  $basename = substr($filename, 0, strrpos($filename, '.'));
+  $ext = substr($filename, strrpos($filename, '.') + 1);
+  $i = 0;
+  while(file_exists($filename)) {
+    $i++;
+    $filename = "$basename.$i.$ext";
+  }
+  return $filename;
+}
+
+function process_torrent_data($content, $filename, $create_file=true) {
+  global $tmp_add_dir;
+  
   if(!is_array($_SESSION['to_add_data'])) {
     $_SESSION['to_add_data'] = array();
   }
   
   $torrent = new Torrent($content);
   $hash = $torrent->hash_info();
-  $files = $torrent->content();
-  $scrape = $torrent->scrape(null, null, 3);
   
+  $filename = "$tmp_add_dir/$filename";
+  if($create_file) {
+    $filename = get_filename_no_clobber($filename);
+    file_put_contents($content, $filename);
+  }
+    
   return $_SESSION['to_add_data'][$hash] = array(
     'hash' => $hash,
     'name' => $torrent->name(),
     'files' => $torrent->content(),
-    'scrape' => $torrent->scrape(null, null, 3),
-    'filename' => $filename
+    //'scrape' => $torrent->scrape(null, null, 3),
+    'filename' => str_replace("$tmp_add_dir/", '', $filename)
   );
 }
 
@@ -81,26 +99,37 @@ switch($r_action) {
         $url = preg_replace('@[/?]+$@', '', $url);
         
         if(filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
-          $to_add[] = array('url' => $url);
+          $to_add[] = array(
+            'type' => 'url',
+            'value' => $url
+          );
         }
       }
     }
     
-    $n_files = count($_FILES['add_files']['name']);
     $err_level = error_reporting(E_NONE);
     foreach($_FILES['add_files']['error'] as $i => $err) {
-      $name = $_FILES['add_files']['name'][$i];
-      $to_add_this = array('file' => $name);
+      $filename = $_FILES['add_files']['name'][$i];
+      
       if($err == UPLOAD_ERR_OK) {
+        // In case move_uploaded_file fails without a useful error
         trigger_error('Unknown error', E_USER_WARNING);
-        if(!move_uploaded_file($_FILES['add_files']['tmp_name'][$i], "$tmp_add_dir/$name")) {
+        $filename = get_filename_no_clobber("$tmp_add_dir/$filename");
+        $to_add_this = array(
+          'type' => 'file',
+          'value' => str_replace("$tmp_add_dir/", '', $filename)
+        );
+        
+        if(!move_uploaded_file($_FILES['add_files']['tmp_name'][$i], $filename)) {
           $err = error_get_last();
           $to_add_this['error'] = $err['message'];
         }
+        $to_add[] = $to_add_this;
+        
       } else if($err != UPLOAD_ERR_NO_FILE) {
         $to_add_this['error'] = upload_error_message($err);
+        $to_add[] = $to_add_this;
       }
-      $to_add[] = $to_add_this;
     }
     error_reporting($err_level);
     
@@ -148,7 +177,7 @@ switch($r_action) {
       
       if($mime_type == 'application/x-bittorrent') {
         // Torrent OK
-        print json_encode(process_torrent_data($content), $filename);
+        print json_encode(process_torrent_data($content, $filename));
       } else {
         json_error("Bad MIME type: $mime_type");
       }
@@ -160,13 +189,16 @@ switch($r_action) {
   
   
   case 'process_file':
+    $r_file = "$tmp_add_dir/$r_file";
     if(file_exists($r_file) && dirname(realpath($r_file)) === realpath($tmp_add_dir)) {
-      print json_encode(process_torrent_data(file_get_contents($r_file), basename($r_file)));
-      @unlink($torrent);
+      print json_encode(process_torrent_data(file_get_contents($r_file), basename($r_file), false));
     } else {
       json_error('Bad path or filename');
     }
     
     break;
+  
+  
+  
 }
 ?>

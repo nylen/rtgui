@@ -10,27 +10,30 @@ include 'functions.php';
 <title>rtGui</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jquery.hsjn.js"></script>
 <script type="text/javascript" src="jquery.form.js"></script>
 <script type="text/javascript" src="jquery.MultiFile.js"></script>
+<script type="text/javascript" src="json2.min.js"></script>
+<script type="text/javascript" src="add-torrents.js"></script>
 </head>
 
 <body>
 <div class="modal">
-<h3>Add torrent(s) - step 1 of 2</h3>
+<h3>Add torrent(s)</h3>
 
 <form method="post" enctype="multipart/form-data" action="add-torrents.php">
 <input type="hidden" name="action" value="get_list" />
 <table id="upload-form">
-  <tr>
+  <tr class="controls">
     <td class="left">Paste URL(s):</td>
     <td class="right input"><textarea name="add_urls" rows="5"></textarea></td>
   </tr>
-  <tr>
+  <tr class="controls">
     <td class="left">Upload file(s):</td>
     <td class="right input"><input name="add_files[]" type="file" class="multi" accept="torrent" /></td>
   </tr>
 <?php if($use_groups) { ?>
-  <tr>
+  <tr class="controls">
     <td class="left">Torrent type:</td>
     <td class="right">
 <?php for($i = 0; $i < count($all_groups); $i++) {
@@ -42,11 +45,24 @@ include 'functions.php';
     </td>
   </tr>
 <?php } ?>
-  <tr>
+  <tr id="row-next">
     <td class="left"></td>
-    <td class="right"><input type="submit" value="Next step" /></td>
+    <td class="right"><input type="submit" id="next" value="Next &gt;&gt;" /></td>
+  </tr>
+  <tr id="row-back" class="hidden">
+    <td class="left"></td>
+    <td class="right"><input type="button" id="back" value="&lt;&lt; Back" /></td>
   </tr>
 </table>
+</form>
+
+<form id="step2" class="hidden" method="post" action="add-torrents.php">
+  <hr />
+  <h4>Select the torrents you want to add below.</h4>
+
+  <div id="to-add"></div>
+  
+  <input type="submit" id="add" value="Add selected" disabled="disabled" />
 </form>
 
 </div>
