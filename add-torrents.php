@@ -60,6 +60,9 @@ function process_torrent_data($content, $filename, $create_file=true) {
   }
   
   $torrent = new Torrent($content);
+  if($error = $torrent->error()) {
+    return array('error' => $error);
+  }
   $hash = $torrent->hash_info();
   
   $filename = "$tmp_add_dir/$filename";
