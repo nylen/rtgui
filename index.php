@@ -92,7 +92,7 @@ $(function() {
   current.refreshIntervalID = setInterval(updateTorrentsData, config.refreshInterval);
 });
 </script>
-<title>rtGui</title>
+<title><?php echo $site_title; ?></title>
 <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
