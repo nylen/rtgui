@@ -99,7 +99,7 @@ $(function() {
                 checked: true
               }],
               ['label',
-                {for: 'file-' + data.hash + '-' + j},
+                {'for': 'file-' + data.hash + '-' + j},
                 f
               ]
             ]]);

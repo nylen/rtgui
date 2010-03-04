@@ -92,7 +92,13 @@
 	}
 	
 	// Test an object for it's constructor type. Sort of a reverse, discriminatory instanceof
-	function isTypeOf(t, c){ return t.constructor.toString().match(new RegExp(c, 'i')) != null }
+	function isTypeOf(t, c){ 
+    if(t === undefined) {
+      return (c.toLowerCase() === 'undefined');
+    } else {
+      return (t.constructor.toString().match(new RegExp(c, 'i')) != null);
+    }
+  }
 	
 	// Path to a function, given a string containing the name and optional scoping
 	function evalFunction( value, strict ){
