@@ -430,7 +430,7 @@ function resetStripes(torrentDivsVisible) {
   if(!torrentDivsVisible) {
     torrentDivsVisible = $('#torrents>div.torrent-container').filter(function() {
       return data.torrents[this.id].visible;
-    });;
+    });
   }
   var row1 = true;
   torrentDivsVisible.each(function() {

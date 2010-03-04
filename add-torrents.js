@@ -1,9 +1,14 @@
 $(function() {
-  $('form').ajaxForm({
+  $('#form1').ajaxForm({
     beforeSubmit: function(formData, form, options) {
       $('#next').after($.hsjn(
         ['img.loading', {src: 'images/loading.gif'}]
       ));
+      for(var i = 0; i < formData.length; i++) {
+        if(formData[i].name == 'group') {
+          $('#form2 input[name=group]').attr('value', formData[i].value);
+        }
+      }
     },
     success: function(d) {
       $('img.loading').remove();
@@ -16,7 +21,7 @@ $(function() {
       }
       
       $('#row-next').addClass('hidden');
-      $('#row-back, #step2').removeClass('hidden');
+      $('#row-back, #form2').removeClass('hidden');
       $('#upload-form tr.controls').find('textarea, input, label')
       .attr('disabled', true).filter('textarea').css('height', '20px');
       $('input[type=file], a.MultiFile-remove').addClass('hidden');
@@ -96,7 +101,8 @@ $(function() {
                 name: 'add_file[]',
                 value: data.hash + '-' + j,
                 id: 'file-' + data.hash + '-' + j,
-                checked: true
+                checked: true,
+                disabled: true // TODO: allow selecting files
               }],
               ['label',
                 {'for': 'file-' + data.hash + '-' + j},
@@ -108,7 +114,7 @@ $(function() {
           $('#add-' + i).prepend($.hsjn(
             ['input.left', {
               type: 'checkbox',
-              name: 'add_all[]',
+              name: 'add_torrent[]',
               value: data.hash,
               checked: true
             }]
@@ -120,7 +126,14 @@ $(function() {
             $(this).find('.toggle').html(hidden ? '+' : '-');
           }).after($.hsjn(['div.files.hidden', fileRows]));
           
-          // TODO: process torrent information here
+          if($.browser.msie) {
+            $('#add-' + i + ' input[type=checkbox]').attr('checked', true);
+          }
+          
+          $('#add-' + i + ' input[type=checkbox].left').click(function() {
+            $(this).parents('.add-torrent').find('div.files input[type=checkbox]')
+            .attr('checked', $(this).attr('checked'));
+          });
         }
         
         processTorrent(i + 1);
@@ -131,7 +144,7 @@ $(function() {
   
   $('#back').click(function() {
     $('#row-next').removeClass('hidden');
-    $('#row-back, #step2').addClass('hidden');
+    $('#row-back, #form2').addClass('hidden');
     $('#upload-form tr.controls').find('textarea, input, label')
     .removeAttr('disabled').filter('textarea').css('height', '');
     $('input[type=file], a.MultiFile-remove').removeClass('hidden');

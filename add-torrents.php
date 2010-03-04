@@ -199,6 +199,41 @@ switch($r_action) {
     break;
   
   
-  
+  case 'add':
+    $errors = array();
+    $this_watchdir = $watchdir;
+    if($use_groups) {
+      if(!in_array($r_group, $all_groups)) {
+        $errors[] = "Unknown group '$r_group'";
+      }
+      $this_watchdir = "$watchdir/$r_group";
+    }
+    
+    foreach($r_add_torrent as $hash) {
+      if($_SESSION['to_add_data'][$hash]) {
+        $data = $_SESSION['to_add_data'][$hash];
+        $filename = $data[$filename];
+        $name = $data[$name];
+        if(!copy("$tmp_add_dir/$filename", "$this_watchdir/$filename")) {
+          $errors[] = "Failed to copy torrent '$name'";
+        }
+      }
+    }
+    
+    foreach($_SESSION['to_add_data'] as $data) {
+      @unlink("$tmp_add_dir/" . $data['filename']);
+    }
+    unset($_SESSION['to_add_data']);
+    
+    if(count($errors)) {
+      array_unshift($errors, "One or more errors occurred:\n");
+      $errors = 'alert(' . json_encode($errors) . '.join("\n"))';
+    } else {
+      $errors = '';
+    }
+    
+    print "<script>$errors; top.hideDialog(true);</script>\n";
+    
+    break;
 }
 ?>

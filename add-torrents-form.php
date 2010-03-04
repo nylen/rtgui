@@ -22,7 +22,7 @@ include 'functions.php';
 <div class="modal">
 <h3>Add torrent(s)</h3>
 
-<form method="post" enctype="multipart/form-data" action="add-torrents.php">
+<form id="form1" method="post" enctype="multipart/form-data" action="add-torrents.php">
 <input type="hidden" name="action" value="get_list" />
 <table id="upload-form">
   <tr class="controls">
@@ -57,12 +57,14 @@ include 'functions.php';
 </table>
 </form>
 
-<form id="step2" class="hidden" method="post" action="add-torrents.php">
+<form id="form2" class="hidden" method="post" action="add-torrents.php">
   <hr />
   <h4>Select the torrents you want to add below.</h4>
 
   <div id="to-add"></div>
   
+  <input type="hidden" name="action" value="add" />
+  <input type="hidden" name="group" value="" />
   <input type="submit" id="add" value="Add selected" disabled="disabled" />
 </form>
 
