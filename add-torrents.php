@@ -85,11 +85,19 @@ import_request_variables('gp', 'r_');
 switch($r_action) {
   
   case 'get_list':
+    $max_urls = 20;
     $to_add = array();
     
     if($r_add_urls) {
       $maybe_urls = preg_split('@[,;\s]+@', $r_add_urls);
       for($i = 0; $i < count($maybe_urls); $i++) {
+        if($i >= $max_urls) {
+          $to_add[] = array(
+            'error' => "Can only add $max_urls URLs at a time"
+          );
+          break;
+        }
+        
         $url = $maybe_urls[$i];
         
         if(!preg_match('@^(ht|f)tps?:@', $url)) {
@@ -182,7 +190,7 @@ switch($r_action) {
         // Torrent OK
         print json_encode(process_torrent_data($content, $filename));
       } else {
-        json_error("Bad MIME type: $mime_type");
+        json_error("Not a torrent ($mime_type)");
       }
     } else {
       json_error(curl_error($c));
@@ -215,8 +223,8 @@ switch($r_action) {
     foreach($r_add_torrent as $hash) {
       if($_SESSION['to_add_data'][$hash]) {
         $data = $_SESSION['to_add_data'][$hash];
-        $filename = $data[$filename];
-        $name = $data[$name];
+        $filename = $data['filename'];
+        $name = $data['name'];
         if(!copy("$tmp_add_dir/$filename", "$this_watchdir/$filename")) {
           $errors[] = "Failed to copy torrent '$name'";
         }

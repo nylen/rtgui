@@ -95,7 +95,8 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     toFilter: [],
     toCheckView: [],
     stripes: !!isFirstUpdate,
-    positions: !!isFirstUpdate
+    positions: !!isFirstUpdate,
+    addedTorrents: false
   };
   var firstHTML = '';
   
@@ -145,6 +146,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
               dirty.toFilter.push(hash);
               dirty.mustSort = true;
               dirty.positions = true;
+              dirty.addedTorrents = true;
             }
           }
         } else {
@@ -185,7 +187,8 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     } else {
       var opts = {
         filter: dirty.toFilter,
-        checkView: dirty.toCheckView
+        checkView: dirty.toCheckView,
+        addedTorrents: dirty.addedTorrents
       };
       if(updateVisibleTorrents(torrentDivsAll, opts)) {
         dirty.stripes = true;
@@ -403,7 +406,7 @@ function updateVisibleTorrents(torrentDivsAll, ids) {
     }
   });
   
-  if(anyChanged || isFirstUpdate) {
+  if(anyChanged || isFirstUpdate || (ids && ids.addedTorrents)) {
     var torrentDivsVisible = torrentDivsAll.filter(function() {
       return data.torrents[this.id].visible;
     });

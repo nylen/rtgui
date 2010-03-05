@@ -417,34 +417,27 @@ function array_compare($before, $after) {
   return $diff;
 }
 
-// from http://snipplr.com/view/17242/parse-http-response/
 function parse_http_response($string) {
   $headers = array();
-  $content = '';
-  $str = strtok($string, "\n");
-  $h = null;
-  while ($str !== false) {
-    if($h and trim($str) === '') {                
-      $h = false;
-      continue;
-    }
-    if($h !== false and false !== strpos($str, ':')) {
-      $h = true;
-      list($headername, $headervalue) = explode(':', trim($str), 2);
-      $headername = strtolower($headername);
-      $headervalue = ltrim($headervalue);
-      if(isset($headers[$headername])) {
-        $headers[$headername] .= ',' . $headervalue;
+  $arr = explode("\n", $string);
+  for($i = 0; $i < count($arr); $i++) {
+    $str = trim($arr[$i]);
+    if($str === '') {
+      return array($headers, implode("\n", array_slice($arr, $i + 1)));
+    } else {
+      list($name, $val) = explode(':', $str, 2);
+      $name = strtolower($name);
+      $val = ltrim($val);
+      if(is_array($headers[$name])) {
+        $headers[$name][] = $val;
+      } else if(isset($headers[$name])) {
+        $headers[$name] = array($headers[$name], $val);
       } else {
-        $headers[$headername] = $headervalue;
+        $headers[$name] = $val;
       }
     }
-    if($h === false) {
-      $content .= $str."\n";
-    }
-    $str = strtok("\n");
   }
-  return array($headers, trim($content));
+  return array($headers, '');
 }
 
 // from source code of rutorrent
