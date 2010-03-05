@@ -1,7 +1,7 @@
 $(function() {
   $('#form1').ajaxForm({
     beforeSubmit: function(formData, form, options) {
-      $('#next').after($.hsjn(
+      $('#next').attr('disabled', true).after($.hsjn(
         ['img.loading', {src: 'images/loading.gif'}]
       ));
       for(var i = 0; i < formData.length; i++) {
@@ -86,9 +86,9 @@ $(function() {
         if(data.error) {
           err(i, data.error);
         } else if(torrents.current[data.hash]) {
-          err(i, "Torrent '" + data.name + "' has already been downloaded");
+          err(i, 'Torrent "' + data.name + '" has already been downloaded');
         } else if(torrents.toAdd[data.hash]) {
-          err(i, "Torrent '" + data.name + "' is a duplicate");
+          err(i, 'Torrent "' + data.name + '" is a duplicate');
         } else {
           torrents.toAdd[data.hash] = data;
           var fileRows = [];

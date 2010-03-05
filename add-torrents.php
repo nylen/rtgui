@@ -85,7 +85,7 @@ import_request_variables('gp', 'r_');
 switch($r_action) {
   
   case 'get_list':
-    $max_urls = 20;
+    $max_urls = 100;
     $to_add = array();
     
     if($r_add_urls) {
@@ -226,7 +226,7 @@ switch($r_action) {
         $filename = $data['filename'];
         $name = $data['name'];
         if(!copy("$tmp_add_dir/$filename", "$this_watchdir/$filename")) {
-          $errors[] = "Failed to copy torrent '$name'";
+          $errors[] = "Failed to copy torrent \"$name\"";
         }
       }
     }
