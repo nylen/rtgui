@@ -87,7 +87,7 @@ var current = {
 var data = <?php echo $data_str; ?>;
 
 $(function() {
-  $('#dialog').jqm();
+  $('#dialog').jqm({onHide: onHideDialog});
   updateTorrentsHTML(data, true);
   current.refreshIntervalID = setInterval(updateTorrentsData, config.refreshInterval);
 });

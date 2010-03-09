@@ -25,7 +25,7 @@ $scgi_port = 5202;
 $scgi_timeout = 5; // seconds
 
 // Site title (change from rtGui if you have multiple)
-$site_title = 'rtGui';
+$site_title = 'rtGui (htpc)';
 
 // rtorrent 'watch' directory (used for upload torrent)
 $watchdir="/media/htpc/bit.torrents/";

@@ -25,6 +25,20 @@ function showDialog(url, width, height) {
   }).jqmShow();
 }
 
+function onHideDialog(h) {
+  if(typeof window.hideDialogCallback == 'function') {
+    var result = window.hideDialogCallback();
+    window.hideDialogCallback = null;
+    if(!result) {
+      return;
+    }
+  }
+  h.w.hide();
+  if(h.o) {
+    h.o.remove();
+  }
+}
+
 function hideDialog(doUpdate) {
   $('#dialog').jqmHide();
   if(doUpdate) {

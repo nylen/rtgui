@@ -1,4 +1,9 @@
 $(function() {
+  top.hideDialogCallback = function() {
+    $.post('add-torrents.php?action=delete_files');
+    return true;
+  }
+  
   $('#form1').ajaxForm({
     beforeSubmit: function(formData, form, options) {
       $('#next').attr('disabled', true).after($.hsjn(
@@ -81,7 +86,7 @@ $(function() {
           processTorrent(i + 1);
           return;
         }
-        // data { hash, name, files, scrape, filename }
+        // data { hash, name, files, filename }
         
         if(data.error) {
           err(i, data.error);

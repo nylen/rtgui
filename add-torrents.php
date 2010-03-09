@@ -231,19 +231,25 @@ switch($r_action) {
       }
     }
     
-    foreach($_SESSION['to_add_data'] as $data) {
-      @unlink("$tmp_add_dir/" . $data['filename']);
-    }
-    unset($_SESSION['to_add_data']);
-    
     if(count($errors)) {
       array_unshift($errors, "One or more errors occurred:\n");
-      $errors = 'alert(' . json_encode($errors) . '.join("\n"))';
+      $script = 'alert(' . json_encode($errors) . '.join("\n"))';
     } else {
-      $errors = '';
+      $script = 'top.hideDialog(true);';
     }
     
-    print "<script>$errors; top.hideDialog(true);</script>\n";
+    print "<script>$script</script>\n";
+    
+    break;
+  
+  
+  case 'delete_files':
+    if(is_array($_SESSION['to_add_data'])) {
+      foreach($_SESSION['to_add_data'] as $data) {
+        @unlink("$tmp_add_dir/" . $data['filename']);
+      }
+      unset($_SESSION['to_add_data']);
+    }
     
     break;
 }
