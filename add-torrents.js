@@ -22,6 +22,7 @@ $(function() {
       var files = JSON.parse(base64_decode(d));
       if(!files.length) {
         alert('Please specify one or more torrents to add.');
+        $('#next').removeAttr('disabled');
         return false;
       }
       
@@ -148,6 +149,7 @@ $(function() {
   });
   
   $('#back').click(function() {
+    $.post('add-torrents.php?action=delete_files');
     $('#row-next').removeClass('hidden');
     $('#row-back, #form2').addClass('hidden');
     $('#upload-form tr.controls').find('textarea, input, label')
