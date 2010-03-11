@@ -1,6 +1,6 @@
 $(function() {
   top.hideDialogCallback = function() {
-    $.post('add-torrents.php?action=delete_files');
+    top.$.post('add-torrents.php?action=delete_files');
     return true;
   }
   
