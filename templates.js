@@ -226,7 +226,7 @@ var formatHandlers = {
     return $.trim(eta);
   },
   message: function(m) {
-    return (m ? m : false);
+    return (m && m != 'Tracker: [Tried all trackers.]' ? m : false);
   },
   
   percent_complete: function(n) {

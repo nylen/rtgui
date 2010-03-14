@@ -80,7 +80,7 @@ $tmp_add_dir = 'tmp';
  * get_torrent_group() function will handle that situation.
  */
 $use_groups = true;
-$all_groups = array('music', 'drew', 'test', 'linux', 'windows', 'porn', 'other', 'other-clients');
+$all_groups = array('music', 'drew', 'test', 'linux', 'windows', 'porn', 'other');
 $default_group = 'music';
 function get_torrent_group($t) {
   return basename(dirname($t['tied_to_file']));
