@@ -116,7 +116,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
   
   if(changes.torrents) {
     // One or more torrents changed
-    for(hash in changes.torrents) {
+    for(var hash in changes.torrents) {
       if(changes.torrents[hash] === null) {
         // A torrent was removed
         $('#' + hash).remove();
@@ -128,7 +128,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
           mustRewriteHTML = true;
         }
         if(!mustRewriteHTML) {
-          for(varName in changes.torrents[hash]) {
+          for(var varName in changes.torrents[hash]) {
             if(templates.torrent.mustRewriteHTML[varName]) {
               mustRewriteHTML = true;
               break;
@@ -164,7 +164,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
             }
           }
         } else {
-          for(varName in changes.torrents[hash]) {
+          for(var varName in changes.torrents[hash]) {
             var el = $('#t-' + hash + '-' + varName)[0];
             var val = getFormattedValue(varName, window.data.torrents[hash][varName], el);
             $(el).html(val);
@@ -172,7 +172,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
           }
         }
         if(checkChangedVars) {
-          for(varName in changes.torrents[hash]) {
+          for(var varName in changes.torrents[hash]) {
             if(viewHandlers.varsToCheck[varName]) {
               dirty.toCheckView.push(hash);
             }
@@ -220,22 +220,12 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     
     // update current positions
     if(dirty.positions) {
-      var i = 0;
-      current.torrentHashes = [];
-      $('#torrents>div.torrent-container').each(function() {
-        if(window.data.torrents[this.id].visible) {
-          current.torrentHashes[i] = this.id;
-          window.data.torrents[this.id].pos = i;
-          i++;
-        } else {
-          window.data.torrents[this.id].pos = -1;
-        }
-      });
+      updateTorrentPositions();
     }
   }
   
   // update global items (total speeds, caps, disk space, etc.)
-  for(k in changes) {
+  for(var k in changes) {
     if(k != 'torrents') {
       var el = document.getElementById(k);
       $(el).html(getFormattedValue(k, changes[k], el));
@@ -430,6 +420,21 @@ function updateVisibleTorrents(torrentDivsAll, ids) {
   return anyChanged;
 }
 
+function updateTorrentPositions() {
+  var i = 0;
+  current.torrentHashes = [];
+  $('#torrents>div.torrent-container').each(function() {
+    var h = this.id;
+    if(window.data.torrents[h].visible) {
+      current.torrentHashes[i] = h;
+      window.data.torrents[h].pos = i;
+      i++;
+    } else {
+      window.data.torrents[h].pos = -1;
+    }
+  });
+}
+
 function getTorrentsComparer() {
   var cmp = (current.sortDesc ? -1 : 1);
   return function(a, b) {
@@ -475,6 +480,7 @@ function setCurrentSort(sortInfo, obj) {
   obj.addClass(current.sortDesc ? 'sort-desc' : 'sort-asc');
   if(sortTorrents(null, arr.length > 2 && reversing)) {
     resetStripes();
+    updateTorrentPositions();
   }
 }
 

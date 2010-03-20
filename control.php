@@ -36,6 +36,10 @@ if(isset($r_bulkaction) && is_array($r_select)) {
         case 'delete':
           $response = do_xmlrpc(xmlrpc_encode_request('d.erase', array($hash)));
           break;
+        
+        case 'hashcheck':
+          $response = do_xmlrpc(xmlrpc_encode_request('d.check_hash', array($hash)));
+          break;
 
         case 'pri_high':
           $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($hash, 3)));

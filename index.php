@@ -237,6 +237,7 @@ foreach($cols as $k => $v) {
       <option value="stop">Stop</option>
       <option value="start">Start</option>
       <option value="delete">Delete</option>
+      <option value="hashcheck">Re-check</option>
     </optgroup>
     <optgroup label="Set Priority...">
       <option value="pri_high">High</option>

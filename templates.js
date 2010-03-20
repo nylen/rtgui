@@ -49,7 +49,7 @@ function makeTemplate() {
   };
   
   var i = 1;
-  for(k in markers) {
+  for(var k in markers) {
     if(str.charAt(0) == markers[k]) {
       i = 0;
       template.before = '';
@@ -59,7 +59,7 @@ function makeTemplate() {
   var lastVarName = '';
   while(i < arr.length) {
     var thisSubstitution = {};
-    for(k in markers) {
+    for(var k in markers) {
       if(arr[i] == markers[k]) {
         thisSubstitution.type = k;
         i++;
@@ -199,31 +199,25 @@ var formatHandlers = {
       return false;
     }
     var eta = '';
-    var units = {
-      d: 86400,
-      h: 3600,
-      m: 60,
-      s: 1
-    };
-    var unitsFound = 0;
-    for(u in units) {
-      if(unitsFound > 0 || n >= units[u]) {
-        var thisUnit = n / units[u];
-        switch(++unitsFound) {
-          case 1:
-            eta += Math.floor(n / units[u]);
-            break;
-          case 2:
-            eta += Math.round(n / units[u]);
-            break;
-          default:
-            return $.trim(eta);
+    var units = [
+      ['d', 86400],
+      ['h', 3600],
+      ['m', 60],
+      ['s', 1]
+    ];
+    for(var i = 0; i < units.length; i++) {
+      var u = units[i];
+      if(n >= u[1]) {
+        eta += Math.floor(n / u[1]) + u[0];
+        n %= u[1];
+        if(++i < units.length) {
+          u = units[i];
+          eta += ' ' + Math.round(n / u[1]) + u[0];
         }
-        eta += u + ' ';
-        n %= units[u];
+        return eta + ' remaining...&nbsp;&nbsp;&nbsp;';
       }
     }
-    return $.trim(eta);
+    return false;
   },
   message: function(m) {
     return (m && m != 'Tracker: [Tried all trackers.]' ? m : false);

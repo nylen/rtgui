@@ -313,7 +313,7 @@ function get_peer_list($hash) {
 
 function tracker_hostname($hash) {
   $response = do_xmlrpc(xmlrpc_encode_request('t.multicall', array($hash, '', 't.get_url=')));
-  return @parse_url($response[0][0], PHP_URL_HOST);
+  return preg_replace('@^tracker\.@', '', @parse_url($response[0][0], PHP_URL_HOST));
 }
 
 /** rtorrent_xmlrpc

@@ -312,9 +312,21 @@ span.group {
   color: #777;
   position: absolute;
   top: 4px;
-  right: 50px;
-  width: 200px;
+  right: 125px;
+  width: 125px;
+  padding-bottom: 5px;
 }
+/* HACK - XXX TODO FIXME */
+.row1 .date-added {
+  background: #eee;
+}
+.row2 .date-added {
+  background: #ddd;
+}
+.row1:hover .date-added, .row2:hover .date-added {
+  background: #ccc;
+}
+/* end HACK */
 .tracker {
   float: right;
   font-size: 90%;

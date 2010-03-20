@@ -68,11 +68,15 @@ $(function() {
     if(e.shiftKey && current.lastHash) {
       var thisPos = window.data.torrents[thisHash].pos;
       var lastPos = window.data.torrents[current.lastHash].pos;
-      var d = (thisPos > lastPos ? 1 : -1);
-      var checked = $thisCheckbox.attr('checked');
-      for(var p = lastPos; p != thisPos; p += d) {
-        $('#t-' + current.torrentHashes[p] + '-checkbox')
-        .attr('checked', checked);
+      if(window.data.torrents[current.lastHash].visible) {
+        var d = (thisPos > lastPos ? 1 : -1);
+        var checked = $thisCheckbox.attr('checked');
+        for(var p = lastPos; p != thisPos; p += d) {
+          var hash = current.torrentHashes[p];
+          if(window.data.torrents[hash].visible) {
+            $('#t-' + hash + '-checkbox').attr('checked', checked);
+          }
+        }
       }
     }
     $thisCheckbox[0].focus();

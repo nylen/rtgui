@@ -157,6 +157,7 @@ $(function() {
     $('input[type=file], a.MultiFile-remove').removeClass('hidden');
     $('#to-add').html('');
     $('#add').attr('disabled', true);
+    $('#next').removeAttr('disabled');
     return false;
   });
 });
