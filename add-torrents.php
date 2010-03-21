@@ -163,6 +163,7 @@ switch($r_action) {
     
     $r = curl_exec($c);
     if($r !== false) {
+      curl_close($c);
       $response = parse_http_response($r);
       $content = $response[1];
       $filename = basename(parse_url($r_url, PHP_URL_PATH));
@@ -192,9 +193,10 @@ switch($r_action) {
         json_error("Not a torrent ($mime_type)");
       }
     } else {
-      json_error(curl_error($c));
+      $err = curl_error($c);
+      curl_close($c);
+      json_error($err);
     }
-    curl_close($c);
     
     break;
   
