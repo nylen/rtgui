@@ -162,7 +162,6 @@ switch($r_action) {
     }
     
     $r = curl_exec($c);
-    curl_close($c);
     if($r !== false) {
       $response = parse_http_response($r);
       $content = $response[1];
@@ -195,6 +194,7 @@ switch($r_action) {
     } else {
       json_error(curl_error($c));
     }
+    curl_close($c);
     
     break;
   
