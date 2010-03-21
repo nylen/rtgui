@@ -83,7 +83,7 @@ $use_groups = true;
 $all_groups = array('music', 'other-music', 'linux', 'windows', 'porn', 'other');
 $default_group = 'music';
 function get_torrent_group($t) {
-  return basename(dirname($t['tied_to_file']));
+  return basename($t['is_multi_file'] ? dirname($t['directory']) : $t['directory']);
 }
 
 $use_date_added = true;

@@ -86,7 +86,7 @@ $use_groups = true;
 $all_groups = array('tv', 'movies');
 $default_group = 'tv';
 function get_torrent_group($t) {
-  return basename(dirname($t['tied_to_file']));
+  return basename($t['is_multi_file'] ? dirname($t['directory']) : $t['directory']);
 }
 
 $use_date_added = true;
@@ -111,6 +111,23 @@ function on_page_requested() {
     }
     $_SESSION['mounted'] = true;
   }
+}
+
+/* Functions to make the directory browser work on a remote PC (the functions provided
+ * here rely on the fact that /media/rtorrent is mounted at /media/htpc/rtorrent)
+ */
+function dirbrowser_translate($dir) {
+  // Just a helper function - not called by dirbrowser code
+  return str_replace('/media/rtorrent/', '/media/htpc/rtorrent/', $dir);
+}
+function dirbrowser_scandir($dir) {
+  return @scandir(dirbrowser_translate($dir));
+}
+function dirbrowser_isdir($dir) {
+  return is_dir(dirbrowser_translate($dir));
+}
+function dirbrowser_isrootdir($dir) {
+  return (rtrim($dir, '/') == '/media/rtorrent');
 }
 
 ?>
