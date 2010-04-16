@@ -102,6 +102,20 @@ $(function() {
   <div id="header">
   
     <h1><a href="./">rt<span class=green>gui</span></a></h1><br/>
+<?php
+if(is_array($header_links) && count($header_links)) {
+  echo "<div id=\"header-links\">\n(Links: \n";
+  $first = true;
+  foreach($header_links as $title => $href) {
+    if(!$first) {
+      echo " | \n";
+    }
+    echo "<a href=\"$href\">$title</a>";
+    $first = false;
+  }
+  echo ")\n</div>\n";
+}
+?>
     <!--[if lt IE 8]>
       <span id="ie">
         Please, go get a

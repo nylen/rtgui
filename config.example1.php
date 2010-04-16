@@ -130,4 +130,9 @@ function dirbrowser_isrootdir($dir) {
   return (rtrim($dir, '/') == '/media/rtorrent');
 }
 
+// Define some links that will be shown in the header
+$header_links = array(
+  'main' => '../main/'
+);
+
 ?>

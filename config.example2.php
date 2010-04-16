@@ -98,4 +98,9 @@ $use_date_added = true;
  */
 // function on_page_requested() { ... }
 
+// Define some links that will be shown in the header
+$header_links = array(
+  'htpc' => '../htpc/'
+);
+
 ?>

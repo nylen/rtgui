@@ -1,4 +1,5 @@
 /* IE users can't have nice things */
+
 .row1, .row2 {
   background-color: white !important;
   border-color: white !important;
@@ -9,6 +10,10 @@
   position: absolute;
   top: 50px;
   left: 150px;
+}
+
+#header-links {
+  top: 30px !important;
 }
 
 #filters-container {

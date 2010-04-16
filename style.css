@@ -86,6 +86,12 @@ form {
   top: 0; left: 0px;
 }
 
+#header-links {
+  position: absolute;
+  top: 43px;
+  left: 150px;
+}
+
 #header a:hover {
   text-decoration: none;
 }
