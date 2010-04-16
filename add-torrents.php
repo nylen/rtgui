@@ -223,11 +223,14 @@ switch($r_action) {
     }
     
     foreach($r_add_torrent as $hash) {
-      if($_SESSION['to_add_data'][$hash]) {
-        $data = $_SESSION['to_add_data'][$hash];
+      if($data = $_SESSION['to_add_data'][$hash]) {
         $filename = $data['filename'];
         $name = $data['name'];
-        if(!copy("$tmp_add_dir/$filename", "$this_watchdir/$filename")) {
+        if(copy("$tmp_add_dir/$filename", "$this_watchdir/$filename")) {
+          if(function_exists('on_add_torrent')) {
+            on_add_torrent($name, $hash, $r_group, "$this_watchdir/$filename");
+          }
+        } else {
           $errors[] = "Failed to copy torrent \"$name\"";
         }
       }

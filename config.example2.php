@@ -103,4 +103,15 @@ $header_links = array(
   'htpc' => '../htpc/'
 );
 
+// Define an action to take when adding a torrent
+function on_add_torrent($name, $hash, $group, $filename) {
+  if($group == 'other-music'
+  && $fp = fopen('/media/rtorrent/users.txt', 'ab')) {
+    $user = $_SERVER['REMOTE_USER'];
+    if(!$user) $user = 'james';
+    fwrite($fp, "$hash,$user,$name\n");
+    fclose($fp);
+  }
+}
+
 ?>
