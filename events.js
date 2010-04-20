@@ -53,8 +53,10 @@ $(function() {
       });
     },
     success: function() {
-      $('div.torrent-container input[type=checkbox]')
-      .attr('checked', false);
+      if(!$('#leave-checked:checked').length) {
+        $('div.torrent-container input[type=checkbox]')
+        .attr('checked', false);
+      }
       updateTorrentsNow();
     }
   });

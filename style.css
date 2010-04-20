@@ -178,6 +178,11 @@ form {
   background: url('images/downarrow.gif') no-repeat center right;
 }
 
+.gray-text {
+  color: #bbb;
+  font-weight: bold;
+}
+
 #filters-container {
   position: absolute;
   bottom: 0;
@@ -188,8 +193,6 @@ form {
   border-bottom-width: 0;
 }
 #filters-label {
-  color: #bbb;
-  font-weight: bold;
   padding: 0 4px 0 2px;
   position: relative;
   top: -3px;
@@ -438,6 +441,10 @@ span.group {
   font-size: 16px;
   color: red;
   font-weight: bold;
+}
+
+#leave-checked {
+  margin-left: 8px;
 }
 
 .hidden {

@@ -195,7 +195,7 @@ var formatHandlers = {
     return 'added on ' + (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear();
   },
   eta: function(n) {
-    if(!n) {
+    if(!(n = Math.round(n))) {
       return false;
     }
     var eta = '';

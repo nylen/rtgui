@@ -154,7 +154,7 @@ if(is_array($header_links) && count($header_links)) {
 <div id="navcontainer">
 
 <div id="filters-container">
-  <span id="filters-label">Filter:</span>
+  <span id="filters-label" class="gray-text">Filter:</span>
   <input type="text" id="filters" value="" />
   <a href="#" id="clear-filters"><img src="images/cross.gif" /></a>
 </div>
@@ -261,6 +261,9 @@ foreach($cols as $k => $v) {
     </optgroup>
   </select>
   <input type="submit" value="Go" />
+  
+  <input type="checkbox" id="leave-checked" name="leave_checked" />
+  <label for="leave-checked" class="gray-text">Leave torrents checked</label>
 </div><!-- class="bottomtab" -->
 
 </form>
