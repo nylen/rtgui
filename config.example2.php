@@ -100,7 +100,8 @@ $use_date_added = true;
 
 // Define some links that will be shown in the header
 $header_links = array(
-  'htpc' => '../htpc/'
+  'htpc' => '../htpc/',
+  'music users' => '/music-users/'
 );
 
 // Define an action to take when adding a torrent
