@@ -110,7 +110,8 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     toCheckView: [],
     stripes: !!isFirstUpdate,
     positions: !!isFirstUpdate,
-    addedTorrents: false
+    addedTorrents: false,
+    removedTorrents: false
   };
   var firstHTML = '';
   
@@ -122,6 +123,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
         $('#' + hash).remove();
         dirty.stripes = true;
         dirty.positions = true;
+        dirty.removedTorrents = true;
       } else {
         var mustRewriteHTML = false;
         if(isFirstUpdate || !window.data.torrents[hash]) {
@@ -192,7 +194,6 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
     }
     
     var torrentDivsAll = $('#torrents>div.torrent-container');
-    $('#t-count-all').html(torrentDivsAll.length);
     
     if(isFirstUpdate) {
       // dirty.stripes, dirty.positions are already true
@@ -202,7 +203,8 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
       var opts = {
         filter: dirty.toFilter,
         checkView: dirty.toCheckView,
-        addedTorrents: dirty.addedTorrents
+        addedTorrents: dirty.addedTorrents,
+        removedTorrents: dirty.removedTorrents
       };
       if(updateVisibleTorrents(torrentDivsAll, opts)) {
         dirty.stripes = true;
@@ -375,7 +377,7 @@ function updateVisibleTorrents(torrentDivsAll, ids) {
     }
   };
   
-  var canStop = true;
+  var canStop = !(ids && (ids.addedTorrents || ids.removedTorrents));
   var checkAll = {}, indices = {};
   for(var a in actions) {
     checkAll[a] = (!ids || (ids[a] && !$.isArray(ids[a])));
@@ -410,12 +412,14 @@ function updateVisibleTorrents(torrentDivsAll, ids) {
     }
   });
   
-  if(anyChanged || isFirstUpdate || (ids && ids.addedTorrents)) {
+  if(anyChanged || isFirstUpdate
+  || (ids && (ids.addedTorrents || ids.removedTorrents))) {
     var torrentDivsVisible = torrentDivsAll.filter(function() {
       return data.torrents[this.id].visible;
     });
     $('#t-none').css('display', (torrentDivsVisible.length ? 'none' : ''));
     $('#t-count-visible').html(torrentDivsVisible.length);
+    $('#t-count-all').html(torrentDivsAll.length);
   }
   return anyChanged;
 }
