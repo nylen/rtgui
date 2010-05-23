@@ -6,6 +6,15 @@ include 'functions.php';
 
 include 'Torrent.php';
 
+// convert warnings into catchable exceptions
+function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
+  if(0 === error_reporting()) {
+    // error was suppressed with the @-operator
+    return false;
+  }
+  throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+}
+
 function upload_error_message($code) {
   switch($code) {
     case UPLOAD_ERR_INI_SIZE:
@@ -59,17 +68,23 @@ function process_torrent_data($content, $filename, $create_file=true) {
     $_SESSION['to_add_data'] = array();
   }
   
-  $torrent = new Torrent($content);
-  if($error = $torrent->error()) {
-    return array('error' => $error);
+  set_error_handler('handleError');
+  try {
+    $torrent = new Torrent($content);
+    if($error = $torrent->error()) {
+      return array('error' => $error);
+    }
+    $hash = $torrent->hash_info();
+    
+    $filename = "$tmp_add_dir/$filename";
+    if($create_file) {
+      $filename = get_filename_no_clobber($filename);
+      file_put_contents($filename, $content);
+    }
+  } catch(Exception $e) {
+    return array('error' => $e->getMessage());
   }
-  $hash = $torrent->hash_info();
-  
-  $filename = "$tmp_add_dir/$filename";
-  if($create_file) {
-    $filename = get_filename_no_clobber($filename);
-    file_put_contents($filename, $content);
-  }
+  restore_error_handler();
     
   return $_SESSION['to_add_data'][$hash] = array(
     'hash' => $hash,

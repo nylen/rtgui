@@ -38,7 +38,7 @@ $(function() {
         $('#to-add').hsjn(
           ['div.add-torrent', {'id': 'add-' + i},
             ['div.name' + (error ? '.error' : ''),
-              error || files[i].value
+              error ? htmlspecialchars(error) : files[i].value
             ]
           ]
         );
@@ -51,7 +51,7 @@ $(function() {
       };
       
       function err(i, msg) {
-        $('#add-' + i).find('.name').addClass('error').html(msg);
+        $('#add-' + i).find('.name').addClass('error').html(htmlspecialchars(msg));
       }
       function processTorrent(i) {
         $('#to-add .loading').remove();
