@@ -109,10 +109,10 @@ function on_add_torrent($name, $hash, $group, $filename) {
   if($group == 'other-music'
   && $fp = fopen('/media/rtorrent/users.txt', 'ab')) {
     $user = $_SERVER['REMOTE_USER'];
-    /* I usually download things for Drew from localhost, and my .htaccess is set up
-     * not to require authentication from 127.0.0.1
-     */
-    if(!$user) $user = 'drew';
+    // This is probably for Drew
+    if(!$user || $user == 'james') {
+      $user = 'drew';
+    }
     fwrite($fp, "$hash,$user,$name\n");
     fclose($fp);
   }
