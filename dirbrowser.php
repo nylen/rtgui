@@ -16,9 +16,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
-if(!$_SESSION) session_start();
-include 'config.php';
-include 'functions.php';
+require_once 'config.php';
+require_once 'functions.php';
+rtgui_session_start();
 
 if(!function_exists('dirbrowser_scandir')) {
   function dirbrowser_scandir($dir) {

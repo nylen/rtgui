@@ -1,5 +1,5 @@
 <?php
-include 'Torrent.php';
+require_once 'Torrent.php';
 header('Content-type: text/plain');
 $torrent = new Torrent(file_get_contents('/media/htpc/bit.torrents/tv/Squidbillies.torrent'));
         $hash = $torrent->hash_info();

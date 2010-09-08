@@ -1,10 +1,10 @@
 <?php
 
-if(!$_SESSION) session_start();
-include 'config.php';
-include 'functions.php';
+require_once 'config.php';
+require_once 'functions.php';
+rtgui_session_start();
 
-include 'Torrent.php';
+require_once 'Torrent.php';
 
 // convert warnings into catchable exceptions
 function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
@@ -82,6 +82,7 @@ function process_torrent_data($content, $filename, $create_file=true) {
       file_put_contents($filename, $content);
     }
   } catch(Exception $e) {
+    restore_error_handler();
     return array('error' => $e->getMessage());
   }
   restore_error_handler();

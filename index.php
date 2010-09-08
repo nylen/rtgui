@@ -17,16 +17,16 @@
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
 $execstart = microtime(true);
-if(!$_SESSION) session_start();
-include 'config.php';
-include 'functions.php';
+require_once 'config.php';
+require_once 'functions.php';
+rtgui_session_start();
 import_request_variables('gp', 'r_');
 
 // Try using alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/
 // (see http://code.google.com/p/rtgui/issues/detail?id=19)
 if(!function_exists('xml_parser_create')) {
-  include('xmlrpc.inc');
-  include('xmlrpc_extension_api.inc');
+  require_once 'xmlrpc.inc';
+  require_once 'xmlrpc_extension_api.inc';
 }
 
 if(!isset($r_debug)) {

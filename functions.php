@@ -19,8 +19,8 @@
 // Optionally use alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/
 // See http://code.google.com/p/rtgui/issues/detail?id=19
 if(!function_exists('xml_parser_create')) {
-  include('xmlrpc.inc');
-  include('xmlrpc_extension_api.inc');
+  require_once 'xmlrpc.inc';
+  require_once 'xmlrpc_extension_api.inc';
 }
 
 if(function_exists('on_page_requested')) {
@@ -31,6 +31,8 @@ if($scgi_local) {
   $scgi_host = "unix://$scgi_local";
   $scgi_port = null;
 }
+
+require_once 'session.php';
 
 function do_xmlrpc($request) {
   global $scgi_host, $scgi_port, $scgi_timeout;

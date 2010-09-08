@@ -16,8 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
-include "config.php";
-include "functions.php";
+require_once 'config.php';
+require_once 'functions.php';
 
 $count=0;
 

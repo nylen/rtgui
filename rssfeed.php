@@ -27,8 +27,8 @@
 //   incomplete
 //   seeding
 
-include "config.php";
-include "functions.php";
+require_once 'config.php';
+require_once 'functions.php';
 import_request_variables("gp","r_");
 
 if (!isset($r_view)) {

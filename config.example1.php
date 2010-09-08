@@ -103,7 +103,8 @@ function get_local_torrent_path($path) {
  * running on another machine.
  */
 function on_page_requested() {
-  if(!$_SESSION) session_start();
+  require_once 'session.php';
+  rtgui_session_start();
   if(!$_SESSION['mounted']) {
     exec('mount | grep //htpc/bit.torrents && mount | grep //htpc/rtorrent || sudo mount-htpc 2>&1', $out, $err);
     if($err) {

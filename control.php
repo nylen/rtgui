@@ -16,8 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
-include 'config.php';
-include 'functions.php';
+require_once 'config.php';
+require_once 'functions.php';
 import_request_variables('gp', 'r_');
 
 // Bulk stop/start/delete torrents...
@@ -117,7 +117,7 @@ switch($r_cmd) {
 }
 
 if(!$r_ajax) {
-  if(!$_SESSION) session_start();
+  rtgui_session_start();
   $_SESSION['must_get_all'] = true;
   session_write_close();
   @header("Location: " . $_SERVER['HTTP_REFERER']);
