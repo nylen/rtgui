@@ -18,7 +18,7 @@
 
 // Optionally use alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/
 // See http://code.google.com/p/rtgui/issues/detail?id=19
-if(!function_exists('xml_parser_create')) {
+if(!function_exists('xml_parser_create') || !function_exists('xmlrpc_encode_request')) {
   require_once 'xmlrpc.inc';
   require_once 'xmlrpc_extension_api.inc';
 }
