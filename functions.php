@@ -325,7 +325,7 @@ function tracker_hostname($hash) {
  */
 function rtorrent_xmlrpc($command, $params=array('')) {
   $response = do_xmlrpc(xmlrpc_encode_request($command, $params));
-  return (xmlrpc_is_fault($response) ? false : $response);
+  return (@xmlrpc_is_fault($response) ? false : $response);
 }
 
 /** rtorrent_multicall
@@ -353,7 +353,7 @@ function rtorrent_multicall($group, $params, $data_names, $key=null, $remove_get
   
   $request = xmlrpc_encode_request("$group.multicall", $params);
   $response = do_xmlrpc($request);
-  if(xmlrpc_is_fault($response)) {
+  if(@xmlrpc_is_fault($response)) {
     trigger_error("xmlrpc: $response[faultString] ($response[faultCode])");
     return false;
   } else {
