@@ -40,11 +40,21 @@ $(function() {
   
   $('#control-form').ajaxForm({
     beforeSubmit: function(formData, form, options) {
-      // don't submit invisible checked torrents
       for(var i = 0; i < formData.length; i++) {
-        var t = window.data.torrents[formData[i].value];
-        if(t && !t.visible) {
-          formData[i].value = '';
+        if(formData[i].name == 'bulkaction') {
+          // confirm delete
+          if(formData[i].value == 'delete'
+          && !confirm('Are you sure you want to delete the selected '
+            + 'torrents?  Their data will not be deleted.')) {
+
+            return false;
+          }
+        } else {
+          // don't submit invisible checked torrents
+          var t = window.data.torrents[formData[i].value];
+          if(t && !t.visible) {
+            formData[i].value = '';
+          }
         }
       }
       formData.push({
@@ -101,7 +111,7 @@ $(function() {
     var stdMessage = 'Are you sure you want to remove this torrent';
     var messages = {
       'delete': stdMessage + '?  Its data will not be deleted.',
-      'purge': stdMessage + ' torrent AND delete its data?'
+      'purge': stdMessage + ' AND delete its data?'
     };
     if($(this).hasClass('confirm')
     && !confirm(messages[$(this).attr('rel')])) {
