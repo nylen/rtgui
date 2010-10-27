@@ -166,6 +166,9 @@ switch($r_action) {
   
   
   case 'process_url':
+    if(!function_exists('curl_init')) {
+      json_error('The required PHP CURL extension is not present.');
+    }
     $c = curl_init($r_url);
     curl_setopt_array($c, array(
       CURLOPT_HEADER => true,
