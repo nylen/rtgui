@@ -91,12 +91,17 @@ function updateTorrentsData() {
       current.error = false;
       $('#error').hide();
     }
+
+    if(config.debugTab) {
+      if(!changes) {
+        debug('(No changes)');
+      }
+      debug(JSON.stringify(changes, null, 2));
+    }
     
     if(!changes) {
-      debug('(No changes)');
       return;
     }
-    debug(JSON.stringify(changes, null, 2));
     
     $.extend(true, window.data, changes);
     updateTorrentsHTML(changes, false);
