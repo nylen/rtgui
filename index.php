@@ -156,7 +156,7 @@ if(is_array($header_links) && count($header_links)) {
 <div id="filters-container">
   <span id="filters-label" class="gray-text">Filter:</span>
   <input type="text" id="filters" value="" />
-  <a href="#" id="clear-filters"><img src="images/cross.gif" /></a>
+  <a href="#" id="clear-filters"><img src="images/cross.png" /></a>
 </div>
 
 <ul id="navlist">
