@@ -92,7 +92,7 @@ $(function() {
 });
 </script>
 <title><?php echo $site_title; ?></title>
-<link href="chrome_style.css" rel="stylesheet" type="text/css" />
+<link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <div id="wrap">

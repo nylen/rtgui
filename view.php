@@ -37,7 +37,7 @@ $active_tab = $tabs[0];
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
-<link href="chrome_style.css" rel="stylesheet" type="text/css" />
+<link href="style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript">
 <?php if(!$only_one_tab) { ?>

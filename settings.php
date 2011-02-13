@@ -43,7 +43,7 @@ if (isset($r_submit)) {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
-<link href="chrome_style.css" rel="stylesheet" type="text/css" />
+<link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body >
 <div class='modal'>

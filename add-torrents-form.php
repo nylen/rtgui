@@ -8,7 +8,7 @@ require_once 'functions.php';
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
-<link href="chrome_style.css" rel="stylesheet" type="text/css" />
+<link href="style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="jquery.hsjn.js"></script>
 <script type="text/javascript" src="jquery.form.js"></script>
