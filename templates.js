@@ -123,12 +123,11 @@ var templates = {
     '<div class="torrent" id="t-$hash">',
       '<div class="namecol" id="@name">',
         '<div class="tracker" id="@tracker_hostname">',
-          '<a class="filter" href="#" rel="tracker:$tracker_hostname" style="color: $tracker_color">$tracker_hostname</a>&nbsp;',
+          '<a class="filter" href="#" rel="tracker:$tracker_hostname" style="color: $tracker_color">$tracker_hostname</a>',
         '</div>',
         '<input type="checkbox" name="select[]" id="@checkbox" value="$hash" />',
         '<a class="dialog $status_class" rel="600:550" href="view.php?hash=$hash">$name</a>',
         (config.useGroups ? '<span class="group">(<a class="filter" href="#" id="@group" rel="group:$group">$group</a>)</span>' : ''),
-        (config.useDateAdded ? '<span class="date-added" id="@date_added">$</span>' : ''),
       '</div>',
       '<div class="errorcol"><span id="@eta">$</span> <span id="@message">$</span></div>',
       '<div class="datacol" style="width: 89px;">',
@@ -153,7 +152,8 @@ var templates = {
       '<div class="datacol" style="width: 89px;" id="@up_total">$</div>',
       '<div class="datacol" style="width: 70px;" id="@ratio">$</div>',
       '<div class="datacol" style="width: 105px;" id="@peers_summary">$</div>',
-      '<div class="datacollast" style="width: 70px;" id="@priority_str">$</div>',
+      '<div class="datacol" style="width: 70px;" id="@priority_str">$</div>',
+      '<div class="datacollast" style="width: 128px; " id="@date_added">$</div>',
       '<div class="spacer"> </div>',
     '</div>')
   
@@ -192,7 +192,8 @@ var formatHandlers = {
   
   date_added: function(ts) {
     var d = new Date(ts * 1000);
-    return 'added on ' + (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear();
+    //return (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear();
+    return d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
   },
   eta: function(n) {
     if(!(n = Math.round(n))) {

@@ -90,7 +90,7 @@ function characterData($parser, $data) {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
-<link href="style.css" rel="stylesheet" type="text/css" />
+<link href="chrome_style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="rtgui.js"></script>
 </head>
 <body>

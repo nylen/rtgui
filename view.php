@@ -37,7 +37,7 @@ $active_tab = $tabs[0];
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
-<link href="style.css" rel="stylesheet" type="text/css" />
+<link href="chrome_style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript">
 <?php if(!$only_one_tab) { ?>
@@ -100,10 +100,9 @@ echo "<input type=button value='Hash check' class='buttonhashcheck' onClick='win
 echo "<input type=button value='Refresh' class='buttonrefresh' onClick='window.location.reload();' />\n";
 
 echo "</div>\n"; // end of controlcontainer div
-echo "<p>&nbsp;</p>";
 
 // Select view...
-echo "<div id='navcontainer'  style='width:552px'>\n";
+echo "<div id='navcontainer'>\n";
 echo "<ul id='navlist'>\n";
 $all_tabs = array('Files', 'Tracker', 'Peers', 'Torrent', 'Storage');
 if($debugtab) {
@@ -127,12 +126,16 @@ foreach($tabs as $r_select) {
   // Display file info...
   if ($r_select=="files") {
      $data=get_file_list($r_hash);
-     echo "<div class='container' style='width:550px'>\n";
-     echo "<div class='headcol' style='width:190px;'>Filename</div>\n";
+     echo "<div class='container'>\n";
+     echo "<div class='modalheadcol'>\n";
+     echo "<div class='headcol' style='width:190px; border:none;'>Filename</div>\n";
+     echo "<div class='floatright'>";
      echo "<div class='headcol' style='width:90px;'>Size</div>\n";
      echo "<div class='headcol' style='width:90px;'>Done</div>\n";
      echo "<div class='headcol' style='width:90px;'>Chunks</div>\n";
      echo "<div class='headcol' style='width:90px;'>Priority</div>\n";
+     echo "</div>\n";  // end floatright div
+     echo "</div>\n";  // end lodheadcol div
      $thisrow="row1";
      $index=0;
      echo "<form action='control.php' method=post>\n";
@@ -174,12 +177,16 @@ foreach($tabs as $r_select) {
   // tracker info...
   if ($r_select=="tracker") {
      $data=get_tracker_list($r_hash);
-     echo "<div class='container' style='width:550px'>\n";
-     echo "<div class='headcol' style='width:156px;'>URL</div>\n";
+     echo "<div class='container'>\n";
+     echo "<div class='modalheadcol'>\n";
+     echo "<div class='headcol' style='width:156px; border:none;'>URL</div>\n";
+     echo "<div class='floatright'>";
      echo "<div class='headcol' style='width:124px;'>Last</div>\n";
      echo "<div class='headcol' style='width:90px;'>Interval</div>\n";
      echo "<div class='headcol' style='width:90px;'>Scrapes</div>\n";
      echo "<div class='headcol' style='width:90px;'>Enabled</div>\n";
+     echo "</div>\n";  // end floatright div
+     echo "</div>\n";  // end modalheadcol div
      $thisrow="row1";
      foreach($data AS $item) {
         echo "<div class='$thisrow'>\n";
@@ -203,12 +210,16 @@ foreach($tabs as $r_select) {
   // Peers info...
   if ($r_select=="peers") {
      $data=get_peer_list($r_hash);
-     echo "<div class='container' style='width:550px'>\n";
-     echo "<div class='headcol' style='width:190px;'>Address</div>\n";
+     echo "<div class='container'>\n";
+     echo "<div class='modalheadcol'>\n";
+     echo "<div class='headcol' style='width:190px; border:none;'>Address</div>\n";
+     echo "<div class='floatright'>";
      echo "<div class='headcol' style='width:90px;'>Complete</div>\n";
      echo "<div class='headcol' style='width:90px;'>Download</div>\n";
      echo "<div class='headcol' style='width:90px;'>Upload</div>\n";
      echo "<div class='headcol' style='width:90px;'>Peer</div>\n";
+     echo "</div>\n";  // end floatright div
+     echo "</div>\n";  // end modalheadcol div
      $thisrow="row1";
      foreach($data AS $item) {
         echo "<div class='$thisrow'>\n";
@@ -250,7 +261,7 @@ foreach($tabs as $r_select) {
      } else {
         $statusstyle.="inactive";
      }
-     echo "<div class='container' style='width:550px'>\n";
+     echo "<div class='container'>\n";
      echo "<table border=0 cellspacing=0 cellpadding=5 class='maintable' width='100%'>\n";
      echo "<tr class='row2'><td class='datacol' align=right><b>Name</b></td><td><span class='torrenttitle $statusstyle'>".mb_wordwrap($thistorrent['name'],60,"<br/>\n",TRUE)."</span></td></tr>\n";
      echo "<tr class='row1'><td class='datacol' align=right><b>Status</b></td><td><img src='images/".$statusstyle.".gif' width=10 height=9 alt='Status' /> ".$thistorrent['status']."</td></tr>\n";
@@ -283,13 +294,13 @@ foreach($tabs as $r_select) {
      echo "<tr class='row1'><td class='datacol' align=right><b>Ratio</b></td><td>".number_format(($thistorrent['ratio']/1000),2)."</td></tr>\n";
      echo "</table>\n";
      echo "</div>\n";
-     echo "<div class='bottomthin' style='width:552px;'> </div>\n";
+     echo "<div class='bottomthin'> </div>\n";
 
   }
 
   // Storage info...
   if ($r_select=="storage") {
-     echo "<div class='container' style='width:550px'>\n";
+     echo "<div class='container'>\n";
      echo "<fieldset ><legend>Current Directory</legend>\n";
      $seldir=$thistorrent['directory'];
 
@@ -317,7 +328,7 @@ foreach($tabs as $r_select) {
      echo "<iframe frameborder=0 src='dirbrowser.php?dir=".urlencode($seldir)."&amp;hilitedir=".urlencode($torrentdir)."' width=100% height=300px>iFrame</iframe>";
 
      echo "<br>&nbsp;</div>"; // end container div
-     echo "<div class='bottomthin' style='width:552px;'> </div>\n";
+     echo "<div class='bottomthin'> </div>\n";
   }
 
   // Debug info

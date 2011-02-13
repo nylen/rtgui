@@ -8,7 +8,7 @@ require_once 'functions.php';
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
-<link href="style.css" rel="stylesheet" type="text/css" />
+<link href="chrome_style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="jquery.hsjn.js"></script>
 <script type="text/javascript" src="jquery.form.js"></script>
@@ -22,6 +22,7 @@ require_once 'functions.php';
 <div class="modal">
 <h3>Add torrent(s)</h3>
 
+<div id='options'>
 <form id="form1" method="post" enctype="multipart/form-data" action="add-torrents.php">
 <input type="hidden" name="action" value="get_list" />
 <table id="upload-form">
@@ -31,7 +32,7 @@ require_once 'functions.php';
   </tr>
   <tr class="controls">
     <td class="left">Upload file(s):</td>
-    <td class="right input"><input name="add_files[]" type="file" class="multi" accept="torrent" /></td>
+    <td class="right input"><input name="add_files[]" type="file" class="multi" /></td>
   </tr>
 <?php if($use_groups) { ?>
   <tr class="controls">
@@ -68,6 +69,7 @@ require_once 'functions.php';
   <input type="submit" id="add" value="Add selected" disabled="disabled" />
 </form>
 
+</div>
 </div>
 </body>
 </html>

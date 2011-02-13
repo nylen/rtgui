@@ -1,5 +1,4 @@
 <?php
-//
 //  This file is part of rtGui.  http://rtgui.googlecode.com/
 //  Copyright (C) 2007-2008 Simon Hall.
 //
@@ -61,12 +60,12 @@ var config = {
   diskAlertThreshold: <?php echo $alertthresh; ?>,
   useGroups: <?php echo $use_groups ? 1 : 0; ?>,
   useDateAdded: <?php echo $use_date_added ? 1 : 0; ?>, 
-  debugTab: <?php echo $debugtab ? 1 : 0 ?>
+  debugTab: <?php echo $debugtab ? 1 : 0; ?>
 };
 var current = {
   view: 'main',
   filters: {},
-  sortVar: null,
+  sortVar: 'name',
   sortDesc: false,
   error: false
 };
@@ -94,10 +93,11 @@ $(function() {
 });
 </script>
 <title><?php echo $site_title; ?></title>
-<link href="style.css" rel="stylesheet" type="text/css" />
+<link href="chrome_style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <div id="wrap">
+<div id="fixedheader">
   <div id="error"></div>
 
   <div id="header">
@@ -178,27 +178,26 @@ if($debugtab) {
 
 <div id="dialog" class="jqmWindow"></div>
 
-<div class="container">
 
 <div id="torrents-header">
 <?php
 // Generate header links
-// variable_name     => ColName:width:add-class (default :89px:[none])
+// variable_name     => ColName:width:add-class (default :90px:[none])
 $cols = array(
-  '+name!'            => 'Name:104',
+  '+name!'            => 'Name',
   '+group'            => 'Grp',
-  '+status'           => 'Status:74',
+  '+status'           => 'Status',
   '+percent_complete' => 'Done',
   '-bytes_remaining'  => 'Remain',
   '-size_bytes!'      => 'Size',
   '-down_rate'        => 'Down',
   '-up_rate'          => 'Up',
-  '+up_total!'        => 'Seeded:94',
-  '+ratio!'           => 'Ratio:50',
-  '-date_added!'      => 'Age:50',
-  '-peers_summary'    => 'Peers:68',
-  '+priority_str'     => 'Pri',
-  '+tracker_hostname' => 'Trk',
+  '+up_total!'        => 'Seeded',
+  '+ratio!'           => 'Ratio:71',
+  '-peers_summary'    => 'Peers:106',
+  '+priority_str'     => 'Pri:72',
+  '+tracker_hostname' => 'Trk:131',
+  '-date_added!'      => 'Date',
 );
 
 foreach($cols as $k => $v) {
@@ -215,20 +214,24 @@ foreach($cols as $k => $v) {
   }
   $arr = explode(':', $v);
   if(count($arr) < 2) {
-    $arr[1] = 89;
+    $arr[1] = 90;
   }
-  $vis = ($k == 'date_added' && !$use_date_added ? ' visibility: hidden;' : '');
+  //$vis = ($k == 'date_added' && !$use_date_added ? ' visibility: hidden;' : '');
+  $vis = ($k == 'date_added' && !$use_date_added ? '' : '');
   $class = trim("headcol $arr[2]");
-  if($k != 'tracker_hostname' && $k != 'group') {
+  if($k != 'date_added' && $k != 'group') {
     echo "<div class=\"$class\" style=\"width: ${arr[1]}px;$vis\">";
   }
   echo "<a class=\"sort\" href=\"#\" rel=\"$k:$order$reorder\">$arr[0]</a>";
-  echo ($k == 'priority_str' || ($k == 'name' && $use_groups) ? "/" : "</div>\n");
+  echo ($k == 'tracker_hostname' || ($k == 'name' && $use_groups) ? "/" : "</div>\n");
 }
 ?>
 </div>
 <div class="spacer"></div>
 
+</div> <!-- id=fixedheader -->
+
+<div class="container">
 <?php if($debugtab) { ?>
 <pre id="debug">&nbsp;</pre>
 <?php } ?>
@@ -268,8 +271,7 @@ foreach($cols as $k => $v) {
 </div><!-- class="bottomtab" -->
 
 </form>
-
-<p>&nbsp;</p>
+<div id="footer">
 <div align="center" class="smalltext">
 <a href="http://libtorrent.rakshasa.no/" target="_blank">
   rTorrent client <?php echo rtorrent_xmlrpc('system.client_version'); ?>
@@ -279,6 +281,7 @@ foreach($cols as $k => $v) {
 Page created in <?php echo round(microtime(true) - $execstart, 3) ?> secs.<br />
 Based on <a href="http://rtgui.googlecode.com" target="_blank">rtGui v0.2.7</a> - by Simon Hall 2007-2008<br />
 Modifications by James Nylen 2010
+</div>
 </div>
 </div>
 </body>
