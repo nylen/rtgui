@@ -156,6 +156,16 @@ form {
   font-size: 80%;
 }
 
+#torrents-header a.sort {
+  padding: 0 7px;
+}
+#torrents-header a.sort-asc {
+  background: url('images/uparrow.gif') no-repeat center right;
+}
+#torrents-header a.sort-desc {
+  background: url('images/downarrow.gif') no-repeat center right;
+}
+
 .gray-text {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 13px;

@@ -130,7 +130,7 @@ var templates = {
         (config.useGroups ? '<span class="group">(<a class="filter" href="#" id="@group" rel="group:$group">$group</a>)</span>' : ''),
       '</div>',
       '<div class="errorcol"><span id="@eta">$</span> <span id="@message">$</span></div>',
-      '<div class="datacol" style="width: 89px;">',
+      '<div class="datacol" style="width: 109px;">',
         '<a class="ajax" href="control.php?hash=$hash&amp;cmd=$start_stop_cmd">',
           '<img alt="$start_stop_cmd torrent" border="0" src="images/$start_stop_cmd.gif" width="16" height="16" />',
         '</a> ',
@@ -151,9 +151,9 @@ var templates = {
       '<div class="datacol" style="width: 89px;" id="@up_rate">$</div>',
       '<div class="datacol" style="width: 89px;" id="@up_total">$</div>',
       '<div class="datacol" style="width: 70px;" id="@ratio">$</div>',
-      '<div class="datacol" style="width: 105px;" id="@peers_summary">$</div>',
-      '<div class="datacol" style="width: 70px;" id="@priority_str">$</div>',
-      '<div class="datacollast" style="width: 128px; " id="@date_added">$</div>',
+      '<div class="datacol" style="width: 99px;" id="@peers_summary">$</div>',
+      '<div class="datacol" style="width: 71px;" id="@priority_str">$</div>',
+      '<div class="datacollast" style="width: 115px;" id="@date_added">$</div>',
       '<div class="spacer"> </div>',
     '</div>')
   

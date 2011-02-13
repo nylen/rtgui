@@ -183,7 +183,7 @@ if($debugtab) {
 // Generate header links
 // variable_name      => ColName:width:add-class (default :90px:[none])
 $cols = array(
-  '+name!'            => 'Name',
+  '+name!'            => 'Name:110',
   '+group'            => 'Grp',
   '+status'           => 'Status',
   '+percent_complete' => 'Done',
@@ -193,9 +193,9 @@ $cols = array(
   '-up_rate'          => 'Up',
   '+up_total!'        => 'Seeded',
   '+ratio!'           => 'Ratio:71',
-  '-peers_summary'    => 'Peers:106',
+  '-peers_summary'    => 'Peers:100',
   '+priority_str'     => 'Pri:72',
-  '+tracker_hostname' => 'Trk:131',
+  '+tracker_hostname' => 'Trk:116',
   '-date_added!'      => 'Date',
 );
 
