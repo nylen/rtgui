@@ -281,7 +281,7 @@ div {
   clear: both;
 }
 div.container {
-  margin: 0px;
+  margin: 67px 0px 0px 0px;
   padding: 0px;
   background-color: #fff;
   border: none;
@@ -301,13 +301,13 @@ div.errorcol {
 }
 
 #torrents-header {
-  background: url('./images/bg-menu-main-tile.gif') repeat-x top center;
+  background: #262626 url('./images/bg-menu-main-tile.gif') repeat-x top center;
   border-top: 1px solid #383838;
+  height: 28px;
 }
 
 div.headcol {
   float: left;
-  background:   url('./images/bg-menu-main-tile.gif') repeat-x top center;
   color: #999;
   text-align: center;
 }
