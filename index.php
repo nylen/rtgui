@@ -181,7 +181,7 @@ if($debugtab) {
 <div id="torrents-header">
 <?php
 // Generate header links
-// variable_name     => ColName:width:add-class (default :90px:[none])
+// variable_name      => ColName:width:add-class (default :90px:[none])
 $cols = array(
   '+name!'            => 'Name',
   '+group'            => 'Grp',
@@ -200,10 +200,15 @@ $cols = array(
 );
 
 foreach($cols as $k => $v) {
+  // If a field name begins with +, its default sort order is
+  // ascending.  - means descending.
   $order = ($k[0] == '+' ? 'asc' : 'desc');
   $k = substr($k, 1);
   $reorder = '';
   if(substr($k, strlen($k)-1) == '!') {
+    // If a field name ends in ! and the list is currently sorted by
+    // that field, the client needs to recompute sort order if that
+    // field changes.
     $reorder = ':true';
     $k = substr($k, 0, strlen($k)-1);
   }
