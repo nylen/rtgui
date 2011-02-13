@@ -92,8 +92,7 @@ form {
 	-moz-box-shadow: 0px 0px 10px #1a1a1a;
 }
 
-#fixedheader {
-	position: fixed;
+#header {
 	top: 0px;
 	width: 1100px;
 	height:146px;
@@ -281,39 +280,35 @@ div.debug pre {
 	padding: 0px;
 }
 div.container {
-	margin: 0px 0px 0px 0px;
-	padding: 148px 0px 0px 0px;
+	margin: 0px;
+	padding: 0px;
 	background-color: #fff;
-	background: url('./images/bg-menu-main-tile.gif') repeat-x top center;
-	border:none;
+	border: none;
 	border-left:1px solid #aaa;
 	border-right:1px solid #aaa;
-clear:both;
+  clear: both;
 }
 div.namecol {
-	width:100%;
+	width: 100%;
 	margin: 3px 3px 3px 3px;
 }
 div.errorcol {
 	margin-left: 2px;
-	font-size:80%;
-	color:#999;
+	font-size: 80%;
+	color: #999;
 	margin: 3px 3px 1px 3px;
 }
 
 #torrents-header {
+	background: url('./images/bg-menu-main-tile.gif') repeat-x top center;
 	border-top: 1px solid #383838;
 }
 
 div.headcol {
 	float: left;
-	text-align:center;
-	/*font-weight: bold;
-	padding-bottom:8px;
-	padding-top:8px;
-	color:#fff;
-	background-color:#333;
-	margin:0px;*/
+	background:	url('./images/bg-menu-main-tile.gif') repeat-x top center;
+  color: #999;
+	text-align: center;
 }
 div.headcol a, div.headrow a, div.headcollast a {
 	font-family: Helvetica, Arial, sans-serif;

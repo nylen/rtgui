@@ -96,7 +96,7 @@ $(function() {
 </head>
 <body>
 <div id="wrap">
-<div id="fixedheader">
+<div id="header">
   <div id="error"></div>
 
   <div id="header">
