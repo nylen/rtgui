@@ -228,10 +228,10 @@ var formatHandlers = {
   
   percent_complete: function(n) {
     return [
-      Math.round(n*10)/10 + '%<br />',
+      Math.round(n*10)/10 + '%<br />', //' fix vim syntax highlighting (wtf)
       '<table align="center" border="0" cellspacing="0" cellpadding="1" bgcolor="#666666" width="50"><tr>',
         '<td align="left"><img src="images/percentbar.gif" height="4" width="' + Math.round(n/2) + '"/></td>',
-      '</tr></table>'
+      '</tr></table>', //' fix vim syntax highlighting (wtf)
     ].join('\n');
   },
   bytes_remaining: formatBytes,
