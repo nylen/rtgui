@@ -47,7 +47,7 @@ function do_xmlrpc($request) {
 
 // Get full list - retrieve full list of torrents 
 function get_all_torrents($torrents_only=false, $view='main') {
-  global $downloaddir, $use_groups, $use_date_added;
+  global $downloaddir, $use_groups;
   global $tracker_hilite, $tracker_hilite_default;
   
   $torrents = rtorrent_multicall('d', $view, array(
@@ -183,13 +183,11 @@ function get_all_torrents($torrents_only=false, $view='main') {
       if($use_groups) {
         $s['group'] = get_torrent_group($t);
       }
-      if($use_date_added) {
-        $fn = $t['tied_to_file'];
-        if(function_exists('get_local_torrent_path')) {
-          $fn = get_local_torrent_path($fn);
-        }
-        $s['date_added'] = filemtime($fn);
+      $fn = $t['tied_to_file'];
+      if(function_exists('get_local_torrent_path')) {
+        $fn = get_local_torrent_path($fn);
       }
+      $s['date_added'] = filemtime($fn);
       $_SESSION['persistent'][$hash] = $s;
     }
     
@@ -198,9 +196,7 @@ function get_all_torrents($torrents_only=false, $view='main') {
     if($use_groups) {
       $t['group'] = $s['group'];
     }
-    if($use_date_added) {
-      $t['date_added'] = $s['date_added'];
-    }
+    $t['date_added'] = $s['date_added'];
     
     $total_down_rate += $t['down_rate'];
     $total_up_rate += $t['up_rate'];

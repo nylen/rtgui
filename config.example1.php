@@ -89,10 +89,11 @@ function get_torrent_group($t) {
   return basename($t['is_multi_file'] ? dirname($t['directory']) : $t['directory']);
 }
 
-$use_date_added = true;
-/* Get the creation date of the .torrent file, and use it as the date added.  If rTorrent
- * is running on another PC, you can define the get_local_torrent_path($path) function to
- * change remote paths into local paths.
+/* If rTorrent is running on another PC, you can define the get_local_torrent_path($path)
+ * function to change a remote path for a .torrent file into a local path (this means the
+ * remote directory containing your .torrent files has to be mounted on the web server).
+ * This will make "date added" work properly since it is based on the modification date
+ * of the .torrent file tied to each download.
  */
 function get_local_torrent_path($path) {
   return str_replace('/media/bit.torrents/', '/media/htpc/bit.torrents/', $path);

@@ -59,7 +59,6 @@ var config = {
   refreshInterval: <?php echo $refresh_interval; ?>,
   diskAlertThreshold: <?php echo $alertthresh; ?>,
   useGroups: <?php echo $use_groups ? 1 : 0; ?>,
-  useDateAdded: <?php echo $use_date_added ? 1 : 0; ?>, 
   debugTab: <?php echo $debugtab ? 1 : 0; ?>
 };
 var current = {
@@ -216,11 +215,9 @@ foreach($cols as $k => $v) {
   if(count($arr) < 2) {
     $arr[1] = 90;
   }
-  //$vis = ($k == 'date_added' && !$use_date_added ? ' visibility: hidden;' : '');
-  $vis = ($k == 'date_added' && !$use_date_added ? '' : '');
   $class = trim("headcol $arr[2]");
   if($k != 'date_added' && $k != 'group') {
-    echo "<div class=\"$class\" style=\"width: ${arr[1]}px;$vis\">";
+    echo "<div class=\"$class\" style=\"width: ${arr[1]}px;\">";
   }
   echo "<a class=\"sort\" href=\"#\" rel=\"$k:$order$reorder\">$arr[0]</a>";
   echo ($k == 'tracker_hostname' || ($k == 'name' && $use_groups) ? "/" : "</div>\n");

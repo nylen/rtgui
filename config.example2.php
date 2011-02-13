@@ -86,12 +86,6 @@ function get_torrent_group($t) {
   return basename($t['is_multi_file'] ? dirname($t['directory']) : $t['directory']);
 }
 
-$use_date_added = true;
-/* Get the creation date of the .torrent file, and use it as the date added.  If rTorrent
- * is running on another PC, you can define the get_local_torrent_path($path) function to
- * change remote paths into local paths.
- */
-
 /* Define a function that will be run every time a page is requested.  It can be used to
  * check if rTorrent is running, or to mount the rTorrent directories if rTorrent is
  * running on another machine.
