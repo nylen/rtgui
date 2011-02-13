@@ -22,17 +22,17 @@ require_once 'functions.php';
 $count=0;
 
 function startElement($parser, $name, $attrs) {
-	global $insideitem, $tag, $title, $description, $link, $pubdate, $category;
-	if ($insideitem) {
-		$tag = $name;
-	} elseif ($name == "ITEM") {
-		$insideitem = true;
-	}
+  global $insideitem, $tag, $title, $description, $link, $pubdate, $category;
+  if ($insideitem) {
+    $tag = $name;
+  } elseif ($name == "ITEM") {
+    $insideitem = true;
+  }
 }
 
 function endElement($parser, $name) {
-	global $insideitem, $tag, $title, $description, $link, $category, $pubdate, $count, $ddl;
-	if ($name == "ITEM") {
+  global $insideitem, $tag, $title, $description, $link, $category, $pubdate, $count, $ddl;
+  if ($name == "ITEM") {
       echo "<p class='feeditem' align='left'>\n";
       
       echo "<a href=\"javascript:toggleLayer('desc".$count."');\"><img src='images/view.gif'></a>\n";
@@ -47,40 +47,40 @@ function endElement($parser, $name) {
       if (trim($category!="")) echo " (".$category.")";
       echo "<div class='togglevis' id='desc".$count."' align='left'><b>".$pubdate."</b><br>".trim($description)."</div>\n";
       echo "</p>\n";
-		$title="";
-		$description="";
-		$link="";
+    $title="";
+    $description="";
+    $link="";
       $category="";
       $pubdate="";
-		$insideitem=false;
+    $insideitem=false;
       $count++;
-	}
+  }
 }
 
 function characterData($parser, $data) {
-	global $insideitem, $tag, $title, $description, $link, $pubdate, $category;
-	if ($insideitem) {
-	switch ($tag) {
-		case "TITLE":
-		$title .= $data;
-		break;
+  global $insideitem, $tag, $title, $description, $link, $pubdate, $category;
+  if ($insideitem) {
+  switch ($tag) {
+    case "TITLE":
+    $title .= $data;
+    break;
       case "DESCRIPTION":      
-		$description .= $data;
-		break;
+    $description .= $data;
+    break;
       case "COMMENTS":       
-		$description .= $data;
-		break;
+    $description .= $data;
+    break;
       case "PUBDATE":       
-		$pubdate.=$data;
-		break;
-		case "LINK":
-		$link .= $data;
-		break;
-		case "CATEGORY":
-		$category .= $data;
-		break;
-	}
-	}
+    $pubdate.=$data;
+    break;
+    case "LINK":
+    $link .= $data;
+    break;
+    case "CATEGORY":
+    $category .= $data;
+    break;
+  }
+  }
 }
 
 ?>
@@ -132,7 +132,7 @@ foreach($feeds as $feed) {
       echo "Couldn't read URL";
    } else {
       while ($data = fread($fp, 4096)) {
-      	if (!xml_parse($xml_parser, $data, feof($fp))) {
+        if (!xml_parse($xml_parser, $data, feof($fp))) {
             sprintf("XML error: %s at line %d", xml_error_string(xml_get_error_code($xml_parser)), xml_get_current_line_number($xml_parser));
          }
       }
