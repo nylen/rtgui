@@ -88,6 +88,13 @@ var data = <?php echo $data_str; ?>;
 $(function() {
   $('#dialog').jqm({onHide: onHideDialog});
   updateTorrentsHTML(data, true);
+  if(current.sortVar) {
+    $('a.sort').each(function() {
+      if($(this).attr('rel').split(':')[0] == current.sortVar) {
+        $(this).addClass(current.sortDesc ? 'sort-desc' : 'sort-asc');
+      }
+    });
+  }
   current.refreshIntervalID = setInterval(updateTorrentsData, config.refreshInterval);
 });
 </script>
