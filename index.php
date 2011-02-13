@@ -168,7 +168,7 @@ foreach($views as $name) {
   echo "<li><a class=\"$class\" href=\"#\" rel=\"$view\">$name</a></li>\n";
 }
 if($debugtab) {
-   echo "<li><a href=\"#\" id=\"debug-tab\">Debug</a></li>\n";
+   echo "<li><a href=\"#\" id=\"debug-tab\" class=\"current\">Debug</a></li>\n";
 }
 ?>
 </ul>

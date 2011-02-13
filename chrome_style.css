@@ -230,7 +230,7 @@ form {
 #navlist li a:link { color: #b2b2b2; }
 #navlist li a:visited { color: #b2b2b2; }
 
-#navlist li a.current:hover {
+#navlist li a.view.current:hover {
   cursor: default;
 }
 #navlist li a:hover, #navlist li a.current {
@@ -266,18 +266,14 @@ div {
   margin: 0px 0px 0px 0px;
   padding: 0px;
 }
-div.debug {
+#debug {
   background-color: #eee;
   margin: 0px;
   padding: 0px 0px 0px 0px;
   border-bottom: 1px solid #262626;
-  overflow: hidden;
+  height: 250px;
+  overflow: auto;
   clear: both;
-}
-div.debug pre {
-  overflow: hidden;
-  margin: 4px;
-  padding: 0px;
 }
 div.container {
   margin: 0px;
