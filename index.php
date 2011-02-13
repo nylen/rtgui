@@ -281,8 +281,8 @@ foreach($cols as $k => $v) {
 </a> | 
 <a href="rssfeed.php">RSS Feed</a> | 
 Page created in <?php echo round(microtime(true) - $execstart, 3) ?> secs.<br />
-Based on <a href="http://rtgui.googlecode.com" target="_blank">rtGui v0.2.7</a> - by Simon Hall 2007-2008<br />
-Modifications by James Nylen 2010
+Based on <a href="http://rtgui.googlecode.com" target="_blank">rtGui v0.2.7</a> by Simon Hall &copy; 2007-2008<br />
+Modifications by James Nylen &copy; 2010-2011 | Theme by Gurvan Guezennec &copy; 2011
 </div>
 </div>
 </div>
