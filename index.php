@@ -232,7 +232,7 @@ foreach($cols as $k => $v) {
     echo "<div class=\"$class\" style=\"width: ${arr[1]}px;\">";
   }
   echo "<a class=\"sort\" href=\"#\" rel=\"$k:$order$reorder\">$arr[0]</a>";
-  echo ($k == 'tracker_hostname' || ($k == 'name' && $use_groups) ? "/" : "</div>\n");
+  echo ($k == 'tracker_hostname' || ($k == 'name' && $use_groups) ? '|' : "</div>\n");
 }
 ?>
 </div>
