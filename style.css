@@ -123,7 +123,6 @@ form {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 5.1em;
   *font-size: 13px;
-  /*line-height: 60px;*/
   color: #b2b2b2;
   text-shadow: -1px -1px 1px #b3b3b3;
   font-weight: bold;
@@ -132,11 +131,11 @@ form {
   text-decoration: none;
 }
 #header #boxright {
-  float: right;
+  position: absolute;
+  right: 5px;
+  top: 15px;
   display: block;
   text-align: right;
-  /*position: relative;
-  top: 30px;*/
   margin: 0px 14px 0px 0px;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 12px;
@@ -146,7 +145,13 @@ form {
   text-shadow: 0 -1px 1px #1d1d1d;
   font-weight: bold;
 }
-
+#header #header-links {
+  color: #b2b2b2;
+  font-weight: bold;
+  position: absolute;
+  top: 43px;
+  left: 150px;
+}
 #header input {
   font-size: 80%;
 }
