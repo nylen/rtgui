@@ -568,8 +568,7 @@ text-decoration:none;
 }
 .row1, .row2 {
   margin: 0px;
-  padding: 0px;
-  min-height: 45px;
+  padding: 0px 0px 4px 0px;
   border: none;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ccc;
