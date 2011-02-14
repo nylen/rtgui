@@ -59,7 +59,8 @@ var config = {
   refreshInterval: <?php echo $refresh_interval; ?>,
   diskAlertThreshold: <?php echo $alertthresh; ?>,
   useGroups: <?php echo $use_groups ? 1 : 0; ?>,
-  debugTab: <?php echo $debugtab ? 1 : 0; ?>
+  debugTab: <?php echo $debugtab ? 1 : 0; ?>,
+  dateAddedFormat: '<?php echo addslashes($date_added_format); ?>'
 };
 var current = {
   view: 'main',

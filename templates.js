@@ -191,9 +191,7 @@ var formatHandlers = {
   },
   
   date_added: function(ts) {
-    var d = new Date(ts * 1000);
-    //return (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear();
-    return d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
+    return date(config.dateAddedFormat, new Date(ts * 1000));
   },
   eta: function(n) {
     if(!(n = Math.round(n))) {

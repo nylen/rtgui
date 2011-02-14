@@ -68,6 +68,9 @@ $feeds[]=array("ibiblio.org","http://torrent.ibiblio.org/feed.php?blockid=3",0);
 $feeds[]=array("etree","http://bt.etree.org/rss/bt_etree_org.rdf",0);
 $feeds[]=array("Utwente","http://borft.student.utwente.nl/%7Emike/oo/bt.rss",1);
 
+// Date format to use for "date added" display (see http://php.net/date)
+$date_added_format = 'n/j/Y'; # American format
+#$date_added_format = 'j/n/Y'; # European format
 
 // Netscape-format cookies file to be used when downloading .torrent files
 $cookies_file = 'cookies.txt';

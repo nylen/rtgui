@@ -1,83 +1,93 @@
 Portions copyright Brett Zamir (http://brett-zamir.me), Kevin van Zonneveld
 (http://kevin.vanzonneveld.net), Onno Marsman, Theriault, Michael White
-(http://getsprink.com), Waldo Malqui Silva, Paulo Ricardo F. Santos, Jack,
-Jonas Raoni Soares Silva (http://www.jsfromhell.com), Philip Peterson, Ates
-Goral (http://magnetiq.com), Legaev Andrey, Alex, Ratheous, Martijn
-Wieringa, Nate, lmeyrick (https://sourceforge.net/projects/bcmath-js/),
-Enrique Gonzalez, Philippe Baumann, Webtoolkit.info
-(http://www.webtoolkit.info/), travc, Carlos R. L. Rodrigues
-(http://www.jsfromhell.com), Jani Hartikainen, Ash Searle
-(http://hexmen.com/blog/), Ole Vrijenhoek, stag019, d3x, Erkekjetter,
-GeekFG (http://geekfg.blogspot.com), T.Wild, Johnny Mast
-(http://www.phpvrouwen.nl), Michael Grier,
+(http://getsprink.com), Waldo Malqui Silva, Paulo Freitas, Jonas Raoni
+Soares Silva (http://www.jsfromhell.com), Jack, Philip Peterson, Ates Goral
+(http://magnetiq.com), Legaev Andrey, Ratheous, Alex, Martijn Wieringa,
+lmeyrick (https://sourceforge.net/projects/bcmath-js/), Nate, Enrique
+Gonzalez, Philippe Baumann, Webtoolkit.info (http://www.webtoolkit.info/),
+Rafał Kukawski (http://blog.kukawski.pl), Ash Searle
+(http://hexmen.com/blog/), Ole Vrijenhoek, travc, Jani Hartikainen, Carlos
+R. L. Rodrigues (http://www.jsfromhell.com), stag019, GeekFG
+(http://geekfg.blogspot.com), WebDevHobo (http://webdevhobo.blogspot.com/),
+Erkekjetter,
 http://stackoverflow.com/questions/57803/how-to-convert-decimal-to-hex-in-javascript,
-pilus, marrtins, Andrea Giammarchi (http://webreflection.blogspot.com),
-WebDevHobo (http://webdevhobo.blogspot.com/), Caio Ariede
-(http://caioariede.com), Thunder.m, Aman Gupta, Martin
-(http://www.erlenwiese.de/), Tyler Akins (http://rumkin.com), Lars Fischer,
-Paul Smith, Alfonso Jimenez (http://www.alfonsojimenez.com), Michael White,
-mdsjack (http://www.mdsjack.bo.it), Pellentesque Malesuada, gettimeofday,
-David, Joris, saulius, Robin, Steven Levithan
-(http://blog.stevenlevithan.com), Public Domain
-(http://www.json.org/json2.js), Kankrelune (http://www.webfaktory.info/),
-Tim de Koning (http://www.kingsquare.nl), Arpad Ray (mailto:arpad@php.net),
-AJ, KELAN, Sakimori, Mailfaker (http://www.weedem.fr/), Oleg Eremeev, Marc
-Palau, Josh Fraser
+Rafał Kukawski (http://blog.kukawski.pl/), T.Wild, pilus, marrtins,
+Michael Grier, Johnny Mast (http://www.phpvrouwen.nl), Andrea Giammarchi
+(http://webreflection.blogspot.com), d3x, Karol Kowalski, Robin, AJ, Joris,
+Steven Levithan (http://blog.stevenlevithan.com), Paul Smith, Arpad Ray
+(mailto:arpad@php.net), Kevin van Zonneveld
+(http://kevin.vanzonneveld.net/), gettimeofday, majak, Imgen Tata
+(http://www.myipdf.com/), Felix Geisendoerfer
+(http://www.debuggable.com/felix), Martin (http://www.erlenwiese.de/),
+mdsjack (http://www.mdsjack.bo.it), Tim de Koning
+(http://www.kingsquare.nl), KELAN, Mailfaker (http://www.weedem.fr/),
+felix, Michael White, Dreamer, Public Domain
+(http://www.json.org/json2.js), David, Nathan, Josh Fraser
 (http://onlineaspect.com/2007/06/08/auto-detect-a-time-zone-with-javascript/),
-Karol Kowalski, Chris, Breaking Par Consulting Inc
+Oleg Eremeev, Breaking Par Consulting Inc
 (http://www.breakingpar.com/bkp/home.nsf/0/87256B280015193F87256CFB006C45F7),
-Mirek Slugen, majak, Felix Geisendoerfer (http://www.debuggable.com/felix),
-gorthaur, Steve Hilder, LH, Stoyan Kyosev (http://www.svest.org/), Der
-Simon (http://innerdom.sourceforge.net/), HKM, echo is bad, nord_ua, Ozh,
-metjay, XoraX (http://www.xorax.info), Eugene Bulkin
-(http://doubleaw.com/), JB, strcasecmp, strcmp, Taras Bogach, Francesco,
-Marco, noname, class_exists, madipta, Alan C, mktime, Douglas Crockford
-(http://javascript.crockford.com), uestla, Frank Forte, David James, Steve
-Clay, J A R, jpfle, Marc Jansen, Paul, Hyam Singer
-(http://www.impact-computing.com/), T. Wild, Ole Vrijenhoek
-(http://www.nervous.nl/), Raphael (Ao RUDLER), kenneth, Brad Touesnard,
-ChaosNo1, Subhasis Deb, Norman "zEh" Fuchs, 0m3r, Sanjoy Roy, Rob, Gilbert,
-Bayron Guevara, paulo kuong, Orlando, duncan, sankai, hitwork, Philippe
-Jausions (http://pear.php.net/user/jausions), Aidan Lister
-(http://aidanlister.com/), ejsanders, Nick Callen, Brian Tafoya
-(http://www.premasolutions.com/), johnrembo, sowberry, Yves Sucaet, Denny
-Wardhana, Ulrich, kilops, dptr1988, john (http://www.jd-tech.net), MeEtc
-(http://yass.meetcweb.com), Peter-Paul Koch
-(http://www.quirksmode.org/js/beat.html), T0bsn, Tim Wiel, Bryan Elliott,
-Alexander Ermolaev (http://snippets.dzone.com/user/AlexanderErmolaev), JT,
-Thomas Beaucourt (http://www.webapp.fr), David Randall, DxGx, Soren Hansen,
-lmeyrick (https://sourceforge.net/projects/bcmath-js/this.), Le Torbi,
-djmix, Lincoln Ramsay, Linuxworld, Thiago Mata
-(http://thiagomata.blog.com), Pedro Tainha (http://www.pedrotainha.com),
-James, Pyerre, Jon Hohle, felix, ger, Russell Walker
-(http://www.nbill.co.uk/), Garagoth, Andrej Pavlovic, Dino, Jamie Beck
-(http://www.terabit.ca/), DtTvB
-(http://dt.in.th/2008-09-16.string-length-in-bytes.html), setcookie, YUI
-Library: http://developer.yahoo.com/yui/docs/YAHOO.util.DateLocale.html,
-Blues at http://hacks.bluesmoon.info/strftime/strftime.js, Andreas, rem,
-meo, Jay Klehr, Kheang Hok Chin (http://www.distantia.ca/), Luke Smith
-(http://lucassmith.name), Rival, Amir Habibi
-(http://www.residence-mixte.com/), Cagri Ekin, Greenseed, mk.keck, Leslie
-Hoare, booeyOH, Ben Bryan, Michael, Christian Doebler, Kirk Strobeck, Brant
-Messenger (http://www.brantmessenger.com/), Rick Waldron, Mick@el, Martin
-Pool, Pierre-Luc Paour, Daniel Esteban, Christoph, Saulo Vallory, Kristof
-Coomans (SCK-CEN Belgian Nucleair Research Centre), rezna, Tomasz
-Wesolowski, Gabriel Paderni, Marco van Oort, Philipp Lenssen,
-penutbutterjelly, Simon Willison (http://simonwillison.net), Anton Ongson,
-Eric Nagel, Bobby Drake, Pul, Blues (http://tech.bluesmoon.info/), Luke
-Godfrey, Diogo Resende, Howard Yeend, vlado houba, Jalal Berrami, Itsacon
-(http://www.itsacon.net/), date, Billy, stensi, Cord, fearphage
-(http://http/my.opera.com/fearphage/), Victor, Matteo, Artur Tchernychev,
-Francois, nobbler, Fox, marc andreu, Nick Kolosov (http://sammy.ru),
-Nathan, Arno, Scott Cariss, Slawomir Kaniecki, ReverseSyntax, Jason Wong
-(http://carrot.org/), Mateusz "loonquawl" Zalega, Manish, Wagner B. Soares,
-3D-GRAF, jakes, Yannoo, gabriel paderni, daniel airton wermann
-(http://wermann.com.br), Atli Þór, Allan Jensen
-(http://www.winternet.no), Benjamin Lupton, davook, Maximusya, FGFEmperor,
-baris ozdil, Luis Salazar (http://www.freaky-media.com/), Tim de Koning,
-taith, Matt Bradley, FremyCompany, T.J. Leahy, Greg Frazier, Valentina De
-Rosa, Tod Gentille, Riddler (http://www.frontierwebdev.com/), Alexander M
-Beedie
+Marc Palau, Mirek Slugen, Chris, Lars Fischer, Tyler Akins
+(http://rumkin.com), Aman Gupta, Thunder.m, Pellentesque Malesuada,
+saulius, Kankrelune (http://www.webfaktory.info/), Alfonso Jimenez
+(http://www.alfonsojimenez.com), Caio Ariede (http://caioariede.com),
+gorthaur, Diplom@t (http://difane.com/), Steve Hilder, Sakimori, Frank
+Forte, djmix, Nick Kolosov (http://sammy.ru), marc andreu, nobbler, Fox,
+Thiago Mata (http://thiagomata.blog.com), lmeyrick
+(https://sourceforge.net/projects/bcmath-js/this.), Douglas Crockford
+(http://javascript.crockford.com), mktime, Linuxworld, john
+(http://www.jd-tech.net), ger, Lincoln Ramsay, jmweb, duncan, date, Adam
+Wallner (http://web2.bitbaro.hu/), paulo kuong, Itsacon
+(http://www.itsacon.net/), Billy, vlado houba, Jalal Berrami, Francois,
+Scott Cariss, sankai, Denny Wardhana, Arno, Bayron Guevara, Mateusz
+"loonquawl" Zalega, Slawomir Kaniecki, ReverseSyntax, Oskar Larsson
+Högfeldt (http://oskar-lh.name/), Marco, madipta, echo is bad, 0m3r,
+T0bsn, Der Simon (http://innerdom.sourceforge.net/), Eugene Bulkin
+(http://doubleaw.com/), Subhasis Deb, JB, EdorFaus, XoraX
+(http://www.xorax.info), Ozh, Thomas Beaucourt (http://www.webapp.fr),
+David Randall, Bryan Elliott, JT, Brad Touesnard, nord_ua, Peter-Paul Koch
+(http://www.quirksmode.org/js/beat.html), MeEtc (http://yass.meetcweb.com),
+josh, LH, Stoyan Kyosev (http://www.svest.org/), Steve Clay, Pyerre,
+Gilbert, Jon Hohle, David James, Tim Wiel, noname, class_exists, T. Wild,
+Ole Vrijenhoek (http://www.nervous.nl/), Marc Jansen, Francesco, Soren
+Hansen, merabi, J A R, Shingo, Raphael (Ao RUDLER), Sanjoy Roy, kenneth,
+FremyCompany, stensi, Kristof Coomans (SCK-CEN Belgian Nucleair Research
+Centre), Devan Penner-Woelk, Pierre-Luc Paour, Martin Pool, Brant Messenger
+(http://www.brantmessenger.com/), Kirk Strobeck, Saulo Vallory, Christoph,
+Wagner B. Soares, Artur Tchernychev, Valentina De Rosa, Jason Wong
+(http://carrot.org/), Daniel Esteban, strftime, Rick Waldron, Mick@el,
+Bjorn Roesbeke (http://www.bjornroesbeke.be/), Bug?, Anton Ongson, Simon
+Willison (http://simonwillison.net), Marco van Oort, Gabriel Paderni, Blues
+(http://tech.bluesmoon.info/), Luke Godfrey, Tomasz Wesolowski, rezna, Eric
+Nagel, Evertjan Garretsen, Pul, Bobby Drake, uestla, Alan C, Ulrich,
+Zahlii, Yves Sucaet, sowberry, Norman "zEh" Fuchs, hitwork, johnrembo,
+Brian Tafoya (http://www.premasolutions.com/), Nick Callen, Steven Levithan
+(stevenlevithan.com), ejsanders, Scott Baker, Philippe Jausions
+(http://pear.php.net/user/jausions), Aidan Lister
+(http://aidanlister.com/), Rob, e-mike, HKM, ChaosNo1, metjay, strcasecmp,
+strcmp, Taras Bogach, jpfle, Alexander Ermolaev
+(http://snippets.dzone.com/user/AlexanderErmolaev), DxGx, kilops, Orlando,
+dptr1988, Le Torbi, James (http://www.james-bell.co.uk/), Pedro Tainha
+(http://www.pedrotainha.com), James, Philipp Lenssen, penutbutterjelly,
+jakes, 3D-GRAF, Yannoo, gabriel paderni, baris ozdil, FGFEmperor, daniel
+airton wermann (http://wermann.com.br), Atli Þór, Howard Yeend, Diogo
+Resende, Allan Jensen (http://www.winternet.no), Benjamin Lupton,
+Maximusya, davook, Greg Frazier, Tod Gentille, Manish, Matt Bradley, Cord,
+fearphage (http://http/my.opera.com/fearphage/), Matteo, Victor, taith, Tim
+de Koning, Alexander M Beedie, Ryan W Tenney (http://ryan.10e.us), Riddler
+(http://www.frontierwebdev.com/), T.J. Leahy, Luis Salazar
+(http://www.freaky-media.com/), Rafał Kukawski, Rival, Luke Smith
+(http://lucassmith.name), Jamie Beck (http://www.terabit.ca/), Ben
+(http://benblume.co.uk/), Russell Walker (http://www.nbill.co.uk/),
+Garagoth, Le Torbi (http://www.letorbi.de/), Andrej Pavlovic, DtTvB
+(http://dt.in.th/2008-09-16.string-length-in-bytes.html), Andreas, Chris
+McMacken, Arnout Kazemier (http://www.3rd-Eden.com), Michael, setcookie,
+Blues at http://hacks.bluesmoon.info/strftime/strftime.js, YUI Library:
+http://developer.yahoo.com/yui/docs/YAHOO.util.DateLocale.html, Dino, rem,
+incidence, Cagri Ekin, Amirouche, Amir Habibi
+(http://www.residence-mixte.com/), Kheang Hok Chin
+(http://www.distantia.ca/), Jay Klehr, booeyOH, Ben Bryan, William, Josep
+Sanz (http://www.ws3.es/), meo, Greenseed, Leslie Hoare, mk.keck, Yen-Wei
+Liu
 
 Dual licensed under the MIT (MIT-LICENSE.txt)
 and GPL (GPL-LICENSE.txt) licenses.
