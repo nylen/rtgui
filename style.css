@@ -456,7 +456,7 @@ div.modal {
   font-weight: bold;
   border-left: 1px dotted #4c4c4c;
 }
-.modal .row1, .modal .row2 {
+.modal .row {
   border-left: 1px solid #1a1a1a;
   border-right: 1px solid #1a1a1a;
   margin: 0px;
@@ -562,15 +562,9 @@ text-decoration:none;
 
 .gray { color: #666; }
 
-.row1 {
+.row {
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
-}
-.row2 {
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
-}
-.row1, .row2 {
   margin: 0px;
   padding: 0px 0px 4px 0px;
   border: none;
@@ -578,7 +572,7 @@ text-decoration:none;
   border-bottom: 1px solid #ccc;
   background: #eee url('./images/bg-row-light.gif') repeat-x top left;
 }
-.row1:hover, .row2:hover {
+.row:hover {
   border-bottom: 1px solid #aaa;
   background: #ddd url('./images/bg-row-mid.gif') repeat-x top left;
 }

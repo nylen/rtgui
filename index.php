@@ -248,8 +248,8 @@ foreach($cols as $k => $v) {
 
 <div id="torrents">
 
-<div class='row1' id="t-none">
-  <div class='namecol' align='center'><p>&nbsp;</p>No torrents to display.<p>&nbsp;</p></div>
+<div class="row" id="t-none">
+  <div class="namecol" align="center"><p>&nbsp;</p>No torrents to display.<p>&nbsp;</p></div>
 </div>
 
 </div><!-- id="torrents" -->

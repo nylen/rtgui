@@ -136,7 +136,7 @@ foreach($tabs as $r_select) {
      echo "<div class='headcol' style='width:90px;'>Priority</div>\n";
      echo "</div>\n";  // end floatright div
      echo "</div>\n";  // end lodheadcol div
-     $thisrow="row1";
+     $thisrow="row";
      $index=0;
      echo "<form action='control.php' method=post>\n";
      foreach($data AS $item) {
@@ -162,7 +162,6 @@ foreach($tabs as $r_select) {
         echo "</div>\n";  // end floatright div
         echo "<div class='spacer'>&nbsp;</div>\n";
         echo "</div>\n";  // end of $thisrow div
-        if ($thisrow=="row1") {$thisrow="row2";} else {$thisrow="row1";}
         $index++;
      }
 
@@ -187,7 +186,7 @@ foreach($tabs as $r_select) {
      echo "<div class='headcol' style='width:90px;'>Enabled</div>\n";
      echo "</div>\n";  // end floatright div
      echo "</div>\n";  // end modalheadcol div
-     $thisrow="row1";
+     $thisrow="row";
      foreach($data AS $item) {
         echo "<div class='$thisrow'>\n";
         echo "<div class='namecol'>\n";
@@ -201,7 +200,6 @@ foreach($tabs as $r_select) {
         echo "</div>\n";  // end floatright div
         echo "<div class='spacer'>&nbsp;</div>\n";
         echo "</div>\n";  // end of $thisrow div      
-        if ($thisrow=="row1") {$thisrow="row2";} else {$thisrow="row1";}
      }
      echo "<div class='bottomthin'> </div>\n";
      echo "</div>\n";  // end container div
@@ -220,7 +218,7 @@ foreach($tabs as $r_select) {
      echo "<div class='headcol' style='width:90px;'>Peer</div>\n";
      echo "</div>\n";  // end floatright div
      echo "</div>\n";  // end modalheadcol div
-     $thisrow="row1";
+     $thisrow="row";
      foreach($data AS $item) {
         echo "<div class='$thisrow'>\n";
         echo "<div class='namecol smalltext'>\n";
@@ -237,7 +235,6 @@ foreach($tabs as $r_select) {
         echo "</div>\n";  // end floatright div
         echo "<div class='spacer'>&nbsp;</div>\n";
         echo "</div>\n";  // end of $thisrow div 
-        if ($thisrow=="row1") {$thisrow="row2";} else {$thisrow="row1";}
      }
      echo "<div class='bottomthin'> </div>\n";
      echo "</div>\n";  // end container div
@@ -263,10 +260,10 @@ foreach($tabs as $r_select) {
      }
      echo "<div class='container'>\n";
      echo "<table border=0 cellspacing=0 cellpadding=5 class='maintable' width='100%'>\n";
-     echo "<tr class='row2'><td class='datacol' align=right><b>Name</b></td><td><span class='torrenttitle $statusstyle'>".mb_wordwrap($thistorrent['name'],60,"<br/>\n",TRUE)."</span></td></tr>\n";
-     echo "<tr class='row1'><td class='datacol' align=right><b>Status</b></td><td><img src='images/".$statusstyle.".gif' width=10 height=9 alt='Status' /> ".$thistorrent['status']."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Name</b></td><td><span class='torrenttitle $statusstyle'>".mb_wordwrap($thistorrent['name'],60,"<br/>\n",TRUE)."</span></td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Status</b></td><td><img src='images/".$statusstyle.".gif' width=10 height=9 alt='Status' /> ".$thistorrent['status']."</td></tr>\n";
 
-     echo "<tr class='row2'><td class='datacol' align=right><b>Priority</b></td><td>";
+     echo "<tr class='row'><td class='datacol' align=right><b>Priority</b></td><td>";
      echo "<form action='control.php' method='post'>";
      echo "<input type='hidden' name='hash' value='".$thistorrent['hash']."' />";
      echo "<select name='set_tpriority'>\n";
@@ -278,20 +275,20 @@ foreach($tabs as $r_select) {
      echo "<input type='submit' value='Set' />\n";
      echo "</form>\n";
 
-     echo "<tr class='row1'><td class='datacol' align=right><b>Status Flags</b></td><td>".$statusflags."</td></tr>\n";
-     echo "<tr class='row2'><td class='datacol' align=right><b>Message</b></td><td>".$thistorrent['message']."</td>";
-     echo "<tr class='row1'><td class='datacol' align=right><b>Completed Bytes</b></td><td>".format_bytes($thistorrent['completed_bytes'])."</td></tr>\n";
-     echo "<tr class='row2'><td class='datacol' align=right><b>Size</b></td><td>".format_bytes($thistorrent['size_bytes'])."</td></tr>\n";
-     echo "<tr class='row1'><td class='datacol' align=right><b>Complete</b></td><td><div class='datacollast'>".$thistorrent['percent_complete']." %<br/>";
+     echo "<tr class='row'><td class='datacol' align=right><b>Status Flags</b></td><td>".$statusflags."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Message</b></td><td>".$thistorrent['message']."</td>";
+     echo "<tr class='row'><td class='datacol' align=right><b>Completed Bytes</b></td><td>".format_bytes($thistorrent['completed_bytes'])."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Size</b></td><td>".format_bytes($thistorrent['size_bytes'])."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Complete</b></td><td><div class='datacollast'>".$thistorrent['percent_complete']." %<br/>";
      echo percentbar($thistorrent['percent_complete'])."</div>";
-     echo "<tr class='row2'><td class='datacol' align=right><b>Down Rate</b></td><td>".format_bytes($thistorrent['down_rate'])."</td></tr>\n";
-     echo "<tr class='row1'><td class='datacol' align=right><b>Down Total</b></td><td>".format_bytes($thistorrent['down_total'])."</td></tr>\n";
-     echo "<tr class='row2'><td class='datacol' align=right><b>Up Rate</b></td><td>".format_bytes($thistorrent['up_rate'])."</td></tr>\n";
-     echo "<tr class='row1'><td class='datacol' align=right><b>Up Total</b></td><td>".format_bytes($thistorrent['up_total'])."</td></tr>\n";
-     echo "<tr class='row2'><td class='datacol' align=right><b>Peers connected</b></td><td>".$thistorrent['peers_connected']."</td></tr>\n";
-     echo "<tr class='row1'><td class='datacol' align=right><b>Peers not connected</b></td><td>".$thistorrent['peers_not_connected']."</td></tr>\n";
-     echo "<tr class='row2'><td class='datacol' align=right><b>Peers complete</b></td><td>".$thistorrent['peers_complete']."</td></tr>\n";
-     echo "<tr class='row1'><td class='datacol' align=right><b>Ratio</b></td><td>".number_format(($thistorrent['ratio']/1000),2)."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Down Rate</b></td><td>".format_bytes($thistorrent['down_rate'])."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Down Total</b></td><td>".format_bytes($thistorrent['down_total'])."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Up Rate</b></td><td>".format_bytes($thistorrent['up_rate'])."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Up Total</b></td><td>".format_bytes($thistorrent['up_total'])."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Peers connected</b></td><td>".$thistorrent['peers_connected']."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Peers not connected</b></td><td>".$thistorrent['peers_not_connected']."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Peers complete</b></td><td>".$thistorrent['peers_complete']."</td></tr>\n";
+     echo "<tr class='row'><td class='datacol' align=right><b>Ratio</b></td><td>".number_format(($thistorrent['ratio']/1000),2)."</td></tr>\n";
      echo "</table>\n";
      echo "</div>\n";
      echo "<div class='bottomthin'> </div>\n";
