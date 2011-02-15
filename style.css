@@ -156,6 +156,10 @@ form {
   font-size: 80%;
 }
 
+#navlist a, #torrents-header a {
+  outline: none;
+}
+
 #torrents-header a.sort {
   padding: 0 7px;
 }
