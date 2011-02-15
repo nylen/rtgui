@@ -96,7 +96,7 @@ $(function() {
       }
     });
   }
-  current.refreshIntervalID = setInterval(updateTorrentsData, config.refreshInterval);
+  current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
 });
 </script>
 <title><?php echo $site_title; ?></title>

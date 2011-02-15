@@ -47,9 +47,8 @@ function hideDialog(doUpdate) {
 }
 
 function updateTorrentsNow() {
-  window.clearInterval(current.refreshIntervalID);
+  window.clearTimeout(current.refreshTimeoutID);
   updateTorrentsData();
-  current.refreshIntervalID = window.setInterval(updateTorrentsData, config.refreshInterval);
 }
 
 // format a number of bytes nicely
@@ -105,6 +104,7 @@ function updateTorrentsData() {
     
     $.extend(true, window.data, changes);
     updateTorrentsHTML(changes, false);
+    current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
   });
 }
 
