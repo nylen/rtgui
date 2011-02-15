@@ -202,7 +202,7 @@ form {
   top: 1px;
 }
 #filters {
-  padding: 2px;
+  padding: 2px 2px 2px 6px;
   margin: 0px;
   border: 1px solid #1a1a1a;
   border-right: none;
@@ -282,7 +282,7 @@ div.tracker {
 }
 
 div {
-  margin: 0px 0px 0px 0px;
+  margin: 0px;
   padding: 0px;
 }
 #debug {
@@ -295,7 +295,7 @@ div {
   clear: both;
 }
 div.container {
-  margin: 67px 0px 0px 0px;
+  margin: 0px;
   padding: 0px;
   background-color: #fff;
   border: none;
