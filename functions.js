@@ -77,34 +77,45 @@ function formatBytes(bytes, zero, after) {
 // Functions to update torrents list
 
 function updateTorrentsData() {
-  $.get('json.php', function(d) {
-    var changes = false;
-    try {
-      changes = JSON.parse(d);
-    } catch(_) {
-      $('#error').html(current.error = d).show();
-      return false;
-    }
-    
-    if(current.error) {
-      current.error = false;
-      $('#error').hide();
-    }
-
-    if(config.debugTab) {
-      if(!changes) {
-        debug('(No changes)');
+  $.ajax({
+    url: 'json.php',
+    cache: false,
+    type: 'GET',
+    success: function(d) {
+      var changes = false;
+      try {
+        changes = JSON.parse(d);
+      } catch(_) {
+        $('#error').html(current.error = d).show();
+        return false;
       }
-      debug(JSON.stringify(changes, null, 2));
+
+      if(current.error) {
+        current.error = false;
+        $('#error').hide();
+      }
+
+      if(config.debugTab) {
+        if(!changes) {
+          debug('(No changes)');
+        }
+        debug(JSON.stringify(changes, null, 2));
+      }
+
+      if(!changes) {
+        return;
+      }
+
+      $.extend(true, window.data, changes);
+      updateTorrentsHTML(changes, false);
+    },
+    error: function(xhr, status, e) {
+      current.error = 'Error updating: ' + status;
+      $('#error').html(current.error).show();
+    },
+    complete: function(xhr, status) {
+      current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
     }
-    
-    if(!changes) {
-      return;
-    }
-    
-    $.extend(true, window.data, changes);
-    updateTorrentsHTML(changes, false);
-    current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
   });
 }
 
