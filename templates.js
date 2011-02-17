@@ -221,7 +221,7 @@ var formatHandlers = {
     return false;
   },
   message: function(m) {
-    return (m && m != 'Tracker: [Tried all trackers.]' ? m : false);
+    return (m ? m : false);
   },
   
   percent_complete: function(n) {

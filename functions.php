@@ -124,6 +124,10 @@ function get_all_torrents($torrents_only=false, $view='main') {
     $t['percent_complete'] = $t['completed_bytes'] / $t['size_bytes'] * 100;
     $t['bytes_remaining'] = $t['size_bytes'] - $t['completed_bytes'];
     
+    if($t['message'] == 'Tracker: [Tried all trackers.]') {
+      $t['message'] = '';
+    }
+
     if($t['is_active'] == 0) {
       $t['status'] = 'Stopped';
     }
