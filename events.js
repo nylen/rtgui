@@ -38,6 +38,16 @@ $(function() {
     return false;
   });
   
+  $('#filter').blur(function() {
+    if($(this).val() == '') {
+      $(this).val(window.defaultFilterText);
+    }
+  }).focus(function() {
+    if($(this).val() == window.defaultFilterText) {
+      $(this).val('');
+    }
+  });
+
   $('#control-form').ajaxForm({
     beforeSubmit: function(formData, form, options) {
       for(var i = 0; i < formData.length; i++) {

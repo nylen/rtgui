@@ -69,6 +69,7 @@ var current = {
   sortDesc: false,
   error: false
 };
+var defaultFilterText = 'Filter';
 </script>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="jquery.form.js"></script>
@@ -97,6 +98,7 @@ $(function() {
     });
   }
   current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
+  $('#filter').trigger('blur');
 });
 </script>
 <title><?php echo $site_title; ?></title>
@@ -158,9 +160,9 @@ if(is_array($header_links) && count($header_links)) {
       </div><!-- id="header" -->
 
       <div id="navcontainer">
-        <div id="filters-container">
-          <input type="text" name="search" id="filters" value="Filter" onfocus="if(this.value==&#39;Filter&#39;)this.value=&#39;&#39;;" onblur="if(this.value==&#39;&#39;)this.value=&#39;Filter&#39;;">
-          <a id="clear-filters" href="#" class="btn-clear-filters"><span>Clear</span></a>
+        <div id="filter-container">
+          <input type="text" name="filter" id="filter" />
+          <a id="clear-filter" href="#" class="btn-clear-filter" title="clear filter"></a>
         </div>
         <ul id="navlist">
 <?php
