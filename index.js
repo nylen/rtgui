@@ -1,25 +1,22 @@
-//
-//  This file is part of rtGui.  http://rtgui.googlecode.com/
-//  Copyright (C) 2007-2008 Simon Hall.
-//  Modifications (C) 2010 James Nylen.
-//
-//  rtGui is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  rtGui is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
-
-
-// Set up event handlers
-
 $(function() {
+  // Perform initialization functions
+
+  $('#dialog').jqm({onHide: onHideDialog});
+
+  updateTorrentsHTML(data, true);
+  current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
+
+  if(current.sortVar) {
+    $('a.sort').each(function() {
+      if($(this).attr('rel').split(':')[0] == current.sortVar) {
+        $(this).addClass(current.sortDesc ? 'sort-desc' : 'sort-asc');
+      }
+    });
+  }
+
+
+  // Set up event handlers
+
   $('#debug-tab').click(function() {
     var dbg = $('#debug:visible').length;
     $(this)[dbg ? 'removeClass' : 'addClass']('current');
@@ -46,7 +43,7 @@ $(function() {
     if($(this).val() == window.defaultFilterText) {
       $(this).val('');
     }
-  });
+  }).trigger('blur');
 
   $('#control-form').ajaxForm({
     beforeSubmit: function(formData, form, options) {

@@ -32,6 +32,20 @@ if($scgi_local) {
   $scgi_port = null;
 }
 
+function file_path_mtime($filename) {
+  return $filename . '?_=' . filemtime($filename);
+}
+
+function include_script($script_filename) {
+  echo '<script type="text/javascript" src="'
+    . file_path_mtime($script_filename) . "\"></script>\n";
+}
+
+function include_stylesheet($stylesheet_filename) {
+  echo '<link rel="stylesheet" type="text/css" href="'
+    . file_path_mtime($stylesheet_filename) . "\" />\n";
+}
+
 require_once 'session.php';
 
 function do_xmlrpc($request) {

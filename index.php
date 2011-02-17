@@ -52,7 +52,6 @@ $_SESSION['last_data'] = $data;
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
-<link rel="stylesheet" type="text/css" href="jqModal.css" />
 <script type="text/javascript">
 // Configuration variables
 var config = {
@@ -70,39 +69,29 @@ var current = {
   error: false
 };
 var defaultFilterText = 'Filter';
+
+var data = <?php echo $data_str; ?>;
 </script>
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="jquery.form.js"></script>
-<script type="text/javascript" src="jqModal.js"></script>
-<script type="text/javascript" src="json2.min.js"></script>
-<script type="text/javascript" src="php.min.js"></script>
-<script type="text/javascript" src="patience_sort.js"></script>
-<script type="text/javascript" src="functions.js"></script>
-<script type="text/javascript" src="templates.js"></script>
-<script type="text/javascript" src="events.js"></script>
+<?php
+include_script('jquery.js');
+include_script('jquery.form.js');
+include_script('jqModal.js');
+include_script('json2.min.js');
+include_script('php.min.js');
+include_script('patience_sort.js');
+include_script('functions.js');
+include_script('templates.js');
+include_script('index.js');
+?>
 <!--[if lt IE 8]>
 <link rel="stylesheet" type="text/css" href="ie.css" />
 <script type="text/javascript" src="ie.js"></script>
 <![endif]-->
-<script type="text/javascript">
-var data = <?php echo $data_str; ?>;
-
-$(function() {
-  $('#dialog').jqm({onHide: onHideDialog});
-  updateTorrentsHTML(data, true);
-  if(current.sortVar) {
-    $('a.sort').each(function() {
-      if($(this).attr('rel').split(':')[0] == current.sortVar) {
-        $(this).addClass(current.sortDesc ? 'sort-desc' : 'sort-asc');
-      }
-    });
-  }
-  current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
-  $('#filter').trigger('blur');
-});
-</script>
 <title><?php echo $site_title; ?></title>
-<link href="style.css" rel="stylesheet" type="text/css" />
+<?php
+include_stylesheet('jqModal.css');
+include_stylesheet('style.css');
+?>
 </head>
 <body>
   <div id="wrap">
