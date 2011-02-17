@@ -131,9 +131,7 @@ form {
   text-decoration: none;
 }
 #header #boxright {
-  position: absolute;
-  right: 5px;
-  top: 15px;
+  float: right;
   display: block;
   text-align: right;
   margin: 0px 14px 0px 0px;
