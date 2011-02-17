@@ -96,10 +96,7 @@ function updateTorrentsData() {
       }
 
       if(config.debugTab) {
-        if(!changes) {
-          debug('(No changes)');
-        }
-        debug(JSON.stringify(changes, null, 2));
+        debug(changes ? JSON.stringify(changes, null, 2) : '(No changes)');
       }
 
       if(!changes) {
