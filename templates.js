@@ -191,7 +191,7 @@ var formatHandlers = {
   },
   
   date_added: function(ts) {
-    return date(config.dateAddedFormat, new Date(ts * 1000));
+    return date(config.dateAddedFormat, ts);
   },
   eta: function(n) {
     if(!(n = Math.round(n))) {
