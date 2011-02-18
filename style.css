@@ -305,9 +305,16 @@ div.tracker {
 }
 
 .bottomtab {
-  padding: 4px 4px 0px 4px;
+  padding: 6px 4px 4px 8px;
   background: #0d0d0d url("./images/bg-footer.jpg") no-repeat top center;
   height: 22px;
+}
+.bottomtab .themed {
+  position: relative;
+  top: -3px;
+}
+.bottomtab #leave-checked {
+  margin-left: 12px;
 }
 
 div {
