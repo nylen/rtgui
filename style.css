@@ -42,12 +42,12 @@ td {
 h1,h2,h3,h4,h5,h6 {
   margin: 0px 0px 0px 0px;
 }
-select {
+select.themed {
   color: #333;
   text-align: left;
   margin-left: 10px;
 }
-select,input {
+input.themed, select.themed {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 9px;
   *font-size: 10px;
@@ -348,6 +348,12 @@ div.errorcol {
   font-size: 80%;
   color: #999;
   margin: 3px 3px 1px 3px;
+}
+.torrent .checkbox {
+  margin: -1px 3px -1px -1px;
+  position: relative;
+  left: 2px;
+  top: 2px;
 }
 
 #torrents-header {

@@ -52,7 +52,7 @@ echo "<h3>Settings</h3>";
 echo "<form method='post' action='settings.php'>\n";
 echo "<div id='options'>";
 echo "<p><label for='setrefresh'>Refresh interval : </label>";
-echo "<select name='setrefresh' id='setrefresh'>\n";
+echo "<select name='setrefresh' class='themed' id='setrefresh'>\n";
 foreach (array(0=>"Off",2000=>"2 secs",5000=>"5 secs",10000=>"10 secs",20000=>"20 secs",30000=>"30 secs",60000=>"1 min",300000=>"5 mins",60000=>"10 mins") as $ms=>$txt) {
    echo "<option value=$ms ".($_SESSION['refresh']==$ms ? "selected" : "").">$txt</option>\n";
 }
@@ -60,7 +60,7 @@ echo "</select>\n";
 echo "</p>\n";
 echo "<p>&nbsp;</p>";
 echo "<p><label>Download limit : </label>";
-echo "<select name='setmaxdown' class='download'>\n";
+echo "<select name='setmaxdown' class='themed' class='download'>\n";
 if ( !in_array(($download_cap/1024),$defspeeds) && $download_cap>0 ) echo "<option value='".$download_cap."' selected>".format_bytes($download_cap)."</option>";
 echo "<option value='0' ".($download_cap==0 ? "selected" : "").">-Unlimited-</option>\n";
 foreach ($defspeeds AS $i) {
@@ -73,7 +73,7 @@ echo "</select>";
 echo "</p>";
 echo "<p>&nbsp;</p>";
 echo "<p><label for='setmaxup'>Upload limit : </label>";
-echo "<select name='setmaxup' id='setmaxup' class='upload'>\n";
+echo "<select name='setmaxup' id='setmaxup' class='themed' class='upload'>\n";
 if ( !in_array(($upload_cap/1024),$defspeeds) && ($upload_cap>0) ) echo "<option value='".$upload_cap."' selected>".format_bytes($upload_cap)."</option>";
 echo "<option value='0' ".($upload_cap==0 ? "selected" : "").">-Unlimited-</option>\n";
 foreach ($defspeeds AS $i) {
@@ -85,7 +85,7 @@ foreach ($defspeeds AS $i) {
 echo "</select>\n";
 echo "</p>\n";
 echo "<div id='modalButtons'>\n";
-echo "<input type='submit' onclick=\"window.top.hideDialog(false);\" value='Cancel' />&nbsp;<input type='submit' name='submit' value='Save' /></p>\n";
+echo "<input type='submit' class='themed' onclick=\"window.top.hideDialog(false);\" value='Cancel' />&nbsp;<input type='submit' name='submit' class='themed' value='Save' /></p>\n";
 echo "</div>\n";
 echo "</div>\n";
 echo "</form>\n";

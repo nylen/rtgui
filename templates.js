@@ -125,7 +125,7 @@ var templates = {
         '<div class="tracker" id="@tracker_hostname">',
           '<a class="filter" href="#" rel="tracker:$tracker_hostname" style="color: $tracker_color">$tracker_hostname</a>',
         '</div>',
-        '<input type="checkbox" name="select[]" id="@checkbox" value="$hash" />',
+        '<input type="checkbox" name="select[]" class="checkbox" id="@checkbox" value="$hash" />',
         '<a class="dialog $status_class" rel="600:550" href="view.php?hash=$hash">$name</a>',
         (config.useGroups ? '<span class="group">(<a class="filter" href="#" id="@group" rel="group:$group">$group</a>)</span>' : ''),
       '</div>',

@@ -236,9 +236,9 @@ foreach($cols as $k => $v) {
       </div><!-- class="container" -->
 
       <div class="bottomtab">
-        <input type="button" class="select-all" value="Select All" />
-        <input type="button" class="unselect-all" value="Unselect All" />
-        <select name="bulkaction" >
+        <input type="button" class="select-all themed" value="Select All" />
+        <input type="button" class="unselect-all themed" value="Unselect All" />
+        <select name="bulkaction" class="themed">
           <optgroup label="With Selected...">
             <option value="stop">Stop</option>
             <option value="start">Start</option>
@@ -252,7 +252,7 @@ foreach($cols as $k => $v) {
             <option value="pri_off">Off</option>
           </optgroup>
         </select>
-        <input type="submit" value="Go" />
+        <input type="submit" value="Go" class="themed" />
         <input type="checkbox" id="leave-checked" name="leave_checked" />
         <label for="leave-checked" class="gray-text">Leave torrents checked</label>
       </div><!-- class="bottomtab" -->

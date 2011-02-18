@@ -91,13 +91,13 @@ echo "<h3 class='".$statusstyle."' align='center'>".mb_wordwrap($thistorrent['na
 // Controls (stop/start/hash check etc)...
 echo "<div class='controlcontainer'>\n";
 if ($thistorrent['is_active']==1) {
-   echo "<input type=button value='Stop' class='buttonstop' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=stop\"' />\n";
+   echo "<input type=button value='Stop' class='buttonstop themed' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=stop\"' />\n";
 } else {
-   echo "<input type=button value='Start' class='buttonstart' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=start\"' />\n";
+   echo "<input type=button value='Start' class='buttonstart themed' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=start\"' />\n";
 }
-echo "<input type=button value='Delete' class='buttondel' onClick='if (confirm(\"Delete torrent - are you sure? (This will not delete data from disk)\")) window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=delete\"' />\n";
-echo "<input type=button value='Hash check' class='buttonhashcheck' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=hashcheck\"' />\n";
-echo "<input type=button value='Refresh' class='buttonrefresh' onClick='window.location.reload();' />\n";
+echo "<input type=button value='Delete' class='buttondel themed' onClick='if (confirm(\"Delete torrent - are you sure? (This will not delete data from disk)\")) window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=delete\"' />\n";
+echo "<input type=button value='Hash check' class='buttonhashcheck themed' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=hashcheck\"' />\n";
+echo "<input type=button value='Refresh' class='buttonrefresh themed' onClick='window.location.reload();' />\n";
 
 echo "</div>\n"; // end of controlcontainer div
 
@@ -152,7 +152,7 @@ foreach($tabs as $r_select) {
         echo "</div>\n";
         echo "<div class='datacol smalltext' style='width:90px;'>".$item['get_completed_chunks']." / ".$item['get_size_chunks']."</div>\n";
         echo "<div class='datacollast smalltext' style='width:90px;'>";
-        echo "<select name='set_fpriority[$index]' class='mediumtext'>\n";
+        echo "<select name='set_fpriority[$index]' class='mediumtext themed'>\n";
         echo "<option value='0' ".($item['get_priority']==0 ? "selected" : "").">Off</option>\n";
         echo "<option value='1' ".($item['get_priority']==1 ? "selected" : "").">Normal</option>\n";
         echo "<option value='2' ".($item['get_priority']==2 ? "selected" : "").">High</option>\n";
@@ -166,7 +166,7 @@ foreach($tabs as $r_select) {
      }
 
      echo "<div align='right' class='bottomtab'>\n";
-     echo "<input type='submit' value='Save' />";
+     echo "<input type='submit' class='themed' value='Save' />";
      echo "</div>\n";
      echo "</form>\n";
      
@@ -266,13 +266,13 @@ foreach($tabs as $r_select) {
      echo "<tr class='row'><td class='datacol' align=right><b>Priority</b></td><td>";
      echo "<form action='control.php' method='post'>";
      echo "<input type='hidden' name='hash' value='".$thistorrent['hash']."' />";
-     echo "<select name='set_tpriority'>\n";
+     echo "<select name='set_tpriority' class='themed'>\n";
      echo "<option value='0' ".($thistorrent['priority']==0 ? "selected" : "").">Off </option>\n";
      echo "<option value='1' ".($thistorrent['priority']==1 ? "selected" : "").">Low </option>\n";
      echo "<option value='2' ".($thistorrent['priority']==2 ? "selected" : "").">Normal </option>\n";
      echo "<option value='3' ".($thistorrent['priority']==3 ? "selected" : "").">High </option>\n";
      echo "</select>\n";
-     echo "<input type='submit' value='Set' />\n";
+     echo "<input type='submit' class='themed' value='Set' />\n";
      echo "</form>\n";
 
      echo "<tr class='row'><td class='datacol' align=right><b>Status Flags</b></td><td>".$statusflags."</td></tr>\n";
@@ -313,11 +313,11 @@ foreach($tabs as $r_select) {
 
      echo "<form action='control.php' method='post' name='directory' onSubmit=\"document.directory.newdir.value=document.getElementById('seldir').innerHTML;\">\n";
      if ($thistorrent['is_active']==1) {
-        echo "<p><input type='submit' name='setdir'  value='Set directory' disabled=1>&nbsp;<i>Torrent must be stopped before changing directory.</i></p>\n";
+        echo "<p><input type='submit' name='setdir' class='themed' value='Set directory' disabled=1>&nbsp;<i>Torrent must be stopped before changing directory.</i></p>\n";
      } else {
         echo "<input type='hidden' name='hash' value='".$thistorrent['hash']."'>\n";
         echo "<input type='hidden' name='newdir' value=''>\n";
-        echo "<input type='submit' name='setdir'  value='Set directory'>\n";
+        echo "<input type='submit' name='setdir' class='themed' value='Set directory'>\n";
      }
      echo "</fieldset>\n";
      echo "</form>\n";  

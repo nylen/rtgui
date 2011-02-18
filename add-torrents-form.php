@@ -32,7 +32,7 @@ require_once 'functions.php';
   </tr>
   <tr class="controls">
     <td class="left">Upload file(s):</td>
-    <td class="right input"><input name="add_files[]" type="file" class="multi" /></td>
+    <td class="right input"><input name="add_files[]" type="file" class="multi themed" /></td>
   </tr>
 <?php if($use_groups) { ?>
   <tr class="controls">
@@ -49,11 +49,11 @@ require_once 'functions.php';
 <?php } ?>
   <tr id="row-next">
     <td class="left"></td>
-    <td class="right"><input type="submit" id="next" value="Next &gt;&gt;" /></td>
+    <td class="right"><input type="submit" id="next" class="themed" value="Next &gt;&gt;" /></td>
   </tr>
   <tr id="row-back" class="hidden">
     <td class="left"></td>
-    <td class="right"><input type="button" id="back" value="&lt;&lt; Back" /></td>
+    <td class="right"><input type="button" id="back" class="themed" value="&lt;&lt; Back" /></td>
   </tr>
 </table>
 </form>
@@ -66,7 +66,7 @@ require_once 'functions.php';
   
   <input type="hidden" name="action" value="add" />
   <input type="hidden" name="group" value="" />
-  <input type="submit" id="add" value="Add selected" disabled="disabled" />
+  <input type="submit" id="add" class="themed" value="Add selected" disabled="disabled" />
 </form>
 
 </div>
