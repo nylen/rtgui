@@ -219,12 +219,11 @@ form {
   text-transform: none;
   float: left;
   font: 14px arial, geneva, verdana, sans-serif;
-  width: 187px;
+  width: 192px;
   background-color: #343434;
   margin-top: 2px;
   color: #919191;
   border: none;
-  border-right: 1px solid #444444;
 
   box-shadow: none;
   -webkit-box-shadow: none;
@@ -239,7 +238,7 @@ a.btn-clear-filter {
   float: right;
   width: 16px;
   height: 16px;
-  margin: 4px 6px 0px 0px;
+  margin: 4px 4px 0px 0px;
   padding: 0px;
 }
 a.btn-clear-filter:hover {
