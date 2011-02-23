@@ -422,139 +422,9 @@ div.spacer {
   margin: 0px;
   padding: 0px;
 }
-.jqmWindow {
-  color: #333;
-  padding: 0px;
-  border: 1px solid #1a1a1a;
-  -webkit-box-shadow: 0px 0px 20px #1a1a1a;
-  -moz-box-shadow: 0px 0px 10px #1a1a1a;
-  background-color: #262626;
-}
-iframe {
-  margin: 0px;
-  padding: 0px;
-  height: 99.3%;
-  width: 99.4%;
-  background-color: #262626;
-}
-div.modal {
-  text-align: left;
-  margin: 0px;
-  padding: 0px;
-  background:   #262626;
-  width: 100%;
-  height: 100%;
-  border: none;
-}
+
 .hidden {
   display: none;
-}
-.modal #controlcontainer {
-}
-.modal #navcontainer {
-  background:   #262626;
-  height: 35px;
-  border-top: 1px solid #383838;
-  border: 1px solid #383838;
-  border-bottom: 1px solid #1a1a1a;
-  margin: 0px;
-  padding: 0px;
-  margin: 20px 0px 0px 0px;
-  background:   url('./images/bg-menu-main-tile.gif') repeat top center;
-}
-.modal #navlist {
-  margin: 5px 0px 0px 5px;
-  padding: 0px;
-}
-.modal .tab {
-  background: none;
-  margin: 0 auto;
-}
-.modal .container {
-  background: none;
-  border: 1px solid #383838;
-  margin: 0 auto;
-  padding: 0px;
-  border: none;
-}
-.modal .modalheadcol {
-  height: 15px;
-  background: url('./images/bg-menu-main-tile.gif') repeat-x top center;
-  border: none;
-  border-top: 1px solid #383838;
-  border-bottom: 1px solid #1a1a1a;
-}
-.modal .headcol {
-  background: none;
-  margin: 3px 0px 0px 0px;
-  padding: 0px;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 9px;
-  *font-size: 10px;
-  color: #b2b2b2;
-  text-transform: uppercase;
-  text-shadow: 0 -2px 1px #1d1d1d;
-  font-weight: bold;
-  border-left: 1px dotted #4c4c4c;
-}
-.modal .row {
-  border-left: 1px solid #1a1a1a;
-  border-right: 1px solid #1a1a1a;
-  margin: 0px;
-  padding: 0px;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ccc;
-  min-height: 37px;
-}
-.modal .namecol {
-  width: auto;
-  margin: 2px 5px 0px 5px;
-  padding: 0px;
-}
-.modal .datacol {
-  margin: 0px;
-  padding: 0px;
-}
-.modal .datacol #smalltext {
-  border: 1px solid red;
-}
-.modal .floatright {
-}
-.modal input {
-  background-color: #333;
-}
-.modal #modalButtons {
-  position: absolute;
-  right: 2px;
-  bottom: 7px;
-}
-.modal #modalButtons input {
-  margin-right: 5px;
-  padding-top: 3px;
-  padding-left: 7px;
-  padding-right: 7px;
-  color: #ccc;
-}
-
-.modal h1, .modal h3 {
-  padding: 5px 1em 4px 1em;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  *font-size: 15px;
-  font-weight: bold;
-  color: #b2b2b2;
-  text-transform: uppercase;
-  text-shadow: 0 -2px 1px #1d1d1d;
-  background: #262626 url('./images/bg-wrap.gif') no-repeat -1px center;
-  border-bottom: 1px solid #1a1a1a;
-  height: 18px;
-}
-
-.modal #options {
-  border-top: 1px solid #383838;
-  margin: 0px;
-  padding: 10px;
-  color: #999;
 }
 div.controls {
   float: left;
@@ -571,11 +441,12 @@ div.controlcontainer {
   font-size: smaller;
 }
 .smalltext a, .smalltext a:hover {
-text-decoration:none;
+  text-decoration:none;
 }
 .mediumtext {
   font-size: 90%;
 }
+
 .completeactive {
   color: #339933;
   font-weight: bold;
@@ -590,6 +461,7 @@ text-decoration:none;
 .incompleteinactive {
   color: #555555;
 }
+
 .datacol {
   border-right: 1px dotted #999999;
 }
@@ -599,9 +471,12 @@ text-decoration:none;
 .upload {
   color: #CC3333;
 }
-.green {  color: #7Ea610; }
-
-.gray { color: #666; }
+.green {
+  color: #7Ea610;
+}
+.gray {
+  color: #666;
+}
 
 .row {
   border-top: 1px solid #eee;

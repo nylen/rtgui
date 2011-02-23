@@ -75,7 +75,7 @@ var data = <?php echo $data_str; ?>;
 <?php
 include_script('jquery.js');
 include_script('jquery.form.js');
-include_script('jqModal.js');
+include_script('jquery-ui-1.8.9-files/js/jquery-ui-1.8.9.custom.min.js');
 include_script('json2.min.js');
 include_script('php.min.js');
 include_script('patience_sort.js');
@@ -89,8 +89,9 @@ include_script('index.js');
 <![endif]-->
 <title><?php echo $site_title; ?></title>
 <?php
-include_stylesheet('jqModal.css');
+include_stylesheet('jquery-ui-1.8.9-files/css/ui-darkness/jquery-ui-1.8.9.custom.css');
 include_stylesheet('style.css');
+include_stylesheet('dialog.css');
 ?>
 </head>
 <body>
@@ -168,7 +169,7 @@ if($debugtab) {
         </ul>
       </div><!-- id="navcontainer" -->
 
-      <div id="dialog" class="jqmWindow"></div>
+      <div id="dialog"></div>
 
       <div id="torrents-header">
 <?php
@@ -268,7 +269,7 @@ foreach($cols as $k => $v) {
         <a href="rssfeed.php">RSS Feed</a> |
         Page created in <?php echo round(microtime(true) - $execstart, 3) ?> secs.<br />
         Based on <a href="http://rtgui.googlecode.com" target="_blank">rtGui v0.2.7</a> by Simon Hall &copy; 2007-2008<br />
-        Modifications by James Nylen &copy; 2010-2011 | Theme by Gurvan Guezennec &copy; 2011
+        Modifications by James Nylen, Gurvan Guezennec &copy; 2010-2011
       </div>
     </div><!-- id="footer" -->
 

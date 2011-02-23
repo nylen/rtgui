@@ -9,6 +9,7 @@ require_once 'functions.php';
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
+<link href="dialog.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="jquery.hsjn.js"></script>
 <script type="text/javascript" src="jquery.form.js"></script>
@@ -18,9 +19,10 @@ require_once 'functions.php';
 <script type="text/javascript" src="add-torrents.js"></script>
 </head>
 
-<body>
-<div class="modal">
+<body class="modal">
+<?php if(!$_GET['dialog']) { ?>
 <h3>Add torrent(s)</h3>
+<?php } ?>
 
 <div id='options'>
 <form id="form1" method="post" enctype="multipart/form-data" action="add-torrents.php">
@@ -69,7 +71,6 @@ require_once 'functions.php';
   <input type="submit" id="add" class="themed" value="Add selected" disabled="disabled" />
 </form>
 
-</div>
 </div>
 </body>
 </html>

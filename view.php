@@ -38,6 +38,7 @@ $active_tab = $tabs[0];
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
+<link href="dialog.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript">
 <?php if(!$only_one_tab) { ?>
@@ -61,8 +62,7 @@ $(function() {
 <?php } ?>
 </script>
 </head>
-<body>
-<div class='modal'>
+<body class="modal">
 <?php
 // Get torrent info...  (get all downloads, then filter out just this one by the hash)
 if(is_array($_SESSION['last_data']) && !$_SESSION['must_get_all']) {
@@ -80,13 +80,15 @@ foreach($alltorrents as $torrent) {
 
 if(!$thistorrent) {
   // probably the current torrent was just deleted
-  die('<script>top.hideDialog(true);</script></div></body></html>');
+  die('<script>top.hideDialog(true);</script></body></html>');
 }
 
 if ($thistorrent['complete']==1) { $statusstyle="complete"; } else { $statusstyle="incomplete"; }
 if ($thistorrent['is_active']==1) { $statusstyle.="active"; } else { $statusstyle.="inactive"; }
 
-echo "<h3 class='".$statusstyle."' align='center'>".mb_wordwrap($thistorrent['name'],52,"<br/>\n",TRUE)."</h3>\n";
+if(!$_GET['dialog']) {
+  echo "<h3>$thistorrent[name]</h3>\n";
+}
 
 // Controls (stop/start/hash check etc)...
 echo "<div class='controlcontainer'>\n";
@@ -346,6 +348,5 @@ foreach($tabs as $r_select) {
 }
 
 ?>
-</div>
 </body>
 </html>

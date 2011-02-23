@@ -1,7 +1,27 @@
 $(function() {
   // Perform initialization functions
 
-  $('#dialog').jqm({onHide: onHideDialog});
+  var hideIframe = function() {
+    $('#dialog-iframe').css('display', 'none');
+  };
+  var showIframe = function() {
+    $('#dialog-iframe').css('display', '');
+  };
+
+  $('#dialog').dialog({
+    modal: true,
+    autoOpen: false,
+    minWidth: 150,
+    minHeight: 150,
+    beforeClose: beforeCloseDialog,
+    dragStart: hideIframe,
+    dragStop: showIframe,
+    resizeStart: hideIframe,
+    resizeStop: showIframe,
+    // For some reason dragging and resizing are VERY slow...
+    draggable: false,
+    resizable: false
+  });
 
   updateTorrentsHTML(data, true);
   current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
@@ -109,8 +129,14 @@ $(function() {
   });
   
   $('a.dialog').live('click', function() {
-    var dims = $(this).attr('rel').split(':');
-    showDialog($(this).attr('href'), dims[0], dims[1]);
+    var $this = $(this);
+    var href = $this.attr('href');
+    if(!/dialog=1/.test(href)) {
+      // Dialog pages know not to display a title if $_GET['dialog'] is set
+      href += (/\?/.test(href) ? '&' : '?') + 'dialog=1';
+    }
+    var dims = $this.attr('rel').split(':');
+    showDialog(href, $this.text(), dims[0], dims[1]);
     return false;
   });
   

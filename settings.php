@@ -44,11 +44,13 @@ if (isset($r_submit)) {
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
+<link href="dialog.css" rel="stylesheet" type="text/css" />
 </head>
-<body >
-<div class='modal'>
+<body class="modal">
 <?php
-echo "<h3>Settings</h3>";
+if(!$_GET['dialog']) {
+  echo "<h3>Settings</h3>";
+}
 echo "<form method='post' action='settings.php'>\n";
 echo "<div id='options'>";
 echo "<p><label for='setrefresh'>Refresh interval : </label>";
@@ -90,6 +92,5 @@ echo "</div>\n";
 echo "</div>\n";
 echo "</form>\n";
 ?>
-</div>
 </body>
 </html>

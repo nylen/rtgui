@@ -9,38 +9,31 @@ function error(msg) {
   throw new Error(msg);
 }
 
-function showDialog(url, width, height) {
+function showDialog(url, title, width, height) {
   var w = Math.min(parseInt(width),  $(window).width()  - 40);
   var h = Math.min(parseInt(height), $(window).height() - 40);
   var px = function(n) {
     return Math.round(n) + 'px';
   };
   $('#dialog')
-  .html('<iframe src="' + htmlspecialchars(url) + '" />')
-  .css({
-    width: px(w),
-    height: px(h),
-    marginLeft: px(-w/2),
-    marginTop: px(-h/2)
-  }).jqmShow();
+  .html('<iframe id="dialog-iframe" src="' + htmlspecialchars(url) + '" />')
+  .dialog('option', 'title', title)
+  .dialog('option', 'width', w)
+  .dialog('option', 'height', h)
+  .dialog('option', 'position', 'center')
+  .dialog('open');
 }
 
-function onHideDialog(h) {
+function beforeCloseDialog() {
   if(typeof window.hideDialogCallback == 'function') {
     var result = window.hideDialogCallback();
     window.hideDialogCallback = null;
-    if(!result) {
-      return;
-    }
   }
-  h.w.hide();
-  if(h.o) {
-    h.o.remove();
-  }
+  return true;
 }
 
 function hideDialog(doUpdate) {
-  $('#dialog').jqmHide();
+  $('#dialog').dialog('close');
   if(doUpdate) {
     updateTorrentsNow();
   }
