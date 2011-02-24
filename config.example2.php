@@ -27,6 +27,9 @@ $site_title = 'rtGui (main)';
 // rtorrent 'watch' directory (used for upload torrent)
 $watchdir="/media/bit.torrents/";
 
+// Theme to use for site
+$theme = 'base';
+
 // Path to report disk usage
 $downloaddir="/media/1000/";
 

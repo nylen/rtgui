@@ -43,8 +43,10 @@ if (isset($r_submit)) {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
-<link href="style.css" rel="stylesheet" type="text/css" />
-<link href="dialog.css" rel="stylesheet" type="text/css" />
+<?php
+include_stylesheet('style.css', true);
+include_stylesheet('dialog.css', true);
+?>
 </head>
 <body class="modal">
 <?php

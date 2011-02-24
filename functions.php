@@ -41,7 +41,17 @@ function include_script($script_filename) {
     . file_path_mtime($script_filename) . "\"></script>\n";
 }
 
-function include_stylesheet($stylesheet_filename) {
+function include_stylesheet($stylesheet_filename, $use_theme=false) {
+  global $theme;
+  if($use_theme) {
+    foreach(array($theme, 'base') as $test) {
+      $new_filename = "themes/$test/$stylesheet_filename";
+      if(file_exists($new_filename)) {
+        $stylesheet_filename = $new_filename;
+        break;
+      }
+    }
+  }
   echo '<link rel="stylesheet" type="text/css" href="'
     . file_path_mtime($stylesheet_filename) . "\" />\n";
 }

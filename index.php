@@ -90,8 +90,8 @@ include_script('index.js');
 <title><?php echo $site_title; ?></title>
 <?php
 include_stylesheet('jquery-ui-1.8.9-files/css/ui-darkness/jquery-ui-1.8.9.custom.css');
-include_stylesheet('style.css');
-include_stylesheet('dialog.css');
+include_stylesheet('style.css', true);
+include_stylesheet('dialog.css', true);
 ?>
 </head>
 <body>
@@ -172,55 +172,42 @@ if($debugtab) {
       <div id="dialog"></div>
 
       <div id="torrents-header">
-<?php
-// Generate header links
-// variable_name      => ColName:width:add-class (default :90px:[none])
-$cols = array(
-  '+name!'            => 'Name:110',
-  '+group'            => 'Grp',
-  '+status'           => 'Status',
-  '+percent_complete' => 'Done',
-  '-bytes_remaining'  => 'Remain',
-  '-size_bytes!'      => 'Size',
-  '-down_rate'        => 'Down',
-  '-up_rate'          => 'Up',
-  '+up_total!'        => 'Seeded',
-  '+ratio!'           => 'Ratio:71',
-  '-peers_summary'    => 'Peers:100',
-  '+priority_str'     => 'Pri:72',
-  '+tracker_hostname' => 'Trk:116',
-  '-date_added!'      => 'Date',
-);
-
-foreach($cols as $k => $v) {
-  // If a field name begins with +, its default sort order is
-  // ascending.  - means descending.
-  $order = ($k[0] == '+' ? 'asc' : 'desc');
-  $k = substr($k, 1);
-  $reorder = '';
-  if(substr($k, strlen($k)-1) == '!') {
-    // If a field name ends in ! and the list is currently sorted by
-    // that field, the client needs to recompute sort order if that
-    // field changes.
-    $reorder = ':true';
-    $k = substr($k, 0, strlen($k)-1);
-  }
-
-  if($k == 'group' && !$use_groups) {
-    continue;
-  }
-  $arr = explode(':', $v);
-  if(count($arr) < 2) {
-    $arr[1] = 90;
-  }
-  $class = trim("headcol $arr[2]");
-  if($k != 'date_added' && $k != 'group') {
-    echo "<div class=\"$class\" style=\"width: ${arr[1]}px;\">";
-  }
-  echo "<a class=\"sort\" href=\"#\" rel=\"$k:$order$reorder\">$arr[0]</a>";
-  echo ($k == 'tracker_hostname' || ($k == 'name' && $use_groups) ? '|' : "</div>\n");
-}
-?>
+        <div class="headcol column-name-grp">
+          <a class="sort" href="#" rel="name:asc:true">Name</a>|<a class="sort" href="#" rel="group:asc">Grp</a>
+        </div>
+        <div class="headcol column-status">
+          <a class="sort" href="#" rel="status:asc">Status</a>
+        </div>
+        <div class="headcol column-done">
+          <a class="sort" href="#" rel="percent_complete:asc">Done</a>
+        </div>
+        <div class="headcol column-remain">
+          <a class="sort" href="#" rel="bytes_remaining:desc">Remain</a>
+        </div>
+        <div class="headcol column-size">
+          <a class="sort" href="#" rel="size_bytes:desc:true">Size</a>
+        </div>
+        <div class="headcol column-down">
+          <a class="sort" href="#" rel="down_rate:desc">Down</a>
+        </div>
+        <div class="headcol column-up">
+          <a class="sort" href="#" rel="up_rate:desc">Up</a>
+        </div>
+        <div class="headcol column-seeded">
+          <a class="sort" href="#" rel="up_total:asc:true">Seeded</a>
+        </div>
+        <div class="headcol column-ratio">
+          <a class="sort" href="#" rel="ratio:asc:true">Ratio</a>
+        </div>
+        <div class="headcol column-peers">
+          <a class="sort" href="#" rel="peers_summary:desc">Peers</a>
+        </div>
+        <div class="headcol column-priority">
+          <a class="sort" href="#" rel="priority_str:asc">Pri</a>
+        </div>
+        <div class="headcol column-tracker-date">
+          <a class="sort" href="#" rel="tracker_hostname:asc">Trk</a>|<a class="sort" href="#" rel="date_added:desc:true">Date</a>
+        </div>
       </div><!-- id="torrents-header" -->
 
       <div class="spacer"></div>
