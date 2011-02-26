@@ -51,7 +51,8 @@ $_SESSION['last_data'] = $data;
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="shortcut icon" href="favicon.ico" />
+<link rel="icon" href="favicon.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <title><?php echo $site_title; ?></title>
 <?php
 include_stylesheet('jquery-ui-1.8.9-files/css/ui-darkness/jquery-ui-1.8.9.custom.css');
