@@ -120,6 +120,7 @@ if(!$r_ajax) {
   rtgui_session_start();
   $_SESSION['must_get_all'] = true;
   session_write_close();
-  @header('Location: ' . $_SERVER['HTTP_REFERER']);
+  $hash = ($r_tab ? "#$r_tab" : '');
+  @header('Location: ' . $_SERVER['HTTP_REFERER'] . $hash);
 }
 ?>
