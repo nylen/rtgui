@@ -141,13 +141,8 @@ $(function() {
   });
   
   $('a.ajax').live('click', function() {
-    var stdMessage = 'Are you sure you want to remove this torrent';
-    var messages = {
-      'delete': stdMessage + '?  Its data will not be deleted.',
-      'purge': stdMessage + ' AND delete its data?'
-    };
     if($(this).hasClass('confirm')
-    && !confirm(messages[$(this).attr('rel')])) {
+    && !confirmWithMessage($(this).attr('rel'))) {
       return false;
     }
     $.post($(this).attr('href'), {ajax: true}, function(d) {

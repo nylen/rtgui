@@ -81,6 +81,7 @@ include_script('php.min.js');
 include_script('patience_sort.js');
 include_script('functions.js');
 include_script('templates.js');
+include_script('confirmMessages.js');
 include_script('index.js');
 ?>
 <!--[if lt IE 8]>

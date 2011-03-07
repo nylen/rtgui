@@ -49,50 +49,99 @@ include_stylesheet('dialog.css', true);
 ?>
 </head>
 <body class="modal">
+<?php if(!$_GET['dialog']) { ?>
+  <h3>Settings</h3>
+<?php } ?>
+  <form method="post" action="settings.php">
+    <div id="options">
+
+      <p><label for="setrefresh">Refresh interval : </label>
+      <select name="setrefresh" class="themed" id="setrefresh">
 <?php
-if(!$_GET['dialog']) {
-  echo "<h3>Settings</h3>";
+foreach(array(
+  0 => 'Off',
+  2000 => '2 secs',
+  5000 => '5 secs',
+  10000 => '10 secs',
+  20000 => '20 secs',
+  30000 => '30 secs',
+  60000 => '1 min',
+  300000 => '5 mins',
+  60000 => '10 mins'
+) as $ms => $txt) {
+  $selected = ($_SESSION['refresh'] == $ms ? ' selected="selected"' : '');
+  echo <<<HTML
+        <option value="$ms"$selected>$txt</option>
+
+HTML;
+} ?>
+      </select>
+      </p>
+
+      <p>&nbsp;</p>
+      <p><label>Download limit : </label>
+      <select name="setmaxdown" class="themed" class="download">
+<?php
+if(!in_array($download_cap/1024, $defspeeds) && $download_cap > 0) {
+  $bytes = format_bytes($download_cap);
+  echo <<<HTML
+        <option value="$download_cap" selected="selected">$bytes</option>
+
+HTML;
 }
-echo "<form method='post' action='settings.php'>\n";
-echo "<div id='options'>";
-echo "<p><label for='setrefresh'>Refresh interval : </label>";
-echo "<select name='setrefresh' class='themed' id='setrefresh'>\n";
-foreach (array(0=>"Off",2000=>"2 secs",5000=>"5 secs",10000=>"10 secs",20000=>"20 secs",30000=>"30 secs",60000=>"1 min",300000=>"5 mins",60000=>"10 mins") as $ms=>$txt) {
-   echo "<option value=$ms ".($_SESSION['refresh']==$ms ? "selected" : "").">$txt</option>\n";
-}
-echo "</select>\n";
-echo "</p>\n";
-echo "<p>&nbsp;</p>";
-echo "<p><label>Download limit : </label>";
-echo "<select name='setmaxdown' class='themed' class='download'>\n";
-if ( !in_array(($download_cap/1024),$defspeeds) && $download_cap>0 ) echo "<option value='".$download_cap."' selected>".format_bytes($download_cap)."</option>";
-echo "<option value='0' ".($download_cap==0 ? "selected" : "").">-Unlimited-</option>\n";
+$selected = ($download_cap == 0 ? ' selected="selected"' : '');
+echo <<<HTML
+        <option value="0"$selected>-Unlimited-</option>
+
+HTML;
 foreach ($defspeeds AS $i) {
-   $x=($i*1024);
-   echo "<option value='$x' ";
-   if ($x==$download_cap) echo "selected";
-   echo ">".format_bytes($x)."</option>\n";
+  $x = $i * 1024;
+  $bytes = format_bytes($x);
+  $selected = ($x == $download_cap ? ' selected="selected"' : '');
+  echo <<<HTML
+        <option value="$x"$selected>$bytes</option>
+
+HTML;
 }
-echo "</select>";
-echo "</p>";
-echo "<p>&nbsp;</p>";
-echo "<p><label for='setmaxup'>Upload limit : </label>";
-echo "<select name='setmaxup' id='setmaxup' class='themed' class='upload'>\n";
-if ( !in_array(($upload_cap/1024),$defspeeds) && ($upload_cap>0) ) echo "<option value='".$upload_cap."' selected>".format_bytes($upload_cap)."</option>";
-echo "<option value='0' ".($upload_cap==0 ? "selected" : "").">-Unlimited-</option>\n";
-foreach ($defspeeds AS $i) {
-   $x=($i*1024);
-   echo "<option value='$x' ";
-   if ($x==$upload_cap) echo "selected";
-   echo ">".format_bytes($x)."</option>\n";
-}
-echo "</select>\n";
-echo "</p>\n";
-echo "<div id='modalButtons'>\n";
-echo "<input type='submit' class='themed' onclick=\"window.top.hideDialog(false);\" value='Cancel' />&nbsp;<input type='submit' name='submit' class='themed' value='Save' /></p>\n";
-echo "</div>\n";
-echo "</div>\n";
-echo "</form>\n";
 ?>
+      </select>
+      </p>
+
+      <p>&nbsp;</p>
+      <p><label>Upload limit : </label>
+      <select name="setmaxup" class="themed" class="upload">
+<?php
+if(!in_array($upload_cap/1024, $defspeeds) && $upload_cap > 0) {
+  $bytes = format_bytes($upload_cap);
+  echo <<<HTML
+        <option value="$upload_cap" selected="selected">$bytes</option>
+
+HTML;
+}
+$selected = ($upload_cap == 0 ? ' selected="selected"' : '');
+echo <<<HTML
+        <option value="0"$selected>-Unlimited-</option>
+
+HTML;
+foreach ($defspeeds AS $i) {
+  $x = $i * 1024;
+  $bytes = format_bytes($x);
+  $selected = ($x == $upload_cap ? ' selected="selected"' : '');
+  echo <<<HTML
+        <option value="$x"$selected>$bytes</option>
+
+HTML;
+}
+?>
+      </select>
+      </p>
+
+      <div id="modalButtons">
+        <input type="submit" class="themed" onclick="window.top.hideDialog(false);" value="Cancel" />
+        <input type="submit" name="submit" class="themed" value="Save" />
+      </div>
+
+    </div>
+  </form>
 </body>
 </html>

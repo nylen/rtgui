@@ -37,318 +37,504 @@ $active_tab = $tabs[0];
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
+<script type="text/javascript">
+var currentHash = '<?php echo $r_hash; ?>';
+</script>
 <?php
 include_stylesheet('style.css', true);
 include_stylesheet('dialog.css', true);
 include_script('jquery.js');
-?>
-<script type="text/javascript">
-<?php if(!$only_one_tab) { ?>
-$(function() {
-  $('a.tab').click(function() {
-    var $this = $(this);
-    var t = $this.attr('rel');
-    $('div.tab').addClass('hidden');
-    $('#tab-' + t).removeClass('hidden');
-    $('a.tab').removeClass('current');
-    $this.addClass('current');
-    document.location.hash = t;
-    return false;
-  });
-  
-  var h = document.location.hash.replace(/^#/, '');
-  if(/^[a-z]+$/.test(h)) {
-    $('a.tab[rel=' + h + ']').trigger('click');
-  }
-});
-<?php } ?>
-</script>
-</head>
-<body class="modal">
-<?php
+include_script('confirmMessages.js');
+include_script('view.js');
+
+
+
 // Get torrent info...  (get all downloads, then filter out just this one by the hash)
 if(is_array($_SESSION['last_data']) && !$_SESSION['must_get_all']) {
-  $alltorrents = $_SESSION['last_data']['torrents'];
+  $all_torrents = $_SESSION['last_data']['torrents'];
 } else {
   $_SESSION['must_get_all'] = false;
-  $alltorrents = get_all_torrents(true);
+  $all_torrents = get_all_torrents(true);
 }
 session_write_close();
 
-$thistorrent = false;
-foreach($alltorrents as $torrent) {
-   if ($r_hash==$torrent['hash']) $thistorrent=$torrent;
+$this_torrent = false;
+foreach($all_torrents as $torrent) {
+  if($r_hash == $torrent['hash']) $this_torrent = $torrent;
 }
 
-if(!$thistorrent) {
+if(!$this_torrent) {
   // probably the current torrent was just deleted
   die('<script>top.hideDialog(true);</script></body></html>');
 }
 
-if ($thistorrent['complete']==1) { $statusstyle="complete"; } else { $statusstyle="incomplete"; }
-if ($thistorrent['is_active']==1) { $statusstyle.="active"; } else { $statusstyle.="inactive"; }
+$status_style = ($this_torrent['complete']  ? 'complete' : 'incomplete')
+              . ($this_torrent['is_active'] ? 'active'   : 'inactive');
 
-if(!$_GET['dialog']) {
-  echo "<h3>$thistorrent[name]</h3>\n";
-}
-
-// Controls (stop/start/hash check etc)...
-echo "<div class='controlcontainer'>\n";
-if ($thistorrent['is_active']==1) {
-   echo "<input type=button value='Stop' class='buttonstop themed' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=stop\"' />\n";
+if($_GET['dialog']) {
+  $dialog_query_str = '&amp;dialog=1';
 } else {
-   echo "<input type=button value='Start' class='buttonstart themed' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=start\"' />\n";
+  echo "<h3>$this_torrent[name]</h3>\n";
+  $dialog_query_str = '';
 }
-echo "<input type=button value='Delete' class='buttondel themed' onClick='if (confirm(\"Delete torrent - are you sure? (This will not delete data from disk)\")) window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=delete\"' />\n";
-echo "<input type=button value='Hash check' class='buttonhashcheck themed' onClick='window.location=\"control.php?hash=".$thistorrent['hash']."&amp;cmd=hashcheck\"' />\n";
-echo "<input type=button value='Refresh' class='buttonrefresh themed' onClick='window.location.reload();' />\n";
 
-echo "</div>\n"; // end of controlcontainer div
+?>
+</head>
+<body class="modal">
+<?php
 
-// Select view...
-echo "<div id='navcontainer'>\n";
-echo "<ul id='navlist'>\n";
+
+
+// ------------------------------------------------
+// --- Controls
+// ------------------------------------------------
+?>
+  <div class="controlcontainer">
+<?php
+$command = ($this_torrent['is_active'] ? 'stop' : 'start');
+$Command = ucfirst($command);
+echo <<<HTML
+    <input type="button" value="$Command"
+      rel="$command" id="btn-$command"
+      class="button$command command-button themed" />
+
+HTML;
+?>
+    <input type="button" value="Delete"
+      rel="delete" id="btn-delete"
+      class="buttondel command-button confirm themed" />
+    <input type="button" value="Hash check"
+      rel="hashcheck" id="btn-hash-check"
+      class="buttonhashcheck command-button themed" />
+    <input type="button" value="Refresh"
+      id="btn-refresh"
+      class="buttonrefresh themed" />
+
+  </div>
+
+  <div id="navcontainer">
+    <ul id="navlist">
+<?php
+$tab_link_class = ($only_one_tab ? 'tab' : 'tab tab-multi');
+$tab_link_class_active = ($only_one_tab ? 'tab current' : 'tab tab-multi current');
+$tab_div_class = ($only_one_tab ? 'tab' : 'tab hidden');
+$tab_div_class_active = 'tab';
+
 $all_tabs = array('Files', 'Tracker', 'Peers', 'Torrent', 'Storage');
 if($debugtab) {
   $all_tabs[] = 'Debug';
 }
 foreach($all_tabs as $tab) {
   $select = strtolower($tab);
-  $class = ($active_tab == $select ? 'tab current' : 'tab');
-  echo "<li><a class=\"$class\" rel=\"$select\" href=\"?select=$select&amp;hash=$r_hash\">$tab</a></li>\n";
+  $class = ($active_tab == $select ? $tab_link_class_active : $tab_link_class);
+  echo <<<HTML
+      <li><a class="$class" rel="$select" href="?select=$select&amp;hash=$r_hash$dialog_query_str">$tab</a></li>
+
+HTML;
 }
-echo "</ul>\n";
-echo "</div>\n";
+?>
+    </ul>
+  </div>
 
-$div_class = ($only_one_tab ? 'tab' : 'tab hidden');
 
+
+<?php
 foreach($tabs as $r_select) {
-  
-  $this_class = ($r_select == $active_tab ? 'tab' : $div_class);
-  echo "<div class=\"$this_class\" id=\"tab-$r_select\">\n";
 
-  // Display file info...
-  if ($r_select=="files") {
-     $data=get_file_list($r_hash);
-     echo "<div class='container'>\n";
-     echo "<div class='modalheadcol'>\n";
-     echo "<div class='headcol' style='width:190px; border:none;'>Filename</div>\n";
-     echo "<div class='floatright'>";
-     echo "<div class='headcol' style='width:90px;'>Size</div>\n";
-     echo "<div class='headcol' style='width:90px;'>Done</div>\n";
-     echo "<div class='headcol' style='width:90px;'>Chunks</div>\n";
-     echo "<div class='headcol' style='width:90px;'>Priority</div>\n";
-     echo "</div>\n";  // end floatright div
-     echo "</div>\n";  // end lodheadcol div
-     $thisrow="row";
-     $index=0;
-     echo "<form action='control.php' method=post>\n";
-     foreach($data AS $item) {
-        echo "<div class='$thisrow'>\n";
-        echo "<div class='namecol'>\n";
-        echo mb_wordwrap($item['get_path'],90,"<br/>\n",TRUE);
-        echo "</div>\n";
-        echo "<div class='floatright'>";
-        echo "<div class='datacol smalltext' style='width:90px;'>".format_bytes($item['get_size_bytes'])."</div>\n";
-        echo "<div class='datacol smalltext' style='width:90px;'>";
-        echo @round(($item['get_completed_chunks']/$item['get_size_chunks'])*100)." %<br/>\n";
-        echo percentbar($item['get_completed_chunks'] / $item['get_size_chunks'] * 100);
-        echo "</div>\n";
-        echo "<div class='datacol smalltext' style='width:90px;'>".$item['get_completed_chunks']." / ".$item['get_size_chunks']."</div>\n";
-        echo "<div class='datacollast smalltext' style='width:90px;'>";
-        echo "<select name='set_fpriority[$index]' class='mediumtext themed'>\n";
-        echo "<option value='0' ".($item['get_priority']==0 ? "selected" : "").">Off</option>\n";
-        echo "<option value='1' ".($item['get_priority']==1 ? "selected" : "").">Normal</option>\n";
-        echo "<option value='2' ".($item['get_priority']==2 ? "selected" : "").">High</option>\n";
-        echo "</select>\n";
-        echo "<input type='hidden' name='hash' value='$r_hash' />\n";
-        echo "</div>\n";
-        echo "</div>\n";  // end floatright div
-        echo "<div class='spacer'>&nbsp;</div>\n";
-        echo "</div>\n";  // end of $thisrow div
+  $this_class = ($r_select == $active_tab ? $tab_div_class_active : $tab_div_class);
+  echo <<<HTML
+  <div class="$this_class" id="tab-$r_select">
+
+HTML;
+
+
+
+  // ------------------------------------------------
+  // --- Files tab
+  // ------------------------------------------------
+
+  if($r_select == 'files') {
+     $data = get_file_list($r_hash);
+?>
+    <div class="container">
+      <div class="modalheadcol">
+        <div class="headcol" style="width:190px; border:none;">Filename</div>
+        <div class="floatright">
+          <div class="headcol" style="width:90px;">Size</div>
+          <div class="headcol" style="width:90px;">Done</div>
+          <div class="headcol" style="width:90px;">Chunks</div>
+          <div class="headcol" style="width:90px;">Priority</div>
+        </div>
+      </div>
+      <form action="control.php" method="post">
+<?php
+     $thisrow = 'row';
+     $index = 0;
+     foreach($data as $item) {
+       $path = mb_wordwrap($item['get_path'],90,"<br />\n",TRUE);
+       $bytes = format_bytes($item['get_size_bytes']);
+       $percent = @round(($item['get_completed_chunks']/$item['get_size_chunks'])*100);
+       $percent_bar = percentbar($item['get_completed_chunks'] / $item['get_size_chunks'] * 100);
+       $selected = array();
+       foreach(range(0, 2) as $i) {
+         $selected[$i] = ($item['get_priority'] == $i ? ' selected="selected"' : '');
+       }
+       echo <<<HTML
+        <div class="$thisrow">
+          <div class="namecol">$path</div>
+          <div class="floatright">
+            <div class="datacol smalltext" style="width:90px;">$bytes</div>
+            <div class="datacol smalltext" style="width:90px;">
+              $percent%<br />
+              $percent_bar
+            </div>
+            <div class="datacol smalltext" style="width:90px;">
+              $item[get_completed_chunks] / $item[get_size_chunks]
+            </div>
+            <div class="datacollast smalltext" style="width:90px;">
+              <select name="set_fpriority[$index]" class="mediumtext themed">
+                <option value="0"$selected[0]>Off</option>
+                <option value="1"$selected[1]>Normal</option>
+                <option value="2"$selected[2]>High</option>
+              </select>
+              <input type="hidden" name="hash" value="$r_hash" />
+            </div>
+          </div>
+          <div class="spacer">&nbsp;</div>
+        </div>
+
+HTML;
         $index++;
      }
-
-     echo "<div align='right' class='bottomtab'>\n";
-     echo "<input type='submit' class='themed' value='Save' />";
-     echo "</div>\n";
-     echo "</form>\n";
-     
-     echo "</div>\n";  // end container div
-  }
-
-  // tracker info...
-  if ($r_select=="tracker") {
-     $data=get_tracker_list($r_hash);
-     echo "<div class='container'>\n";
-     echo "<div class='modalheadcol'>\n";
-     echo "<div class='headcol' style='width:156px; border:none;'>URL</div>\n";
-     echo "<div class='floatright'>";
-     echo "<div class='headcol' style='width:124px;'>Last</div>\n";
-     echo "<div class='headcol' style='width:90px;'>Interval</div>\n";
-     echo "<div class='headcol' style='width:90px;'>Scrapes</div>\n";
-     echo "<div class='headcol' style='width:90px;'>Enabled</div>\n";
-     echo "</div>\n";  // end floatright div
-     echo "</div>\n";  // end modalheadcol div
-     $thisrow="row";
-     foreach($data AS $item) {
-        echo "<div class='$thisrow'>\n";
-        echo "<div class='namecol'>\n";
-        echo mb_wordwrap($item['get_url'],90,"<br/>\n",TRUE);
-        echo "</div>\n";
-        echo "<div class='floatright'>";
-        echo "<div class='datacol smalltext'  style='width:124px;'>".($item['get_scrape_time_last']>0 ? date("Y-m-d H:i",@round($item['get_scrape_time_last']/1000000)) : "never")."</div>\n";
-        echo "<div class='datacol smalltext' style='width:90px;'>".@round($item['get_normal_interval']/60)."</div>\n";
-        echo "<div class='datacol smalltext' style='width:90px;'>".$item['get_scrape_complete']."</div>\n";
-        echo "<div class='datacollast smalltext' style='width:90px;'>".($item['is_enabled']==1 ? "Yes" : "No")."</div>\n";
-        echo "</div>\n";  // end floatright div
-        echo "<div class='spacer'>&nbsp;</div>\n";
-        echo "</div>\n";  // end of $thisrow div      
-     }
-     echo "<div class='bottomthin'> </div>\n";
-     echo "</div>\n";  // end container div
-  }
-
-  // Peers info...
-  if ($r_select=="peers") {
-     $data=get_peer_list($r_hash);
-     echo "<div class='container'>\n";
-     echo "<div class='modalheadcol'>\n";
-     echo "<div class='headcol' style='width:190px; border:none;'>Address</div>\n";
-     echo "<div class='floatright'>";
-     echo "<div class='headcol' style='width:90px;'>Complete</div>\n";
-     echo "<div class='headcol' style='width:90px;'>Download</div>\n";
-     echo "<div class='headcol' style='width:90px;'>Upload</div>\n";
-     echo "<div class='headcol' style='width:90px;'>Peer</div>\n";
-     echo "</div>\n";  // end floatright div
-     echo "</div>\n";  // end modalheadcol div
-     $thisrow="row";
-     foreach($data AS $item) {
-        echo "<div class='$thisrow'>\n";
-        echo "<div class='namecol smalltext'>\n";
-        echo "<a href='http://www.who.is/whois-ip/ip-address/".$item['get_address']."/' target='_blank' class='ip-address'>".$item['get_address']."</a>";
-        echo ":".$item['get_port']."&nbsp;&nbsp;<i>".$item['get_client_version']."</i>";
-        $flags=($item['is_encrypted'] ? "enc " : "").($item['is_incoming'] ? "inc " : "").($item['is_obfuscated'] ? "obs " : "").($item['is_snubbed'] ? "snb " : "");
-        echo ($flags!="" ? "&nbsp;&nbsp;Flags: ".$flags : "");      
-        echo "</div>\n";
-        echo "<div class='floatright'>";        
-        echo "<div class='datacol smalltext' style='width:90px;'>&nbsp;".$item['get_completed_percent']. "%<br/>".percentbar($item['get_completed_percent'])."</div>\n";
-        echo "<div class='datacol smalltext download' style='width:90px;'>&nbsp;".($item['get_down_rate']>0 ? format_bytes($item['get_down_rate'])."/sec<br/>" : "").format_bytes($item['get_down_total'])."</div>\n";
-        echo "<div class='datacol smalltext upload' style='width:90px;'>&nbsp;".($item['get_up_rate']>0 ? format_bytes($item['get_up_rate'])."/sec<br/>" : "").format_bytes($item['get_up_total'])."</div>\n";
-        echo "<div class='datacollast smalltext' style='width:90px;'>&nbsp;".($item['get_peer_rate']>0 ? format_bytes($item['get_peer_rate'])."ps<br/>" : "").format_bytes($item['get_peer_total'])."</div>\n";
-        echo "</div>\n";  // end floatright div
-        echo "<div class='spacer'>&nbsp;</div>\n";
-        echo "</div>\n";  // end of $thisrow div 
-     }
-     echo "<div class='bottomthin'> </div>\n";
-     echo "</div>\n";  // end container div
-  }
-
-  // Display torrent info...
-  if ($r_select=="torrent") {
-     if ($thistorrent['complete']) { $statusflags="Complete "; } else { $statusflags="Incomplete ";}
-     if ($thistorrent['is_hash_checked']) $statusflags.="&middot; Hash Checked ";
-     if ($thistorrent['is_hash_checking']) $statusflags.="&middot; Hash Checking ";
-     if ($thistorrent['is_multi_file']) $statusflags.="&middot; Multi-file ";
-     if ($thistorrent['is_open']) $statusflags.="&middot; Open ";
-     if ($thistorrent['is_private']) $statusflags.="&middot; Private ";
-     if ($thistorrent['complete']==1) {
-        $statusstyle="complete";
-     } else {
-        $statusstyle="incomplete";
-     }
-     if ($thistorrent['is_active']==1) {
-        $statusstyle.="active";
-     } else {
-        $statusstyle.="inactive";
-     }
-     echo "<div class='container'>\n";
-     echo "<table border=0 cellspacing=0 cellpadding=5 class='maintable' width='100%'>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Name</b></td><td><span class='torrenttitle $statusstyle'>".mb_wordwrap($thistorrent['name'],60,"<br/>\n",TRUE)."</span></td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Status</b></td><td><img src='images/".$statusstyle.".gif' width=10 height=9 alt='Status' /> ".$thistorrent['status']."</td></tr>\n";
-
-     echo "<tr class='row'><td class='datacol' align=right><b>Priority</b></td><td>";
-     echo "<form action='control.php' method='post'>";
-     echo "<input type='hidden' name='hash' value='".$thistorrent['hash']."' />";
-     echo "<select name='set_tpriority' class='themed'>\n";
-     echo "<option value='0' ".($thistorrent['priority']==0 ? "selected" : "").">Off </option>\n";
-     echo "<option value='1' ".($thistorrent['priority']==1 ? "selected" : "").">Low </option>\n";
-     echo "<option value='2' ".($thistorrent['priority']==2 ? "selected" : "").">Normal </option>\n";
-     echo "<option value='3' ".($thistorrent['priority']==3 ? "selected" : "").">High </option>\n";
-     echo "</select>\n";
-     echo "<input type='submit' class='themed' value='Set' />\n";
-     echo "</form>\n";
-
-     echo "<tr class='row'><td class='datacol' align=right><b>Status Flags</b></td><td>".$statusflags."</td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Message</b></td><td>".$thistorrent['message']."</td>";
-     echo "<tr class='row'><td class='datacol' align=right><b>Completed Bytes</b></td><td>".format_bytes($thistorrent['completed_bytes'])."</td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Size</b></td><td>".format_bytes($thistorrent['size_bytes'])."</td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Complete</b></td><td><div class='datacollast'>".$thistorrent['percent_complete']." %<br/>";
-     echo percentbar($thistorrent['percent_complete'])."</div>";
-     echo "<tr class='row'><td class='datacol' align=right><b>Down Rate</b></td><td>".format_bytes($thistorrent['down_rate'])."</td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Down Total</b></td><td>".format_bytes($thistorrent['down_total'])."</td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Up Rate</b></td><td>".format_bytes($thistorrent['up_rate'])."</td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Up Total</b></td><td>".format_bytes($thistorrent['up_total'])."</td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Peers connected</b></td><td>".$thistorrent['peers_connected']."</td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Peers not connected</b></td><td>".$thistorrent['peers_not_connected']."</td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Peers complete</b></td><td>".$thistorrent['peers_complete']."</td></tr>\n";
-     echo "<tr class='row'><td class='datacol' align=right><b>Ratio</b></td><td>".number_format(($thistorrent['ratio']/1000),2)."</td></tr>\n";
-     echo "</table>\n";
-     echo "</div>\n";
-     echo "<div class='bottomthin'> </div>\n";
-
-  }
-
-  // Storage info...
-  if ($r_select=="storage") {
-     echo "<div class='container'>\n";
-     echo "<fieldset ><legend>Current Directory</legend>\n";
-     $seldir=$thistorrent['directory'];
-
-     $torrentdir="";
-     if ($thistorrent['is_multi_file']==1) {
-        $seldir=substr($thistorrent['directory'],0,strrpos($thistorrent['directory'],"/"));
-        $torrentdir=substr($thistorrent['directory'],strrpos($thistorrent['directory'],"/"));
-     }
-     $torrentdir=htmlentities($torrentdir,ENT_QUOTES,"UTF-8");
-     if (isset($r_dir)) $seldir=$r_dir;
-     
-     echo "<p style='background-color:#ddd;padding:3px;'><span id='seldir'>".$seldir."</span><span class='gray'>".$torrentdir."</span></p>\n";
-
-     echo "<form action='control.php' method='post' name='directory' onSubmit=\"document.directory.newdir.value=document.getElementById('seldir').innerHTML;\">\n";
-     if ($thistorrent['is_active']==1) {
-        echo "<p><input type='submit' name='setdir' class='themed' value='Set directory' disabled=1>&nbsp;<i>Torrent must be stopped before changing directory.</i></p>\n";
-     } else {
-        echo "<input type='hidden' name='hash' value='".$thistorrent['hash']."'>\n";
-        echo "<input type='hidden' name='newdir' value=''>\n";
-        echo "<input type='submit' name='setdir' class='themed' value='Set directory'>\n";
-     }
-     echo "</fieldset>\n";
-     echo "</form>\n";  
-     
-     echo "<iframe frameborder=0 src='dirbrowser.php?dir=".urlencode($seldir)."&amp;hilitedir=".urlencode($torrentdir)."' width=100% height=300px>iFrame</iframe>";
-
-     echo "<br>&nbsp;</div>"; // end container div
-     echo "<div class='bottomthin'> </div>\n";
-  }
-
-  // Debug info
-  if ($debugtab && $r_select=="debug") {
-     echo "<pre class='medtext'>";
-     echo "<h2>Torrent</h2>";
-     echo nl2br(print_r($thistorrent));
-     echo "<h2>Files</h2>";
-     echo nl2br(print_r(get_file_list($r_hash)));
-     echo "<h2>Peers</h2>";
-     echo nl2br(print_r(get_peer_list($r_hash)));
-     echo "<h2>Tracker</h2>";
-     echo nl2br(print_r(get_tracker_list($r_hash)));
-     echo "</pre>";
-  }
-
-  echo "</div><!-- class=\"tab\" -->\n\n\n";
-}
-
 ?>
+
+        <div align="right" class="bottomtab">
+          <input type="submit" class="themed" value="Save" />
+        </div>
+      </form>
+    </div>
+<?php
+  }
+
+
+
+  // ------------------------------------------------
+  // --- Tracker tab
+  // ------------------------------------------------
+  if($r_select == 'tracker') {
+    $data = get_tracker_list($r_hash);
+?>
+    <div class="container">
+      <div class="modalheadcol">
+        <div class="headcol" style="width: 156px; border:none;">URL</div>
+        <div class="floatright">
+          <div class="headcol" style="width: 124px;">Last</div>
+          <div class="headcol" style="width: 90px;">Interval</div>
+          <div class="headcol" style="width: 90px;">Scrapes</div>
+          <div class="headcol" style="width: 90px;">Enabled</div>
+        </div>
+      </div>
+<?php
+    $thisrow = 'row';
+    foreach($data as $item) {
+      $url = mb_wordwrap($item['get_url'],90,"<br />\n",TRUE);
+      $last_scrape_time = ($item['get_scrape_time_last'] > 0
+        ? date('Y-m-d g:ia', @round($item['get_scrape_time_last']))
+        : 'never');
+      $scrape_interval = @round($item['get_normal_interval'] / 60);
+      $is_enabled = ($item['is_enabled'] ? 'Yes' : 'No');
+      echo <<<HTML
+      <div class="$thisrow">
+        <div class="namecol">$url</div>
+        <div class="floatright">
+          <div class="datacol smalltext" style="width:124px;">$last_scrape_time</div>
+          <div class="datacol smalltext" style="width:90px;">$scrape_interval</div>
+          <div class="datacol smalltext" style="width:90px;">$item[get_scrape_complete]</div>
+          <div class="datacollast smalltext" style="width:90px;">$is_enabled</div>
+        </div>
+        <div class="spacer">&nbsp;</div>
+      </div>
+
+HTML;
+    }
+?>
+      <div class="bottomthin"> </div>
+    </div>
+<?php
+  }
+
+
+
+  // ------------------------------------------------
+  // --- Peers tab
+  // ------------------------------------------------
+  if($r_select == 'peers') {
+    $data=get_peer_list($r_hash);
+?>
+    <div class="container">
+      <div class="modalheadcol">
+        <div class="headcol" style="width:190px; border:none;">Address</div>
+        <div class="floatright">
+          <div class="headcol" style="width:90px;">Complete</div>
+          <div class="headcol" style="width:90px;">Download</div>
+          <div class="headcol" style="width:90px;">Upload</div>
+          <div class="headcol" style="width:90px;">Peer</div>
+        </div>
+      </div>
+<?php
+    $thisrow = 'row';
+    foreach($data as $item) {
+      $flags = ($item['is_encrypted']  ? 'enc ' : '')
+             . ($item['is_incoming']   ? 'inc ' : '')
+             . ($item['is_obfuscated'] ? 'obf ' : '')
+             . ($item['is_snubbed']    ? 'snb ' : '');
+      $flags = (trim($flags) ? "Flags: $flags" : '');
+      $percent_bar = percentbar($item['get_completed_percent']);
+      $rates = array();
+      foreach(array('down', 'up', 'peer') as $i) {
+        $rates[$i] = ($item["get_${i}_rate"]
+          ? format_bytes($item["get_${i}_rate"]) . '/sec<br />'
+          : '')
+          . format_bytes($item["get_${i}_total"]);
+      }
+      echo <<<HTML
+      <div class="$thisrow">
+        <div class="namecol smalltext">
+          <a href="http://www.who.is/whois-ip/ip-address/$item[get_address]/" target="_blank" class="ip-address">
+            $item[get_address]
+          </a>:
+          $item[get_port]&nbsp;&nbsp;<i>$item[get_client_version]</i>&nbsp;&nbsp;$flags
+        </div>
+        <div class="floatright">
+          <div class="datacol smalltext" style="width:90px;">
+            &nbsp;$item[get_completed_percent]%<br />
+            $percent_bar
+          </div>
+          <div class="datacol smalltext download" style="width:90px;">&nbsp;$rates[down]</div>
+          <div class="datacol smalltext upload" style="width:90px;">&nbsp;$rates[up]</div>
+          <div class="datacol smalltext" style="width:90px;">&nbsp;$rates[peer]</div>
+        </div>
+        <div class="spacer">&nbsp;</div>
+      </div>
+HTML;
+     }
+?>
+      <div class="bottomthin"> </div>
+    </div>
+<?php
+  }
+
+
+
+  // ------------------------------------------------
+  // --- Torrent tab
+  // ------------------------------------------------
+  if($r_select == 'torrent') {
+    $status_flags = ($this_torrent['complete'] ? 'Complete ' : 'Incomplete ');
+    if($this_torrent['is_hash_checked'])  $status_flags .= '&middot; Hash Checked ';
+    if($this_torrent['is_hash_checking']) $status_flags .= '&middot; Hash Checking ';
+    if($this_torrent['is_multi_file'])    $status_flags .= '&middot; Multi-file ';
+    if($this_torrent['is_open'])          $status_flags .= '&middot; Open ';
+    if($this_torrent['is_private'])       $status_flags .= '&middot; Private ';
+
+    $status_style = ($this_torrent['complete']  ? 'complete' : 'incomplete')
+                  . ($this_torrent['is_active'] ? 'active'   : 'inactive');
+
+    $name = mb_wordwrap($this_torrent['name'], 60, "<br />\n", true);
+
+    $selected = array();
+    foreach(range(0, 3) as $i) {
+      $selected[$i] = ($this_torrent['priority'] == $i ? ' selected="selected"' : '');
+    }
+    $formatted = array();
+    foreach(array('completed_bytes', 'size_bytes', 'down_rate', 'down_total', 'up_rate', 'up_total') as $i) {
+      $formatted[$i] = format_bytes($this_torrent[$i]);
+    }
+    $percent_bar = percentbar($this_torrent['percent_complete']);
+    $ratio = number_format($this_torrent['ratio'] / 1000, 2);
+
+    echo <<<HTML
+    <div class="container">
+      <table border=0 cellspacing=0 cellpadding=5 class="maintable" width="100%">
+        <tr class="row">
+          <td class="datacol" align=right><b>Name</b></td>
+          <td><span class="torrenttitle $status_style">$name</span></td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align=right><b>Status</b></td>
+          <td><img src="images/$status_style.gif" width=10 height=9 alt="Status" />$this_torrent[status]</td>
+        </tr>
+
+        <tr class="row">
+          <td class="datacol" align=right><b>Priority</b></td>
+          <td>
+            <form action="control.php" method="post">
+              <input type="hidden" name="hash" value="$this_torrent[hash]" />
+              <select name="set_tpriority" class="themed">
+                <option value="0"$selected[0]>Off</option>
+                <option value="1"$selected[1]>Low</option>
+                <option value="2"$selected[2]>Normal</option>
+                <option value="3"$selected[3]>High</option>
+              </select>
+              <input type="submit" class="themed" value="Set" />
+            </form>
+          </td>
+        </tr>
+
+        <tr class="row">
+          <td class="datacol" align="right"><b>Status Flags</b></td>
+          <td>$status_flags</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Message</b></td>
+          <td>$this_torrent[message]</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Completed Bytes</b></td>
+          <td>$formatted[completed_bytes]</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Size</b></td>
+          <td>$formatted[size_bytes]</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Complete</b></td>
+          <td><div class="datacollast">$this_torrent[percent_complete]%<br />$percent_bar</div>
+        <tr class="row"><td class="datacol" align="right"><b>Down Rate</b></td><td>$formatted[down_rate]</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Down Total</b></td>
+          <td>$formatted[down_total]</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Up Rate</b></td>
+          <td>$formatted[up_rate]</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Up Total</b></td>
+          <td>$formatted[up_total]</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Peers connected</b></td>
+          <td>$this_torrent[peers_connected]</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Peers not connected</b></td>
+          <td>$this_torrent[peers_not_connected]</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Peers complete</b></td>
+          <td>$this_torrent[peers_complete]</td>
+        </tr>
+        <tr class="row">
+          <td class="datacol" align="right"><b>Ratio</b></td>
+          <td>$ratio</td>
+        </tr>
+      </table>
+    </div>
+    <div class="bottomthin"> </div>
+
+HTML;
+  }
+
+
+
+  // ------------------------------------------------
+  // --- Storage tab
+  // ------------------------------------------------
+  if($r_select == 'storage') {
+    $sel_dir = $this_torrent['directory'];
+    $torrent_dir = '';
+    if($this_torrent['is_multi_file']) {
+      $slash_pos   = strrpos($this_torrent['directory'],'/');
+      $sel_dir     = substr( $this_torrent['directory'], 0, $slash_pos);
+      $torrent_dir = substr( $this_torrent['directory'], $slash_pos);
+    }
+    $torrent_dir = htmlentities($torrent_dir, ENT_QUOTES, 'UTF-8');
+    if(isset($r_dir)) $sel_dir = $r_dir;
+
+    $sel_dir_encode = urlencode($sel_dir);
+    $torrent_dir_encode = urlencode($torrent_dir);
+
+    echo <<<HTML
+    <div class="container">
+      <fieldset>
+        <legend>Current Directory</legend>
+
+        <div id="current-dir">
+          <span id="sel-dir">$sel_dir</span><span class="gray">$torrent_dir</span>
+        </div>
+
+        <form action="control.php" method="post" name="directory" id="directory-form">
+
+HTML;
+    if($this_torrent['is_active']) {
+      echo <<<HTML
+          <p>
+            <input type="submit" name="setdir" class="themed" value="Set directory" disabled="disabled" />&nbsp;
+            <i>Torrent must be stopped before changing directory.</i>
+          </p>
+
+HTML;
+    } else {
+      echo <<<HTML
+          <input type="hidden" name="hash" value="$this_torrent[hash]" />
+          <input type="hidden" name="newdir" id="new-dir" value="">
+          <input type="submit" name="setdir" class="themed" value="Set directory" />
+
+HTML;
+    }
+    echo <<<HTML
+        </form>
+      </fieldset>
+
+      <iframe
+        src="dirbrowser.php?dir=$sel_dir_encode&amp;hilitedir=$torrent_dir_encode"
+        frameborder="0" width="100%" height="300px">
+      </iframe>
+
+      <br>&nbsp;
+    </div>
+    <div class="bottomthin"> </div>
+
+HTML;
+  }
+
+
+
+  // ------------------------------------------------
+  // --- Debug tab
+  // ------------------------------------------------
+  if($debugtab && $r_select == 'debug') {
+?>
+    <pre class="medtext">
+      <h2>Torrent</h2>
+<?php print_r($this_torrent); ?>
+
+      <h2>Files</h2>
+<?php print_r(get_file_list($r_hash)); ?>
+
+      <h2>Peers</h2>
+<?php print_r(get_peer_list($r_hash)); ?>
+
+      <h2>Tracker</h2>
+<?php print_r(get_tracker_list($r_hash)); ?>
+
+    </pre>
+<?php
+ }
+
+
+
+echo <<<HTML
+  </div><!-- id="tab-$r_select" -->
+
+
+
+
+HTML;
+} // end tab loop
+?>
+
 </body>
 </html>
