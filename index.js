@@ -44,17 +44,17 @@ $(function() {
     debug('Waiting for refresh...');
     return false;
   });
-  
+
   $('#torrents-header a.sort').click(function() {
     setCurrentSort($(this).attr('rel'), $(this));
     return false;
   });
-  
+
   $('#navlist a.view').click(function() {
     setCurrentView($(this).attr('rel'), $(this));
     return false;
   });
-  
+
   $('#filter').blur(function() {
     if($(this).val() == '') {
       $(this).val(window.defaultFilterText);
@@ -97,7 +97,7 @@ $(function() {
       updateTorrentsNow();
     }
   });
-  
+
   $('div.torrent-container').live('click', function(e) {
     var thisHash = this.id;
     var $thisCheckbox = $(this).find('input[type=checkbox]');
@@ -121,13 +121,13 @@ $(function() {
     $thisCheckbox[0].focus();
     current.lastHash = thisHash;
   });
-  
+
   $('.select-all, .unselect-all').click(function() {
     $('div.torrent-container input[type=checkbox]')
     .attr('checked', $(this).hasClass('select-all'));
     return false;
   });
-  
+
   $('a.dialog').live('click', function() {
     var $this = $(this);
     var href = $this.attr('href');
@@ -139,7 +139,7 @@ $(function() {
     showDialog(href, $this.text(), dims[0], dims[1]);
     return false;
   });
-  
+
   $('a.ajax').live('click', function() {
     if($(this).hasClass('confirm')
     && !confirmWithMessage($(this).attr('rel'))) {

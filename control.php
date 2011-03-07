@@ -36,7 +36,7 @@ if(isset($r_bulkaction) && is_array($r_select)) {
         case 'delete':
           $response = do_xmlrpc(xmlrpc_encode_request('d.erase', array($hash)));
           break;
-        
+
         case 'hashcheck':
           $response = do_xmlrpc(xmlrpc_encode_request('d.check_hash', array($hash)));
           break;
@@ -72,13 +72,13 @@ if(isset($r_set_fpriority)) {
       $index++;
    }
    $response=do_xmlrpc(xmlrpc_encode_request('d.update_priorities', $r_hash));
-   $r_cmd='';
+   $r_cmd = '';
 }
 
 // Set torrent priorities...
 if(isset($r_set_tpriority)) {
    $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($r_hash, $r_set_tpriority)));
-   $r_cmd = "";
+   $r_cmd = '';
 }
 
 
@@ -120,6 +120,6 @@ if(!$r_ajax) {
   rtgui_session_start();
   $_SESSION['must_get_all'] = true;
   session_write_close();
-  @header("Location: " . $_SERVER['HTTP_REFERER']);
+  @header('Location: ' . $_SERVER['HTTP_REFERER']);
 }
 ?>
