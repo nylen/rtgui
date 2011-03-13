@@ -94,7 +94,7 @@ echo <<<HTML
         <option value="0"$selected>-Unlimited-</option>
 
 HTML;
-foreach ($defspeeds AS $i) {
+foreach($defspeeds AS $i) {
   $x = $i * 1024;
   $bytes = format_bytes($x);
   $selected = ($x == $download_cap ? ' selected="selected"' : '');
@@ -123,7 +123,7 @@ echo <<<HTML
         <option value="0"$selected>-Unlimited-</option>
 
 HTML;
-foreach ($defspeeds AS $i) {
+foreach($defspeeds AS $i) {
   $x = $i * 1024;
   $bytes = format_bytes($x);
   $selected = ($x == $upload_cap ? ' selected="selected"' : '');
