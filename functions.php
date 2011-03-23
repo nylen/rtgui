@@ -71,8 +71,8 @@ function do_xmlrpc($request) {
 
 // Get full list - retrieve full list of torrents 
 function get_all_torrents($torrents_only=false, $view='main') {
-  global $downloaddir, $use_groups;
-  global $tracker_hilite, $tracker_hilite_default;
+  global $download_dir, $use_groups;
+  global $tracker_highlight, $tracker_highlight_default;
   
   $torrents = rtorrent_multicall('d', $view, array(
     #'get_base_filename',
@@ -198,9 +198,9 @@ function get_all_torrents($torrents_only=false, $view='main') {
     } else {
       $s = array();
       $s['tracker_hostname'] = tracker_hostname($hash);
-      $s['tracker_color'] = $tracker_hilite_default;
-      if(is_array($tracker_hilite)) {
-        foreach($tracker_hilite as $hilite) {
+      $s['tracker_color'] = $tracker_highlight_default;
+      if(is_array($tracker_highlight)) {
+        foreach($tracker_highlight as $hilite) {
           foreach($hilite as $thisurl) {
             if(stristr($s['tracker_hostname'], $thisurl) !== false) {
               $s['tracker_color'] = $hilite[0];
@@ -249,8 +249,8 @@ function get_all_torrents($torrents_only=false, $view='main') {
     'total_up_rate'    => $total_up_rate,
     'total_down_limit' => rtorrent_xmlrpc('get_download_rate'),
     'total_up_limit'   => rtorrent_xmlrpc('get_upload_rate'),
-    'disk_free'        => @disk_free_space($downloaddir),
-    'disk_total'       => @disk_total_space($downloaddir),
+    'disk_free'        => @disk_free_space($download_dir),
+    'disk_total'       => @disk_total_space($download_dir),
   );
   if($data['disk_total'] > 0) {
     $data['disk_percent'] = $data['disk_free'] / $data['disk_total'] * 100;

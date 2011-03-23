@@ -233,21 +233,21 @@ switch($r_action) {
   
   case 'add':
     $errors = array();
-    $this_watchdir = $watchdir;
+    $this_watch_dir = $watch_dir;
     if($use_groups) {
       if(!in_array($r_group, $all_groups)) {
         $errors[] = "Unknown group '$r_group'";
       }
-      $this_watchdir = "$watchdir/$r_group";
+      $this_watch_dir = "$watch_dir/$r_group";
     }
     
     foreach($r_add_torrent as $hash) {
       if($data = $_SESSION['to_add_data'][$hash]) {
         $filename = $data['filename'];
         $name = $data['name'];
-        if(copy("$tmp_add_dir/$filename", "$this_watchdir/$filename")) {
+        if(copy("$tmp_add_dir/$filename", "$this_watch_dir/$filename")) {
           if(function_exists('on_add_torrent')) {
-            on_add_torrent($name, $hash, $r_group, "$this_watchdir/$filename");
+            on_add_torrent($name, $hash, $r_group, "$this_watch_dir/$filename");
           }
         } else {
           $errors[] = "Failed to copy torrent \"$name\"";

@@ -121,7 +121,7 @@ $tab_div_class = ($only_one_tab ? 'tab' : 'tab hidden');
 $tab_div_class_active = 'tab';
 
 $all_tabs = array('Files', 'Tracker', 'Peers', 'Torrent', 'Storage');
-if($debugtab) {
+if($debug_mode) {
   $all_tabs[] = 'Debug';
 }
 foreach($all_tabs as $tab) {
@@ -505,7 +505,7 @@ HTML;
   // ------------------------------------------------
   // --- Debug tab
   // ------------------------------------------------
-  if($debugtab && $r_select == 'debug') {
+  if($debug_mode && $r_select == 'debug') {
 ?>
     <pre class="medtext">
       <h2>Torrent</h2>

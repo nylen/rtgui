@@ -56,9 +56,9 @@ $_SESSION['last_data'] = $data;
 // Configuration variables
 var config = {
   refreshInterval: <?php echo $refresh_interval; ?>,
-  diskAlertThreshold: <?php echo $alertthresh; ?>,
+  diskAlertThreshold: <?php echo $disk_alert_threshold; ?>,
   useGroups: <?php echo $use_groups ? 1 : 0; ?>,
-  debugTab: <?php echo $debugtab ? 1 : 0; ?>,
+  debugTab: <?php echo $debug_mode ? 1 : 0; ?>,
   dateAddedFormat: '<?php echo addslashes($date_added_format); ?>'
 };
 var current = {
@@ -133,7 +133,7 @@ if(is_array($header_links) && count($header_links)) {
             <span class="inline upload" id="total_up_rate">??</span>
             <span class="smalltext" id="total_up_limit">??</span>
           </p>
-<?php if(isset($downloaddir)) { ?>
+<?php if(isset($download_dir)) { ?>
           <div>
             Disk Free: <span id="disk_free">??</span>
             / <span id="disk_total">??</span>
@@ -163,7 +163,7 @@ foreach($views as $name) {
   $class = ($name == 'All' ? 'view current' : 'view');
   echo "<li><a class=\"$class\" href=\"#\" rel=\"$view\">$name</a></li>\n";
 }
-if($debugtab) {
+if($debug_mode) {
    echo "<li><a href=\"#\" id=\"debug-tab\">Debug</a></li>\n";
 }
 ?>
@@ -214,7 +214,7 @@ if($debugtab) {
       <div class="spacer"></div>
 
       <div class="container">
-<?php if($debugtab) { ?>
+<?php if($debug_mode) { ?>
         <pre id="debug" style="display: none;">&nbsp;</pre>
 <?php } ?>
         <div id="torrents">

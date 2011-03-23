@@ -22,7 +22,7 @@ rtgui_session_start();
 import_request_variables('gp', 'r_');
 
 if(!isset($_SESSION['refresh'])) {
-  $_SESSION['refresh'] = $defaultrefresh;
+  $_SESSION['refresh'] = 5000; // TODO: allow themes to override this
 }
 if(isset($r_set_refresh)) {
   $_SESSION['refresh'] = $r_set_refresh;
@@ -86,7 +86,7 @@ HTML;
       <p><label for="set-max-down">Download limit : </label>
       <select name="set_max_down" class="themed" class="download" id="set-max-down">
 <?php
-if(!in_array($download_cap/1024, $defspeeds) && $download_cap > 0) {
+if(!in_array($download_cap/1024, $cap_speeds) && $download_cap > 0) {
   $bytes = format_bytes($download_cap);
   echo <<<HTML
         <option value="$download_cap" selected="selected">$bytes</option>
@@ -98,7 +98,7 @@ echo <<<HTML
         <option value="0"$selected>-Unlimited-</option>
 
 HTML;
-foreach($defspeeds AS $i) {
+foreach($cap_speeds AS $i) {
   $x = $i * 1024;
   $bytes = format_bytes($x);
   $selected = ($x == $download_cap ? ' selected="selected"' : '');
@@ -115,7 +115,7 @@ HTML;
       <p><label for="set-max-up">Upload limit : </label>
       <select name="set_max_up" class="themed" class="upload" id="set-max-up">
 <?php
-if(!in_array($upload_cap/1024, $defspeeds) && $upload_cap > 0) {
+if(!in_array($upload_cap/1024, $cap_speeds) && $upload_cap > 0) {
   $bytes = format_bytes($upload_cap);
   echo <<<HTML
         <option value="$upload_cap" selected="selected">$bytes</option>
@@ -127,7 +127,7 @@ echo <<<HTML
         <option value="0"$selected>-Unlimited-</option>
 
 HTML;
-foreach($defspeeds AS $i) {
+foreach($cap_speeds AS $i) {
   $x = $i * 1024;
   $bytes = format_bytes($x);
   $selected = ($x == $upload_cap ? ' selected="selected"' : '');

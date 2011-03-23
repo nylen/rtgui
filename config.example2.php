@@ -25,25 +25,25 @@ $scgi_timeout = 5; // seconds
 $site_title = 'rtGui (main)';
 
 // rtorrent 'watch' directory (used for upload torrent)
-$watchdir = '/media/bit.torrents/';
+$watch_dir = '/media/bit.torrents/';
 
 // Theme to use for site
 $theme = 'base';
 
 // Path to report disk usage
-$downloaddir = '/media/1000/';
+$download_dir = '/media/1000/';
 
 // Threshold for disk usage alert (%)
-$alertthresh = 15;
+$disk_alert_threshold = 15;
 
 // Time between ajax calls - default 5000 (5 secs).   Disable with 0
 $refresh_interval = 5000;
 
 // URL to your rtGui installation (used in RSS feed).  Include trailing slash.
-$rtguiurl = 'http://' . $_SERVER['HTTP_HOST'] . '/rtgui/main/';
+$rtgui_url = 'http://' . $_SERVER['HTTP_HOST'] . '/rtgui/main/';
 
 // Speeds (in KB) for the download/upload cap in the settings dialog.
-$defspeeds = array(
+$cap_speeds = array(
   5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90,
   100, 125, 150, 200, 250, 300, 400,
   500, 600, 700, 800, 900,
@@ -54,17 +54,17 @@ $defspeeds = array(
 $load_start = true;
 
 // Enable debug tabs
-#$debugtab = true;
+$debug_mode = false;
 
-// Tracker colour hilighting...
-// Format is array(hexcolour, URL, URL, ...) The URL is a string to match identifiy tracker URL
+// Tracker color hilighting...
+// Format is array(hexcolor, URL, URL, ...) The URL is a string to match identifiy tracker URL
 // Add as many arrays as needed.
-$tracker_hilite_default = '#900';   // Default colour
-$tracker_hilite[] = array('#990000', 'ibiblio.org', 'etree.org');
-#$tracker_hilite[] = array('#006699', 'another.com', 'tracker.mytracker.net', 'mytracker.com');
-#$tracker_hilite[] = array('#996600', 'moretrackers.com');
-$tracker_hilite[] = array('#885500', 'what.cd');
-$tracker_hilite[] = array('#436101', 'already.be');
+$tracker_highlight_default = '#900';   // Default color
+$tracker_highlight[] = array('#990000', 'ibiblio.org', 'etree.org');
+#$tracker_highlight[] = array('#006699', 'another.com', 'tracker.mytracker.net', 'mytracker.com');
+#$tracker_highlight[] = array('#996600', 'moretrackers.com');
+$tracker_highlight[] = array('#885500', 'what.cd');
+$tracker_highlight[] = array('#436101', 'already.be');
 
 
 // Define your RSS feeds here - you can have as many as you like.   Used in the feedreader
