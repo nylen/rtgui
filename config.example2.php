@@ -25,48 +25,53 @@ $scgi_timeout = 5; // seconds
 $site_title = 'rtGui (main)';
 
 // rtorrent 'watch' directory (used for upload torrent)
-$watchdir="/media/bit.torrents/";
+$watchdir = '/media/bit.torrents/';
 
 // Theme to use for site
 $theme = 'base';
 
 // Path to report disk usage
-$downloaddir="/media/1000/";
+$downloaddir = '/media/1000/';
 
 // Threshold for disk usage alert (%)
-$alertthresh=15;
+$alertthresh = 15;
 
 // Time between ajax calls - default 5000 (5 secs).   Disable with 0
 $refresh_interval = 5000;
 
 // URL to your rtGui installation (used in RSS feed).  Include trailing slash.
-$rtguiurl="http://".$_SERVER["HTTP_HOST"]."/rtgui/main/";
+$rtguiurl = 'http://' . $_SERVER['HTTP_HOST'] . '/rtgui/main/';
 
-// Speeds for the download cap settings dialog.
-$defspeeds=array(5,10,15,20,30,40,50,60,70,80,90,100,125,150,200,250,300,400,500,600,700,800,900,1000,1500,2000,5000,10000);
+// Speeds (in KB) for the download/upload cap in the settings dialog.
+$defspeeds = array(
+  5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90,
+  100, 125, 150, 200, 250, 300, 400,
+  500, 600, 700, 800, 900,
+  1024, 1536, 2048, 5120, 10240
+);
 
 // Start download immediately after loading torrent
-$load_start=TRUE;
+$load_start = true;
 
 // Enable debug tabs
-#$debugtab=TRUE;
+#$debugtab = true;
 
 // Tracker colour hilighting...
 // Format is array(hexcolour, URL, URL, ...) The URL is a string to match identifiy tracker URL
 // Add as many arrays as needed.
-$tracker_hilite_default="#900";   // Default colour
-$tracker_hilite[]=array("#990000","ibiblio.org","etree.org");
-#$tracker_hilite[]=array("#006699","another.com","tracker.mytracker.net","mytracker.com");
-#$tracker_hilite[]=array("#996600","moretrackers.com");
-$tracker_hilite[]=array("#885500","what.cd");
-$tracker_hilite[]=array("#436101","already.be");
+$tracker_hilite_default = '#900';   // Default colour
+$tracker_hilite[] = array('#990000', 'ibiblio.org', 'etree.org');
+#$tracker_hilite[] = array('#006699', 'another.com', 'tracker.mytracker.net', 'mytracker.com');
+#$tracker_hilite[] = array('#996600', 'moretrackers.com');
+$tracker_hilite[] = array('#885500', 'what.cd');
+$tracker_hilite[] = array('#436101', 'already.be');
 
 
 // Define your RSS feeds here - you can have as many as you like.   Used in the feedreader
 // Feed name, feed URL, Direct download links? (0/1)
-$feeds[]=array("ibiblio.org","http://torrent.ibiblio.org/feed.php?blockid=3",0);
-$feeds[]=array("etree","http://bt.etree.org/rss/bt_etree_org.rdf",0);
-$feeds[]=array("Utwente","http://borft.student.utwente.nl/%7Emike/oo/bt.rss",1);
+$feeds[] = array('ibiblio.org', 'http://torrent.ibiblio.org/feed.php?blockid=3', 0);
+$feeds[] = array('etree', 'http://bt.etree.org/rss/bt_etree_org.rdf', 0);
+$feeds[] = array('Utwente', 'http://borft.student.utwente.nl/%7Emike/oo/bt.rss', 1);
 
 // Date format to use for "date added" display (see http://php.net/date)
 $date_added_format = 'n/j/Y'; # American format
