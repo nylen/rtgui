@@ -21,18 +21,22 @@ require_once 'functions.php';
 rtgui_session_start();
 import_request_variables('gp', 'r_');
 
-if (!isset($_SESSION['refresh'])) $_SESSION['refresh']=$defaultrefresh;
-if (isset($r_setrefresh)) $_SESSION['refresh']=$r_setrefresh;
+if(!isset($_SESSION['refresh'])) {
+  $_SESSION['refresh'] = $defaultrefresh;
+}
+if(isset($r_set_refresh)) {
+  $_SESSION['refresh'] = $r_set_refresh;
+}
 
-if (isset($r_setmaxup) || isset($r_setmaxdown)) {
-   rtorrent_xmlrpc('set_upload_rate', array($r_setmaxup));
-   rtorrent_xmlrpc('set_download_rate', array($r_setmaxdown));
+if(isset($r_set_max_up) || isset($r_set_max_down)) {
+   rtorrent_xmlrpc('set_upload_rate', array($r_set_max_up));
+   rtorrent_xmlrpc('set_download_rate', array($r_set_max_down));
 }
 
 $download_cap = rtorrent_xmlrpc('get_download_rate');
 $upload_cap = rtorrent_xmlrpc('get_upload_rate');
 
-if (isset($r_submit)) {
+if(isset($r_submit)) {
    echo "<script>window.top.hideDialog(true);</script>";
    die();
 }
@@ -55,8 +59,8 @@ include_stylesheet('dialog.css', true);
   <form method="post" action="settings.php">
     <div id="options">
 
-      <p><label for="setrefresh">Refresh interval : </label>
-      <select name="setrefresh" class="themed" id="setrefresh">
+      <p><label for="set-refresh">Refresh interval : </label>
+      <select name="set_refresh" class="themed" id="set-refresh">
 <?php
 foreach(array(
   0 => 'Off',
@@ -79,8 +83,8 @@ HTML;
       </p>
 
       <p>&nbsp;</p>
-      <p><label>Download limit : </label>
-      <select name="setmaxdown" class="themed" class="download">
+      <p><label for="set-max-down">Download limit : </label>
+      <select name="set_max_down" class="themed" class="download" id="set-max-down">
 <?php
 if(!in_array($download_cap/1024, $defspeeds) && $download_cap > 0) {
   $bytes = format_bytes($download_cap);
@@ -108,8 +112,8 @@ HTML;
       </p>
 
       <p>&nbsp;</p>
-      <p><label>Upload limit : </label>
-      <select name="setmaxup" class="themed" class="upload">
+      <p><label for="set-max-up">Upload limit : </label>
+      <select name="set_max_up" class="themed" class="upload" id="set-max-up">
 <?php
 if(!in_array($upload_cap/1024, $defspeeds) && $upload_cap > 0) {
   $bytes = format_bytes($upload_cap);
