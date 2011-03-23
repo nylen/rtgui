@@ -29,16 +29,16 @@ if(isset($r_set_refresh)) {
 }
 
 if(isset($r_set_max_up) || isset($r_set_max_down)) {
-   rtorrent_xmlrpc('set_upload_rate', array($r_set_max_up));
-   rtorrent_xmlrpc('set_download_rate', array($r_set_max_down));
+  rtorrent_xmlrpc('set_upload_rate', array($r_set_max_up));
+  rtorrent_xmlrpc('set_download_rate', array($r_set_max_down));
 }
 
 $download_cap = rtorrent_xmlrpc('get_download_rate');
 $upload_cap = rtorrent_xmlrpc('get_upload_rate');
 
 if(isset($r_submit)) {
-   echo "<script>window.top.hideDialog(true);</script>";
-   die();
+  echo "<script>window.top.hideDialog(true);</script>";
+  die();
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

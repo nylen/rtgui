@@ -69,11 +69,11 @@ function do_xmlrpc($request) {
   }
 }
 
-// Get full list - retrieve full list of torrents 
+// Get full list - retrieve full list of torrents
 function get_all_torrents($torrents_only=false, $view='main') {
   global $download_dir, $use_groups;
   global $tracker_highlight, $tracker_highlight_default;
-  
+
   $torrents = rtorrent_multicall('d', $view, array(
     #'get_base_filename',
     #'get_base_path',
@@ -144,10 +144,10 @@ function get_all_torrents($torrents_only=false, $view='main') {
     $t['completed_bytes'] = $t['completed_chunks'] * $t['chunk_size'];
     $t['size_bytes'] = $t['size_chunks'] * $t['chunk_size'];
     $t['up_total'] = $t['size_bytes'] * $t['ratio'] / 1000;
-    
+
     $t['percent_complete'] = $t['completed_bytes'] / $t['size_bytes'] * 100;
     $t['bytes_remaining'] = $t['size_bytes'] - $t['completed_bytes'];
-    
+
     if($t['message'] == 'Tracker: [Tried all trackers.]') {
       $t['message'] = '';
     }
@@ -168,7 +168,7 @@ function get_all_torrents($torrents_only=false, $view='main') {
       $t['status'] = 'Hashing';
       $t['percent_complete'] = $t['chunks_hashed'] / $t['size_chunks'] * 100;
     }
-    
+
     if($t['complete'] == 1) {
       $t['status_class'] = 'complete';
     } else {
@@ -184,15 +184,15 @@ function get_all_torrents($torrents_only=false, $view='main') {
     } else {
       $t['eta'] = 0;
     }
-    
+
     $t['start_stop_cmd'] = ($t['is_active'] == 1 ? 'stop' : 'start');
     # Format peers_summary to keep the client side sorting routine as simple as possible
     $t['peers_summary'] = sprintf('%03d,%03d,%03d',
       $t['peers_connected'], $t['peers_not_connected'], $t['peers_complete']
     );
-    
+
     $t['is_transferring'] = (($t['down_rate'] + $t['up_rate']) ? 1 : 0);
-    
+
     if(is_array($_SESSION['persistent'][$hash])) {
       $s = $_SESSION['persistent'][$hash];
     } else {
@@ -218,31 +218,31 @@ function get_all_torrents($torrents_only=false, $view='main') {
       $s['date_added'] = filemtime($fn);
       $_SESSION['persistent'][$hash] = $s;
     }
-    
+
     $t['tracker_hostname'] = $s['tracker_hostname'];
     $t['tracker_color'] = $s['tracker_color'];
     if($use_groups) {
       $t['group'] = $s['group'];
     }
     $t['date_added'] = $s['date_added'];
-    
+
     $total_down_rate += $t['down_rate'];
     $total_up_rate += $t['up_rate'];
-    
+
     // unset items that are only needed for setting other items
     unset($t['chunk_size']);
     unset($t['chunks_hashed']);
     unset($t['connection_current']);
     unset($t['hashing']);
     unset($t['size_chunks']);
-    
+
     $torrents[$hash] = $t;
   }
-  
+
   if($torrents_only) {
     return $torrents;
   }
-  
+
   $data = array(
     'torrents'         => $torrents,
     'total_down_rate'  => $total_down_rate,
@@ -258,7 +258,7 @@ function get_all_torrents($torrents_only=false, $view='main') {
     // avoid divide by zero error if disk_total_space() fails
     $data['disk_percent'] = 0;
   }
-  
+
   return $data;
 }
 
@@ -283,14 +283,14 @@ function get_file_list($hash) {
     'get_size_bytes',
     'get_size_chunks'
   ));
-  
+
   if(!$use_old_api) {
     for($i=0; $i<count($results); $i++) {
       $results[$i]['get_is_created'] = $results[$i]['is_created'];
       $results[$i]['get_is_open'] = $results[$i]['is_open'];
     }
   }
-  
+
   return $results;
 }
 
@@ -343,7 +343,7 @@ function tracker_hostname($hash) {
 }
 
 /** rtorrent_xmlrpc
- * 
+ *
  * Short function to execute and return an XML-RPC request.
  * TODO: rename?
  */
@@ -353,7 +353,7 @@ function rtorrent_xmlrpc($command, $params=array('')) {
 }
 
 /** rtorrent_multicall
- * 
+ *
  * Does a "multicall" request to rtorrent and returns an array of data
  * items that can be either sequential or associative.  Each data item
  * is an associative array with the requested variables as keys.
@@ -374,7 +374,7 @@ function rtorrent_multicall($group, $params, $data_names, $key=null, $remove_get
       $key_index = $index;
     }
   }
-  
+
   $request = xmlrpc_encode_request("$group.multicall", $params);
   $response = do_xmlrpc($request);
   if(@xmlrpc_is_fault($response)) {
@@ -395,10 +395,10 @@ function rtorrent_multicall($group, $params, $data_names, $key=null, $remove_get
 }
 
 /** array_compare
- * 
- * Modified from: 
+ *
+ * Modified from:
  * http://www.php.net/manual/en/function.array-diff-assoc.php#89635
- * 
+ *
  * Finds only the differences between two arbitrarily nested data
  * arrays.  For the output of this function to be suitable for use
  * with json_encode and jQuery.extend, $before and $after should
@@ -521,7 +521,7 @@ function format_bytes($bytes) {
 // Draw the percent bar using a table...
 function percentbar($percent) {
    $retvar="<table align=center border=0 cellspacing=0 cellpadding=1 bgcolor=#666666 width=50><tr><td align=left>";
-   $retvar.="<img src='images/percentbar.gif' height=4 width=".round($percent/2)." /></td></tr>";   
+   $retvar.="<img src='images/percentbar.gif' height=4 width=".round($percent/2)." /></td></tr>";
    $retvar.="</table>";
    return $retvar;
 }
