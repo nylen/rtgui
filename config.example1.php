@@ -30,20 +30,29 @@ $site_title = 'rtGui (htpc)';
 // rtorrent 'watch' directory (used for upload torrent)
 $watch_dir = '/media/htpc/bit.torrents/';
 
-// Theme to use for site
-$theme = 'base';
+// Start download immediately after loading torrent
+$load_start = true;
+
+// Default values for settings that the user can change
+$default_user_settings = array(
+  // Theme to use for site, unless it is changed by the user or the user-agent
+  'theme' => 'base',
+
+  // Time between ajax calls - default 5000 (5 secs).  Disable with 0
+  'refresh_interval' => 5000,
+
+  // Default sort variable
+  'sort_var' => 'date_added',
+
+  // Whether to sort descending by default ('yes' or 'no')
+  'sort_desc' => 'yes'
+);
 
 // Path to report disk usage
 $download_dir = '/media/htpc/bit.torrents/';
 
 // Threshold for disk usage alert (%)
 $disk_alert_threshold = 15;
-
-// Time between ajax calls - default 5000 (5 secs).   Disable with 0
-$refresh_interval = 5000;
-
-// URL to your rtGui installation (used in RSS feed).  Include trailing slash.
-$rtgui_url = 'http://' . $_SERVER['HTTP_HOST'] . '/rtgui/';
 
 // Speeds (in KB) for the download/upload cap in the settings dialog.
 $cap_speeds = array(
@@ -52,9 +61,6 @@ $cap_speeds = array(
   500, 600, 700, 800, 900,
   1024, 1536, 2048, 5120, 10240
 );
-
-// Start download immediately after loading torrent
-$load_start = true;
 
 // Enable debug tabs
 $debug_mode = false;

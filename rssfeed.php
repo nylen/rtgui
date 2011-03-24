@@ -43,7 +43,7 @@ echo "<channel>";
 echo "<title>rtGui rss feed</title>";
 echo "<description>Latest info from your rTorrent/rtGui system</description>";
 echo "<generator>rtGui - http://rtgui.googlecode.com/ </generator>";
-echo "<link>".$rtgui_url."</link>";
+echo "<link>".get_rtgui_url()."</link>";
 echo "<lastBuildDate>".date("r")."</lastBuildDate>";
 
 $data = get_all_torrents(true, $r_view);
@@ -64,7 +64,7 @@ if (is_array($data)) {
       echo htmlspecialchars($item['tied_to_file'])." (".format_bytes($item['size_bytes']).")";
       echo "</description>";
       echo "<pubDate>".date("r",$item['state_changed'])."</pubDate>";
-      echo "<guid>".$rtgui_url."view.php?hash=".$item['hash']."</guid>";
+      echo "<guid>".get_rtgui_url()."view.php?hash=".$item['hash']."</guid>";
       echo "</item>";
    }
 }

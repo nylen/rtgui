@@ -32,6 +32,35 @@ if($scgi_local) {
   $scgi_port = null;
 }
 
+function get_current_theme() {
+  global $default_user_settings;
+  if(!$_COOKIE['theme']) {
+    // TODO: enumerate themes and look for user-agent match
+  }
+  if(!$_COOKIE['theme']) {
+    set_user_setting('theme', $default_user_settings['theme']);
+  }
+  return $_COOKIE['theme'];
+}
+
+function get_user_setting($key, $should_set=true) {
+  global $default_user_settings;
+  if(array_key_exists($key, $_COOKIE)) {
+    return $_COOKIE[$key];
+  } else {
+    if($should_set) {
+      set_user_setting($key, $default_user_settings[$key]);
+    }
+    return $default_user_settings[$key];
+  }
+}
+
+function set_user_setting($key, $value) {
+  @setcookie($key, $value, time()+60*60*24*365, get_rtgui_path());
+  // HACK: make the desired value available before the next page load
+  $_COOKIE[$key] = $value;
+}
+
 function file_path_mtime($filename) {
   return $filename . '?_=' . filemtime($filename);
 }
@@ -42,9 +71,8 @@ function include_script($script_filename) {
 }
 
 function include_stylesheet($stylesheet_filename, $use_theme=false) {
-  global $theme;
   if($use_theme) {
-    foreach(array($theme, 'base') as $test) {
+    foreach(array(get_current_theme(), 'base') as $test) {
       $new_filename = "themes/$test/$stylesheet_filename";
       if(file_exists($new_filename)) {
         $stylesheet_filename = $new_filename;
@@ -54,6 +82,24 @@ function include_stylesheet($stylesheet_filename, $use_theme=false) {
   }
   echo '<link rel="stylesheet" type="text/css" href="'
     . file_path_mtime($stylesheet_filename) . "\" />\n";
+}
+
+function get_rtgui_path() {
+  return substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'));
+}
+
+function get_rtgui_url() {
+  // adapted from http://stackoverflow.com/questions/189113/1229827#1229827
+  $protocol = 'http';
+  if($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')) {
+      $protocol .= 's';
+      $protocol_port = $_SERVER['SERVER_PORT'];
+  } else {
+      $protocol_port = 80;
+  }
+  $host = $_SERVER['HTTP_HOST'];
+  $port = $_SERVER['SERVER_PORT'];
+  return "$protocol://$host" . ($port == $protocol_port ? '' : ':' . $port) . get_rtgui_path();
 }
 
 require_once 'session.php';

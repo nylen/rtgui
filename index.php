@@ -53,22 +53,27 @@ $_SESSION['last_data'] = $data;
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <script type="text/javascript">
-// Configuration variables
 var config = {
-  refreshInterval: <?php echo $refresh_interval; ?>,
   diskAlertThreshold: <?php echo $disk_alert_threshold; ?>,
   useGroups: <?php echo $use_groups ? 1 : 0; ?>,
   debugTab: <?php echo $debug_mode ? 1 : 0; ?>,
-  dateAddedFormat: '<?php echo addslashes($date_added_format); ?>'
+  dateAddedFormat: '<?php echo addslashes($date_added_format); ?>',
+  rtGuiPath: '<?php echo addslashes(get_rtgui_path()); ?>',
+  defaultFilterText: 'Filter'
 };
+
+var userSettings = {
+  refreshInterval: <?php echo get_user_setting('refresh_interval'); ?>,
+  sortVar: '<?php echo get_user_setting('sort_var'); ?>',
+  sortDesc: <?php echo (get_user_setting('sort_desc') == 'yes' ? 'true' : 'false'); ?>,
+  theme: '<?php echo get_current_theme(); ?>'
+};
+
 var current = {
   view: 'main',
   filters: {},
-  sortVar: 'name',
-  sortDesc: false,
   error: false
 };
-var defaultFilterText = 'Filter';
 
 var data = <?php echo $data_str; ?>;
 </script>
@@ -76,6 +81,7 @@ var data = <?php echo $data_str; ?>;
 include_script('jquery.js');
 include_script('jquery.form.js');
 include_script('jquery-ui-1.8.9-files/js/jquery-ui-1.8.9.custom.min.js');
+include_script('jquery.cookie.js');
 include_script('json2.min.js');
 include_script('php.min.js');
 include_script('patience_sort.js');

@@ -25,12 +25,14 @@ $(function() {
 
   updateTorrentsHTML(data, true);
   window.clearTimeout(current.refreshTimeoutID);
-  current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
+  if(userSettings.refreshInterval) {
+    current.refreshTimeoutID = window.setTimeout(updateTorrentsData, userSettings.refreshInterval);
+  }
 
-  if(current.sortVar) {
+  if(userSettings.sortVar) {
     $('a.sort').each(function() {
-      if($(this).attr('rel').split(':')[0] == current.sortVar) {
-        $(this).addClass(current.sortDesc ? 'sort-desc' : 'sort-asc');
+      if($(this).attr('rel').split(':')[0] == userSettings.sortVar) {
+        $(this).addClass(userSettings.sortDesc ? 'sort-desc' : 'sort-asc');
       }
     });
   }
@@ -58,10 +60,10 @@ $(function() {
 
   $('#filter').blur(function() {
     if($(this).val() == '') {
-      $(this).val(window.defaultFilterText);
+      $(this).val(config.defaultFilterText);
     }
   }).focus(function() {
-    if($(this).val() == window.defaultFilterText) {
+    if($(this).val() == config.defaultFilterText) {
       $(this).val('');
     }
   }).trigger('blur');

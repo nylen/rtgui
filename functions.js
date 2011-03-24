@@ -9,6 +9,9 @@ function error(msg) {
   throw new Error(msg);
 }
 
+
+// Functions for dialogs
+
 function showDialog(url, title, width, height) {
   var w = Math.min(parseInt(width),  $(window).width()  - 40);
   var h = Math.min(parseInt(height), $(window).height() - 40);
@@ -39,12 +42,28 @@ function hideDialog(doUpdate) {
   }
 }
 
-function updateTorrentsNow() {
-  window.clearTimeout(current.refreshTimeoutID);
-  updateTorrentsData();
+
+// Functions for user settings
+
+function reloadUserSettings() {
+  userSettings.refreshInterval = parseInt($.cookie('refresh_interval'));
+  if(userSettings.theme != $.cookie('theme')) {
+    document.location.reload();
+  }
 }
 
-// format a number of bytes nicely
+function saveUserSettings() {
+  var cookieOptions = {
+    expires: 365,
+    path: config.rtGuiPath
+  };
+  $.cookie('sort_var', userSettings.sortVar, cookieOptions);
+  $.cookie('sort_desc', (userSettings.sortDesc ? 'yes' : 'no'), cookieOptions);
+}
+
+
+// Format a number of bytes nicely
+
 function formatBytes(bytes, zero, after) {
   if(zero === undefined) {
     zero = '';
@@ -65,9 +84,12 @@ function formatBytes(bytes, zero, after) {
 }
 
 
-
-
 // Functions to update torrents list
+
+function updateTorrentsNow() {
+  window.clearTimeout(current.refreshTimeoutID);
+  updateTorrentsData();
+}
 
 function updateTorrentsData() {
   $.ajax({
@@ -105,7 +127,9 @@ function updateTorrentsData() {
     },
     complete: function(xhr, status) {
       window.clearTimeout(current.refreshTimeoutID);
-      current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
+      if(userSettings.refreshInterval) {
+        current.refreshTimeoutID = window.setTimeout(updateTorrentsData, userSettings.refreshInterval);
+      }
     }
   });
 }
@@ -185,7 +209,7 @@ function updateTorrentsHTML(changes, isFirstUpdate) {
             if(current.filters[varName]) {
               dirty.toFilter.push(hash);
             }
-            if(current.sortVar == varName) {
+            if(userSettings.sortVar == varName) {
               dirty.mustSort = true;
             }
           }
@@ -268,7 +292,7 @@ var viewHandlers = {
 
 
 function sortTorrents(torrentDivsAll, reorderAll) {
-  if(!current.sortVar) {
+  if(!userSettings.sortVar) {
     // no sort order is defined
     return false;
   }
@@ -436,12 +460,12 @@ function updateTorrentPositions() {
 }
 
 function getTorrentsComparer() {
-  var cmp = (current.sortDesc ? -1 : 1);
+  var cmp = (userSettings.sortDesc ? -1 : 1);
   return function(a, b) {
     var ta = window.data.torrents[a.id];
     var tb = window.data.torrents[b.id];
-    var va = ta[current.sortVar];
-    var vb = tb[current.sortVar];
+    var va = ta[userSettings.sortVar];
+    var vb = tb[userSettings.sortVar];
     if(va.toLowerCase) va = va.toLowerCase();
     if(vb.toLowerCase) vb = vb.toLowerCase();
     return (va < vb ? -cmp : (va > vb ? cmp : ta.sortPos - tb.sortPos));
@@ -454,18 +478,19 @@ function setCurrentSort(sortInfo, obj) {
   }
   var arr = sortInfo.split(':');
   var reversing = false;
-  if(arr[0] == current.sortVar) {
+  if(arr[0] == userSettings.sortVar) {
     reversing = true;
-    current.sortDesc = !current.sortDesc;
+    userSettings.sortDesc = !userSettings.sortDesc;
   } else {
-    current.sortVar = arr[0];
-    current.sortDesc = (arr[1] == 'desc');
+    userSettings.sortVar = arr[0];
+    userSettings.sortDesc = (arr[1] == 'desc');
   }
   $('#torrents-header a.sort').attr('class', 'sort');
-  obj.addClass(current.sortDesc ? 'sort-desc' : 'sort-asc');
+  obj.addClass(userSettings.sortDesc ? 'sort-desc' : 'sort-asc');
   if(sortTorrents(null, arr.length > 2 && reversing)) {
     updateTorrentPositions();
   }
+  saveUserSettings();
 }
 
 function setCurrentView(viewName, obj) {
