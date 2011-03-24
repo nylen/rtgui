@@ -24,6 +24,7 @@ $(function() {
   });
 
   updateTorrentsHTML(data, true);
+  window.clearTimeout(current.refreshTimeoutID);
   current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
 
   if(current.sortVar) {

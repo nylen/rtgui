@@ -104,6 +104,7 @@ function updateTorrentsData() {
       $('#error').html(current.error).show();
     },
     complete: function(xhr, status) {
+      window.clearTimeout(current.refreshTimeoutID);
       current.refreshTimeoutID = window.setTimeout(updateTorrentsData, config.refreshInterval);
     }
   });
