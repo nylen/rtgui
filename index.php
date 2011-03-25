@@ -111,16 +111,23 @@ include_script('ie.js');
         <h1><a href="./">rt<span class=green>gui</span></a></h1><br/>
 <?php
 if(is_array($header_links) && count($header_links)) {
-  echo "<div id=\"header-links\">\n(Links: \n";
-  $first = true;
+  echo <<<HTML
+        <div id="header-links">
+
+HTML;
+  $i = 0;
   foreach($header_links as $title => $href) {
-    if(!$first) {
-      echo " | \n";
-    }
-    echo "<a href=\"$href\">$title</a>";
-    $first = false;
+    $prefix = ($i == 0 ? '(Links: ' : ' | ');
+    $suffix = (++$i == count($header_links) ? ')' : '');
+    echo <<<HTML
+          $prefix<a href="$href">$title</a>$suffix
+
+HTML;
   }
-  echo ")\n</div>\n";
+  echo <<<HTML
+        </div>
+
+HTML;
 }
 ?>
         <!--[if lt IE 8]>
@@ -169,12 +176,14 @@ $views = array('All', 'Started', 'Stopped', 'Active', 'Inactive', 'Complete', 'I
 foreach($views as $name) {
   $view = ($name == 'All' ? 'main' : strtolower($name));
   $class = ($name == 'All' ? 'view current' : 'view');
-  echo "<li><a class=\"$class\" href=\"#\" rel=\"$view\">$name</a></li>\n";
+  echo <<<HTML
+          <li><a class="$class" href="#" rel="$view">$name</a></li>
+
+HTML;
 }
-if($debug_mode) {
-   echo "<li><a href=\"#\" id=\"debug-tab\">Debug</a></li>\n";
-}
-?>
+if($debug_mode) { ?>
+          <li><a href="#" id="debug-tab">Debug</a></li>
+<?php } ?>
         </ul>
       </div><!-- id="navcontainer" -->
 
