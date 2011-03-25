@@ -36,9 +36,15 @@ function get_current_theme() {
   global $default_user_settings;
   if(!$_COOKIE['theme']) {
     // TODO: enumerate themes and look for user-agent match
+    if(!$_COOKIE['theme']) {
+      set_user_setting('theme', $default_user_settings['theme']);
+    }
   }
-  if(!$_COOKIE['theme']) {
-    set_user_setting('theme', $default_user_settings['theme']);
+  if(!is_dir('themes/' . $_COOKIE['theme'])) {
+    if(!is_dir('themes/base')) {
+      die('Error: base theme not found');
+    }
+    set_user_setting('theme', 'base');
   }
   return $_COOKIE['theme'];
 }
