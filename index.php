@@ -52,6 +52,12 @@ $_SESSION['last_data'] = $data;
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
+<title><?php echo $site_title; ?></title>
+<?php
+include_stylesheet('jquery-ui-1.8.9-files/css/ui-darkness/jquery-ui-1.8.9.custom.css');
+include_stylesheet('style.css', true);
+include_stylesheet('dialog.css', true);
+?>
 <script type="text/javascript">
 var config = {
   diskAlertThreshold: <?php echo $disk_alert_threshold; ?>,
@@ -91,15 +97,11 @@ include_script('confirmMessages.js');
 include_script('index.js');
 ?>
 <!--[if lt IE 8]>
-<link rel="stylesheet" type="text/css" href="ie.css" />
-<script type="text/javascript" src="ie.js"></script>
-<![endif]-->
-<title><?php echo $site_title; ?></title>
 <?php
-include_stylesheet('jquery-ui-1.8.9-files/css/ui-darkness/jquery-ui-1.8.9.custom.css');
-include_stylesheet('style.css', true);
-include_stylesheet('dialog.css', true);
+include_stylesheet('ie.css');
+include_script('ie.js');
 ?>
+<![endif]-->
 </head>
 <body>
   <div id="wrap">
