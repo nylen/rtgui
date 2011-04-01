@@ -36,7 +36,7 @@ $load_start = true;
 // Default values for settings that the user can change
 $default_user_settings = array(
   // Theme to use for site, unless it is changed by the user or the user-agent
-  'theme' => 'base',
+  'theme' => 'default',
 
   // Time between ajax calls - default 5000 (5 secs).  Disable with 0
   'refresh_interval' => 5000,

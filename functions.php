@@ -41,10 +41,10 @@ function get_current_theme() {
     }
   }
   if(!is_dir('themes/' . $_COOKIE['theme'])) {
-    if(!is_dir('themes/base')) {
-      die('Error: base theme not found');
+    if(!is_dir('themes/default')) {
+      die('Error: default theme not found');
     }
-    set_user_setting('theme', 'base');
+    set_user_setting('theme', 'default');
   }
   return $_COOKIE['theme'];
 }
@@ -78,7 +78,7 @@ function include_script($script_filename) {
 
 function include_stylesheet($stylesheet_filename, $use_theme=false) {
   if($use_theme) {
-    foreach(array(get_current_theme(), 'base') as $test) {
+    foreach(array(get_current_theme(), 'default') as $test) {
       $new_filename = "themes/$test/$stylesheet_filename";
       if(file_exists($new_filename)) {
         $stylesheet_filename = $new_filename;
