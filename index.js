@@ -123,6 +123,10 @@ $(function() {
     }
     $thisCheckbox[0].focus();
     current.lastHash = thisHash;
+  }).live('mousedown', function(e) {
+    if(e.shiftKey) {
+      return false;
+    }
   });
 
   $('.select-all, .unselect-all').click(function() {
