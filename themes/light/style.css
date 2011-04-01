@@ -129,13 +129,20 @@ form {
 #header a:hover {
   text-decoration: none;
 }
-#header #boxright {
+#header-links {
+  position: absolute;
+  top: 43px;
+  left: 150px;
+}
+#boxright {
   position: absolute;
   right: 5px;
   top: 15px;
   display: block;
   text-align: right;
   margin: 0px 14px 0px 0px;
+}
+#header-links, #boxright {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 12px;
   *font-size: 13px;
@@ -144,12 +151,8 @@ form {
   text-shadow: 0 -1px 1px #1d1d1d;
   font-weight: bold;
 }
-#header #header-links {
-  color: #b2b2b2;
-  font-weight: bold;
-  position: absolute;
-  top: 43px;
-  left: 150px;
+#header-links a, #boxright a {
+  color: #1472d4;
 }
 #header input {
   font-size: 80%;
@@ -256,7 +259,7 @@ form {
   width: 220px;
 
   margin: 2px 10px 2px 0px;
-  padding: 0px 0px 0px 8px;
+  padding: 0px 0px 0px 2px;
 
   color: #b2b2b2;
   background: #343434 url('./images/bg-menu-tile2.gif') repeat-x bottom left;
@@ -290,7 +293,6 @@ form {
   margin-top: 1px;
   color: #c2c2c2;
   border:none;
-  border-right: 1px solid #5c5c5c;
   text-shadow: 0px -1px 0px #363636;
 
   border-radius: 0;
@@ -379,6 +381,10 @@ div.tracker {
   background: #262626 url('./images/bg-header2.gif') no-repeat 0px 0px;
   height: 22px;
   border-top: 1px solid #919191;
+}
+.bottomtab input.themed, .bottomtab select.themed {
+  position: relative;
+  top: -4px;
 }
 
 div {
@@ -611,12 +617,6 @@ div.modal {
   height: 18px;
 }
 
-.modal #options {
-  border-top: 1px solid #383838;
-  margin: 0px;
-  padding: 10px;
-  color: #999;
-}
 div.controls {
   float: left;
 }
@@ -668,8 +668,7 @@ text-decoration:none;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
   margin: 0px;
-  padding: 0px;
-  min-height: 45px;
+  padding: 0 0 4px;
   border: none;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ccc;
@@ -677,7 +676,13 @@ text-decoration:none;
 }
 .row:hover {
   border-bottom: 1px solid #aaa;
-  background: #ddd url('./images/bg-row-light.gif') repeat-x top left;
+  background: #f1f1f1 url('./images/bg-row-light.gif') repeat-x top left;
+}
+.torrent .checkbox {
+  margin: -1px 3px -1px -1px;
+  position: relative;
+  left: 2px;
+  top: 2px;
 }
 .buttonstart {
   background: url('images/start.gif') no-repeat center left;
