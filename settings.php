@@ -158,14 +158,18 @@ HTML;
         <td class="option">
           <select name="set_theme" class="themed" id="set-theme">
 <?php
-foreach(glob('themes/*', GLOB_ONLYDIR) as $theme) {
-  $theme = basename($theme);
-  $theme_friendly_name = $theme; // TODO: set this from the theme settings
-  $selected = ($theme == get_current_theme() ? ' selected="selected"' : '');
-  echo <<<HTML
+foreach(array(true, false) as $pick_default_theme) {
+  foreach(glob('themes/*', GLOB_ONLYDIR) as $theme) {
+    if(($theme == 'themes/default') == $pick_default_theme) {
+      $theme = basename($theme);
+      $theme_friendly_name = $theme; // TODO: set this from the theme settings
+      $selected = ($theme == get_current_theme() ? ' selected="selected"' : '');
+      echo <<<HTML
             <option value="$theme"$selected>$theme_friendly_name</option>
 
 HTML;
+    }
+  }
 }
 ?>
           </select>
