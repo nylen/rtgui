@@ -91,7 +91,21 @@ function characterData($parser, $data) {
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="rtgui.js"></script>
+<script type="text/javascript">
+function toggleLayer( whichLayer ) {
+  var elem, vis;
+  if( document.getElementById )
+    elem = document.getElementById( whichLayer );
+  else if( document.all )
+      elem = document.all[whichLayer];
+  else if( document.layers )
+    elem = document.layers[whichLayer];
+  vis = elem.style;
+  if(vis.display==''&&elem.offsetWidth!=undefined&&elem.offsetHeight!=undefined)
+    vis.display = (elem.offsetWidth!=0&&elem.offsetHeight!=0)?'block':'none';
+  vis.display = (vis.display==''||vis.display=='block')?'none':'block';
+}
+</script>
 </head>
 <body>
 
