@@ -34,7 +34,7 @@ function endElement($parser, $name) {
   global $insideitem, $tag, $title, $description, $link, $category, $pubdate, $count, $ddl;
   if ($name == "ITEM") {
       echo "<p class='feeditem' align='left'>\n";
-      
+
       echo "<a href=\"javascript:toggleLayer('desc".$count."');\"><img src='images/view.gif'></a>\n";
 
       if ($ddl) {
@@ -42,7 +42,7 @@ function endElement($parser, $name) {
       } else {
          echo "<a href='".addslashes(trim($link))."' target='_blank'><img src='images/weblink.gif' alt='Visit web link'></a>";
       }
-      
+
       echo "&nbsp;<a href=\"javascript:toggleLayer('desc".$count."');\">".htmlspecialchars(trim($title))."</a>\n";
       if (trim($category!="")) echo " (".$category.")";
       echo "<div class='togglevis' id='desc".$count."' align='left'><b>".$pubdate."</b><br>".trim($description)."</div>\n";
@@ -64,13 +64,13 @@ function characterData($parser, $data) {
     case "TITLE":
     $title .= $data;
     break;
-      case "DESCRIPTION":      
+      case "DESCRIPTION":
     $description .= $data;
     break;
-      case "COMMENTS":       
+      case "COMMENTS":
     $description .= $data;
     break;
-      case "PUBDATE":       
+      case "PUBDATE":
     $pubdate.=$data;
     break;
     case "LINK":

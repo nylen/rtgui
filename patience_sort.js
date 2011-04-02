@@ -11,7 +11,7 @@ function binarySearch(list, val, cmp, len) {
   if(!len && len !== 0) {
     len = list.length;
   }
-  
+
   var left = 0, right = len - 1;
   while(right >= left) {
     var mid = (left + right) >> 1;
@@ -31,13 +31,13 @@ function patienceSort(list, cmp, subseqOnly) {
   if(typeof cmp != 'function') {
     cmp = getDefaultComparer();
   }
-  
+
   // we'll use this whenever we binary search through the piles
   var pileComparer = function(pile, val) {
     // compare each pile's last element to the desired value
     return cmp(pile[pile.length-1].item, val);
   };
-  
+
   /* we'll work with an array of piles, where each "pile" is a
    * stack of "cards"
    */
@@ -46,7 +46,7 @@ function patienceSort(list, cmp, subseqOnly) {
     backPtr: null
   }]];
   var nItems = list.length;
-  
+
   // build the piles
   for(var i = 1; i < nItems; i++) {
     /* each "card" contains the list item and a back-pointer to the
@@ -57,7 +57,7 @@ function patienceSort(list, cmp, subseqOnly) {
       item: list[i],
       backPtr: null
     };
-    
+
     /* optimize for a common case (often, the list is mostly sorted,
      * which means we will be starting a lot of new piles)
      */
@@ -78,7 +78,7 @@ function patienceSort(list, cmp, subseqOnly) {
     }
     piles[p].push(card);
   }
-  
+
   if(piles.length == nItems) {
     // the list was already sorted
     if(subseqOnly) {
@@ -90,7 +90,7 @@ function patienceSort(list, cmp, subseqOnly) {
       return {sorted: list, subseq: list};
     }
   }
-  
+
   // build the longest increasing subsequence
   var subseq = new Array(piles.length);
   var p = piles[piles.length - 1];
@@ -100,11 +100,11 @@ function patienceSort(list, cmp, subseqOnly) {
     card = card.backPtr;
     subseq[i] = card.item;
   }
-  
+
   if(subseqOnly) {
     return subseq;
   }
-  
+
   var sorted = new Array(nItems);
   // try to traverse the piles efficiently
   for(var i = 0; i < nItems; i++) {
@@ -115,6 +115,6 @@ function patienceSort(list, cmp, subseqOnly) {
       piles.splice((b < 0 ? ~b : b), 0, p);
     }
   }
-  
+
   return {sorted: sorted, subseq: subseq};
 }

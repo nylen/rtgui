@@ -1,6 +1,6 @@
 (function() {
   // A few helper functions
-  
+
   function log() {
     var msg = Array.prototype.slice.call(arguments).join(' ');
     document.write('<div>' + msg + '</div>\n');
@@ -11,7 +11,7 @@
       throw new Error('Assert failed (debug me!)');
     }
   }
-  
+
   function randomArray(n, p) {
     if(!p) p = 1000;
     var arr = new Array(n);
@@ -20,7 +20,7 @@
     }
     return arr;
   }
-  
+
   function mostlySortedArray(n, r) {
     var arr = new Array(n);
     for(var i=0; i<n; i++) {
@@ -35,8 +35,8 @@
     }
     return arr;
   }
-  
-  
+
+
   // Test binary search
   (function() {
     var a = [0,5,10];
@@ -53,7 +53,7 @@
     assert(binarySearch(a, -1) == -1);
     assert(binarySearch(a, 16) == -5);
   })();
-  
+
   // Test patience sorting
   (function() {
     var trials = 30, len = 100;
@@ -68,7 +68,7 @@
       }
     }
   })();
-  
+
   // Benchmark vs. Array.sort()
   (function() {
     var cs = {
@@ -81,18 +81,18 @@
         return getDefaultComparer()(a, b);
       }
     };
-    
+
     var mob = (navigator.userAgent.indexOf('Mobile') >= 0);
-    
+
     var trials = mob?50:500, len = 50, swaps = 10;
     log('trials=',trials, 'len=',len, 'swaps=',swaps);
-    
+
     for(var c in cs) {
       var data = new Array(trials);
       for(var i=0; i<trials; i++) {
         data[i] = mostlySortedArray(len, swaps);
       }
-      
+
       var d1 = new Date();
       for(var i=0; i<trials; i++) {
         patienceSort(data[i], cs[c]);
@@ -115,7 +115,7 @@
       log('cmp=',c, 'patience=',d2-d1, 'subseq=',d3-d2, 'stock=',d4-d3, 'diff=',(d2-d1)-(d4-d2));
     }
   })();
-    
+
   document.close();
-  
+
 })();

@@ -3,7 +3,7 @@ $(function() {
     top.$.post('add-torrents.php?action=delete_files');
     return true;
   }
-  
+
   $('#form1').ajaxForm({
     beforeSubmit: function(formData, form, options) {
       $('#next').attr('disabled', true).after($.hsjn(
@@ -17,7 +17,7 @@ $(function() {
     },
     success: function(d) {
       $('img.loading').remove();
-      
+
       // work around bug in jquery.form.js (TODO: fix this)
       var files = JSON.parse(base64_decode(d));
       if(!files.length) {
@@ -25,13 +25,13 @@ $(function() {
         $('#next').removeAttr('disabled');
         return false;
       }
-      
+
       $('#row-next').addClass('hidden');
       $('#row-back, #form2').removeClass('hidden');
       $('#upload-form tr.controls').find('textarea, input, label')
       .attr('disabled', true).filter('textarea').css('height', '20px');
       $('input[type=file], a.MultiFile-remove').addClass('hidden');
-      
+
       var odd = false;
       for(var i = 0; i < files.length; i++) {
         var error = files[i].error;
@@ -44,27 +44,27 @@ $(function() {
         );
       }
       $('#to-add .add-torrent:even').addClass('add-torrent-striped');
-      
+
       var torrents = {
         current: window.top.data.torrents,
         toAdd: {}
       };
-      
+
       function err(i, msg) {
         $('#add-' + i).find('.name').addClass('error').html(htmlspecialchars(msg));
       }
       function processTorrent(i) {
         $('#to-add .loading').remove();
-        
+
         if(i >= files.length) {
           $('#add').removeAttr('disabled');
           return;
         }
-        
+
         $('#add-' + i).prepend($.hsjn(
           ['img.loading.left', {src: 'images/loading.gif'}]
         ));
-        
+
         var f = files[i];
         if(files[i].error) {
           processTorrent(i + 1);
@@ -74,7 +74,7 @@ $(function() {
           'action': 'process_' + f.type
         };
         data[f.type] = f.value;
-        
+
         $.post('add-torrents.php', data, function(d) {
           processTorrentResponse(d, i);
         });
@@ -88,7 +88,7 @@ $(function() {
           return;
         }
         // data { hash, name, files, filename }
-        
+
         if(data.error) {
           err(i, data.error);
         } else if(torrents.current[data.hash]) {
@@ -116,7 +116,7 @@ $(function() {
               ]
             ]]);
           }
-          
+
           $('#add-' + i).prepend($.hsjn(
             ['input.left', {
               type: 'checkbox',
@@ -131,23 +131,23 @@ $(function() {
               .toggleClass('hidden').is('.hidden');
             $(this).find('.toggle').html(hidden ? '+' : '-');
           }).after($.hsjn(['div.files.hidden', fileRows]));
-          
+
           if($.browser.msie) {
             $('#add-' + i + ' input[type=checkbox]').attr('checked', true);
           }
-          
+
           $('#add-' + i + ' input[type=checkbox].left').click(function() {
             $(this).parents('.add-torrent').find('div.files input[type=checkbox]')
             .attr('checked', $(this).attr('checked'));
           });
         }
-        
+
         processTorrent(i + 1);
       }
       processTorrent(0);
     }
   });
-  
+
   $('#back').click(function() {
     $.post('add-torrents.php?action=delete_files');
     $('#row-next').removeClass('hidden');

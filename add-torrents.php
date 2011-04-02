@@ -63,11 +63,11 @@ function get_filename_no_clobber($filename) {
 
 function process_torrent_data($content, $filename, $create_file=true) {
   global $tmp_add_dir;
-  
+
   if(!is_array($_SESSION['to_add_data'])) {
     $_SESSION['to_add_data'] = array();
   }
-  
+
   set_error_handler('handleError');
   try {
     $torrent = new Torrent($content);
@@ -75,7 +75,7 @@ function process_torrent_data($content, $filename, $create_file=true) {
       return array('error' => $error);
     }
     $hash = $torrent->hash_info();
-    
+
     $filename = "$tmp_add_dir/$filename";
     if($create_file) {
       $filename = get_filename_no_clobber($filename);
@@ -86,7 +86,7 @@ function process_torrent_data($content, $filename, $create_file=true) {
     return array('error' => $e->getMessage());
   }
   restore_error_handler();
-    
+
   return $_SESSION['to_add_data'][$hash] = array(
     'hash' => $hash,
     'name' => $torrent->name(),
@@ -99,11 +99,11 @@ function process_torrent_data($content, $filename, $create_file=true) {
 import_request_variables('gp', 'r_');
 
 switch($r_action) {
-  
+
   case 'get_list':
     $max_urls = 100;
     $to_add = array();
-    
+
     if($r_add_urls) {
       $maybe_urls = preg_split('@[,;\s]+@', $r_add_urls);
       for($i = 0; $i < count($maybe_urls); $i++) {
@@ -113,9 +113,9 @@ switch($r_action) {
           );
           break;
         }
-        
+
         $url = $maybe_urls[$i];
-        
+
         if(!preg_match('@^(ht|f)tps?:@', $url)) {
           if(preg_match('@^[^/]+\.[a-z]{1,6}/@', $url)) {
             $url = "http://$url";
@@ -124,7 +124,7 @@ switch($r_action) {
           }
         }
         $url = preg_replace('@[/?]+$@', '', $url);
-        
+
         if(filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
           $to_add[] = array(
             'type' => 'url',
@@ -133,11 +133,11 @@ switch($r_action) {
         }
       }
     }
-    
+
     $err_level = error_reporting(E_NONE);
     foreach($_FILES['add_files']['error'] as $i => $err) {
       $filename = $_FILES['add_files']['name'][$i];
-      
+
       if($err == UPLOAD_ERR_OK) {
         // In case move_uploaded_file fails without a useful error
         trigger_error('Unknown error', E_USER_WARNING);
@@ -146,25 +146,25 @@ switch($r_action) {
           'type' => 'file',
           'value' => str_replace("$tmp_add_dir/", '', $filename)
         );
-        
+
         if(!move_uploaded_file($_FILES['add_files']['tmp_name'][$i], $filename)) {
           $err = error_get_last();
           $to_add_this['error'] = $err['message'];
         }
         $to_add[] = $to_add_this;
-        
+
       } else if($err != UPLOAD_ERR_NO_FILE) {
         $to_add_this['error'] = upload_error_message($err);
         $to_add[] = $to_add_this;
       }
     }
     error_reporting($err_level);
-    
+
     print base64_encode(json_encode($to_add));
-    
+
     break;
-  
-  
+
+
   case 'process_url':
     if(!function_exists('curl_init')) {
       json_error('The required PHP CURL extension is not present.');
@@ -179,7 +179,7 @@ switch($r_action) {
     if($cookies_file) {
       curl_setopt($c, CURLOPT_COOKIEFILE, $cookies_file);
     }
-    
+
     $r = curl_exec($c);
     if($r !== false) {
       curl_close($c);
@@ -204,7 +204,7 @@ switch($r_action) {
             break;
         }
       }
-      
+
       if($mime_type == 'application/x-bittorrent') {
         // Torrent OK
         print json_encode(process_torrent_data($content, $filename));
@@ -216,10 +216,10 @@ switch($r_action) {
       curl_close($c);
       json_error($err);
     }
-    
+
     break;
-  
-  
+
+
   case 'process_file':
     $r_file = "$tmp_add_dir/$r_file";
     if(file_exists($r_file) && dirname(realpath($r_file)) === realpath($tmp_add_dir)) {
@@ -227,10 +227,10 @@ switch($r_action) {
     } else {
       json_error('Bad path or filename');
     }
-    
+
     break;
-  
-  
+
+
   case 'add':
     $errors = array();
     $this_watch_dir = $watch_dir;
@@ -240,7 +240,7 @@ switch($r_action) {
       }
       $this_watch_dir = "$watch_dir/$r_group";
     }
-    
+
     foreach($r_add_torrent as $hash) {
       if($data = $_SESSION['to_add_data'][$hash]) {
         $filename = $data['filename'];
@@ -254,19 +254,19 @@ switch($r_action) {
         }
       }
     }
-    
+
     if(count($errors)) {
       array_unshift($errors, "One or more errors occurred:\n");
       $script = 'alert(' . json_encode($errors) . '.join("\n"))';
     } else {
       $script = 'top.hideDialog(true);';
     }
-    
+
     print "<script>$script</script>\n";
-    
+
     break;
-  
-  
+
+
   case 'delete_files':
     if(is_array($_SESSION['to_add_data'])) {
       foreach($_SESSION['to_add_data'] as $data) {
@@ -274,7 +274,7 @@ switch($r_action) {
       }
       unset($_SESSION['to_add_data']);
     }
-    
+
     break;
 }
 ?>

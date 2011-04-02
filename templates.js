@@ -4,7 +4,7 @@ function makeTemplate() {
     id: '@',
     value: '$'
   };
-  
+
   var arr = [];
   if($.browser.msie) {
     // I hate you
@@ -36,18 +36,18 @@ function makeTemplate() {
       }
     }
     arr.push(token);
-    
+
   } else {
     arr = str.split(/([@\$])([a-z0-9_-]*)/i);
     // Wasn't that easy?  Too easy.
   }
-  
+
   var template = {
     before: arr[0],
     substitutions: [],
     mustRewriteHTML: {}
   };
-  
+
   var i = 1;
   for(var k in markers) {
     if(str.charAt(0) == markers[k]) {
@@ -55,7 +55,7 @@ function makeTemplate() {
       template.before = '';
     }
   }
-  
+
   var lastVarName = '';
   while(i < arr.length) {
     var thisSubstitution = {};
@@ -87,7 +87,7 @@ function makeTemplate() {
     thisSubstitution.after = (i >= arr.length ? '' : arr[i++]);
     template.substitutions.push(thisSubstitution);
   }
-  
+
   return template;
 }
 
@@ -95,9 +95,9 @@ function applyTemplate(data, template, key, group) {
   if(group === undefined) {
     group = 't';
   }
-  
+
   var html = template.before;
-  
+
   for(var i = 0; i < template.substitutions.length; i++) {
     var s = template.substitutions[i];
     switch(s.type) {
@@ -114,7 +114,7 @@ function applyTemplate(data, template, key, group) {
     }
     html += s.after;
   }
-  
+
   return html;
 }
 
@@ -156,8 +156,8 @@ var templates = {
       '<div class="datacollast column-tracker-date" id="@date_added">$</div>',
       '<div class="spacer"> </div>',
     '</div>')
-  
-  
+
+
 };
 
 // these functions define how to format numeric items
@@ -174,7 +174,7 @@ var formatHandlers = {
   total_up_limit: function(n) {
     return '[' + formatBytes(n, 'unlim', '/s') + ']';
   },
-  
+
   disk_free: formatBytes,
   disk_total: formatBytes,
   disk_percent: function(n) {
@@ -189,7 +189,7 @@ var formatHandlers = {
     }
     return Math.round(n*100)/100 + '%';
   },
-  
+
   date_added: function(ts) {
     return date(config.dateAddedFormat, ts);
   },
@@ -223,7 +223,7 @@ var formatHandlers = {
   message: function(m) {
     return (m ? m : false);
   },
-  
+
   percent_complete: function(n) {
     return [
       Math.round(n*10)/10 + '%<br />', //' fix vim syntax highlighting (wtf)
@@ -248,7 +248,7 @@ var formatHandlers = {
     var arr = s.split(',');
     return parseInt(arr[0]) + '/' + parseInt(arr[1]) + ' (' + parseInt(arr[2]) + ')';
   }
-  
+
 };
 
 function getFormattedValue(varName, varValue, el) {

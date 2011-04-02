@@ -67,7 +67,7 @@ include_script('add-torrents.js');
   <h4>Select the torrents you want to add below.</h4>
 
   <div id="to-add"></div>
-  
+
   <input type="hidden" name="action" value="add" />
   <input type="hidden" name="group" value="" />
   <input type="submit" id="add" class="themed" value="Add selected" disabled="disabled" />
