@@ -36,7 +36,7 @@ if(!isset($r_debug)) {
 $_SESSION['persistent'] = array();
 
 // Get the list of torrents downloading
-$data = get_all_torrents();
+$data = get_all_torrents(false, true);
 
 // Turn it into JSON and format it somewhat nicely
 $data_str = json_encode($data);

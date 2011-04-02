@@ -20,7 +20,7 @@ require_once 'config.php';
 require_once 'functions.php';
 rtgui_session_start();
 
-$data = get_all_torrents(false);
+$data = get_all_torrents(false, true);
 
 if(@is_array($_SESSION['last_data'])) {
   $last_data = $_SESSION['last_data'];

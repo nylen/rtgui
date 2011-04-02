@@ -122,7 +122,7 @@ function do_xmlrpc($request) {
 }
 
 // Get full list - retrieve full list of torrents
-function get_all_torrents($torrents_only=false, $view='main') {
+function get_all_torrents($torrents_only=false, $for_script=false, $view='main') {
   global $download_dir, $use_groups;
   global $tracker_highlight, $tracker_highlight_default;
 
@@ -287,6 +287,23 @@ function get_all_torrents($torrents_only=false, $view='main') {
     unset($t['connection_current']);
     unset($t['hashing']);
     unset($t['size_chunks']);
+
+    if($for_script) {
+      // unset items that aren't needed by the client
+      unset($t['directory']);
+      unset($t['is_active']);
+      unset($t['is_hash_checked']);
+      unset($t['is_hash_checking']);
+      unset($t['is_multi_file']);
+      unset($t['is_open']);
+      unset($t['is_private']);
+      unset($t['peers_complete']);
+      unset($t['peers_connected']);
+      unset($t['peers_not_connected']);
+      unset($t['priority']);
+      unset($t['state_changed']);
+      unset($t['tied_to_file']);
+    }
 
     $torrents[$hash] = $t;
   }

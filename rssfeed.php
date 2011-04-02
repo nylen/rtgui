@@ -46,7 +46,7 @@ echo "<generator>rtGui - http://rtgui.googlecode.com/ </generator>";
 echo "<link>".get_rtgui_url()."</link>";
 echo "<lastBuildDate>".date("r")."</lastBuildDate>";
 
-$data = get_all_torrents(true, $r_view);
+$data = get_all_torrents(true, false, $r_view);
 
 if (is_array($data)) {
    $sortkey="state_changed";
