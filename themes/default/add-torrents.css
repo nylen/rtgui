@@ -1,0 +1,73 @@
+table#upload-form {
+  width: 100%;
+}
+#upload-form td {
+  vertical-align: middle;
+}
+#upload-form td.left {
+  width: 8em;
+}
+#upload-form td.input textarea, #upload-form td.input input {
+  width: 100%;
+}
+#upload-form label {
+  margin-right: 1em;
+}
+
+img.loading {
+  width: 16px;
+  height: 16px;
+}
+
+#to-add {
+  margin-bottom: 2em;
+}
+#to-add .add-torrent {
+  position: relative;
+}
+#to-add .add-torrent-striped {
+  background-color: #444;
+}
+#to-add .add-torrent .name {
+  padding: 3px 0 3px 25px;
+  line-height: 18px;
+  vertical-align: middle;
+}
+#to-add .add-torrent .name .toggle-container {
+  color: #888;
+  padding-right: 4px;
+  font-size: 80%;
+  position: relative;
+  top: -1px;
+}
+#to-add .add-torrent .name .toggle {
+  font-family: Courier, monospace;
+  font-size: 150%;
+  margin: 0 -2px;
+}
+#to-add .add-torrent .error {
+  color: #d22;
+}
+#to-add .add-torrent .ok {
+  color: #3a3;
+  cursor: pointer;
+}
+#to-add .add-torrent .ok:hover {
+  text-decoration: underline;
+}
+#to-add .add-torrent .left {
+  position: absolute;
+  left: 2px;
+  top: 3px;
+}
+#to-add .add-torrent div.file {
+  padding-left: 21px;
+}
+#to-add .add-torrent div.file:hover, #to-add .add-torrent div.name:hover {
+  background-color: #555;
+}
+#to-add .add-torrent div.file label {
+  position: relative;
+  top: -2px;
+  color: #bbb;
+}
