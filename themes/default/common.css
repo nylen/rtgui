@@ -1,0 +1,213 @@
+body {
+  font-family: Verdana, Arial, helvetica, sans-serif;
+  color: #333;
+  font-size: 11px;
+  background-color: #f6f6f6;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+  color: #1265BC;
+}
+a:hover {
+  text-decoration: underline;
+}
+th {
+  font-family: Verdana, Arial, helvetica, sans-serif;
+}
+td {
+  font-family: Verdana, Arial, helvetica, sans-serif;
+  vertical-align: top;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+div {
+  margin: 0;
+  padding: 0;
+}
+img {
+  border: 0px solid #ffffff;
+}
+p {
+  margin: 2px 0;
+}
+
+form {
+  margin: 0;
+}
+div.container {
+  margin: 0px;
+  padding: 0px;
+  background-color: #fff;
+  border: none;
+  border-left: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+}
+div.namecol {
+  width: 100%;
+  margin: 3px 3px 3px 3px;
+}
+div.errorcol {
+  margin-left: 2px;
+  font-size: 80%;
+  color: #999;
+  margin: 3px 3px 1px 3px;
+}
+div.headcol {
+  float: left;
+  color: #999;
+  margin-top: 1px;
+  margin-bottom: 0px;
+  text-align: center;
+  border-right: 1px solid #555;
+}
+div.headcol a, div.headrow a, div.headcollast a {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  *font-size: 11px;
+  line-height: 17px;
+  color: #d2d2d2;
+  text-transform: uppercase;
+  text-shadow: 1px -1px 0px #383838;
+  font-weight: bold;
+}
+div.headcol a:hover, div.headrow a:hover, div.headcollast a:hover {
+  color: #d2d2d2;
+  text-decoration: none;
+}
+div.headcollast {
+  float: left;
+  width: 74px;
+  font-weight: bold;
+  text-align: center;
+  background-color: #333;
+  border: none;
+}
+div.viewheadcol {
+  background-color: #333;
+  float: left;
+  line-height: 30px;
+  font-size: 80%;
+  font-weight: bold;
+  color: #fff;
+  padding-left: 3px;
+}
+div.floatright {
+  float: right;
+  margin-right: 0px;
+}
+div.floatleft {
+  float: left;
+  margin-right: 6px;
+}
+div.datacol {
+  float: left;
+  border-right: 1px dotted #aaa;
+  text-align: center;
+}
+div.datacollast {
+  float: left;
+  border-right: none;
+  text-align: center;
+}
+div.spacer {
+  clear: both;
+  font-size: 10%;
+  height: 0px;
+  margin: 0px;
+  padding: 0px;
+}
+.hidden {
+  display: none;
+}
+.smalltext {
+  font-size: smaller;
+}
+.smalltext a, .smalltext a:hover {
+  text-decoration: none;
+}
+.mediumtext {
+  font-size: 90%;
+}
+
+.row {
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin: 0px;
+  padding: 0 0 4px;
+  border: none;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ccc;
+  background: #eee url('./images/bg-row-tile.gif') repeat-x bottom left;
+}
+.row:hover {
+  border-bottom: 1px solid #aaa;
+  background: #f1f1f1 url('./images/bg-row-light.gif') repeat-x top left;
+}
+
+#navcontainer {
+  position: relative;
+  background: #717171 url('./images/bg-menu-tile2.gif') repeat-x bottom left;
+  height: 29px;
+  border-top: 1px solid #919191;
+  border-bottom: 1px solid #2d2d2d;
+  margin: 0px;
+  padding: 0px;
+}
+
+#navlist a, #torrents-header a, #filter-container a {
+  outline: none;
+}
+#navlist {
+  padding: 3px 0px 0px 5px;
+  margin: 0px 0px 0px 0px;
+}
+
+#navlist li {
+  list-style: none;
+  margin: 0;
+  display: inline;
+  margin: 0px 0px 0px 5px;
+  padding: 0px 0px 0px 0px;
+}
+
+#navlist li a {
+  padding: 2px .7em 2px .7em;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  *font-size: 15px;
+  font-weight: bold;
+  line-height: 21px;
+  color: #e0e0e0;
+  text-transform: uppercase;
+  text-shadow: 0 -1px 1px black;
+}
+
+#navlist li a:link, #navlist li a:visited {
+  color: #e0e0e0;
+}
+
+#navlist li a.view.current:hover {
+  cursor: default;
+}
+#navlist li a:hover, #navlist li a.current {
+  background-color: #383838;
+  margin: -1px;
+  padding: 2px .7em 2px .7em;
+  border-radius: 1em;
+  -webkit-border-radius: 1em;
+  -moz-border-radius: 1em;
+  color: #e0e0e0;
+  text-decoration: none;
+
+  border: 1px solid #1a1a1a;
+  -webkit-box-shadow: 0px 1px 1px #8c8c8c;
+  -moz-box-shadow: 0px 1px 1px #8c8c8c;
+
+  border: 1px solid #363636;
+  border-right: 1px solid #262626;
+  border-bottom: 1px solid #262626;
+}

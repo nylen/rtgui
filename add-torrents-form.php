@@ -9,8 +9,10 @@ require_once 'functions.php';
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
 <?php
-include_stylesheet('style.css', true);
-include_stylesheet('dialog.css', true);
+include_stylesheet('common.css', true);
+include_stylesheet('form-controls.css', true);
+include_stylesheet('dialogs.css', true);
+include_stylesheet('add-torrents.css', true);
 include_script('jquery.js');
 include_script('jquery.hsjn.js');
 include_script('jquery.form.js');

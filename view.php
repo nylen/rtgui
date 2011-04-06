@@ -41,8 +41,9 @@ $active_tab = $tabs[0];
 var currentHash = '<?php echo $r_hash; ?>';
 </script>
 <?php
-include_stylesheet('style.css', true);
-include_stylesheet('dialog.css', true);
+include_stylesheet('common.css', true);
+include_stylesheet('form-controls.css', true);
+include_stylesheet('dialogs.css', true);
 include_script('jquery.js');
 include_script('confirmMessages.js');
 include_script('view.js');
@@ -208,7 +209,7 @@ HTML;
      }
 ?>
 
-        <div align="right" class="bottomtab">
+        <div align="right" class="tab-bottom">
           <input type="submit" class="themed" value="Save" />
         </div>
       </form>
@@ -258,7 +259,6 @@ HTML;
 HTML;
     }
 ?>
-      <div class="bottomthin"> </div>
     </div>
 <?php
   }
@@ -319,7 +319,6 @@ HTML;
 HTML;
      }
 ?>
-      <div class="bottomthin"> </div>
     </div>
 <?php
   }
@@ -432,7 +431,6 @@ HTML;
         </tr>
       </table>
     </div>
-    <div class="bottomthin"> </div>
 
 HTML;
   }
@@ -495,7 +493,6 @@ HTML;
 
       <br>&nbsp;
     </div>
-    <div class="bottomthin"> </div>
 
 HTML;
   }

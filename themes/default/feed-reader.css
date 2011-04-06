@@ -1,0 +1,38 @@
+.feedtitle {
+  margin-top: 5px;
+  padding: 8px 8px 3px 3px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #333;
+  text-align: left;
+  border-bottom: 4px solid #7EA610;
+}
+.feeditem {
+  background-color: #eee;
+  margin: 2px 0 0;
+  overflow: hidden;
+}
+
+.feedhilite {
+  color: #c33;
+}
+.controlbut {
+  font-size: 80%;
+  font-weight: bold;
+  width: 20px;
+}
+.feedlist {
+  margin: 1px 15px 1px 1px;
+  display: inline;
+}
+.feedlistul {
+  margin: 0;
+  padding: 0;
+}
+.togglevis {
+  display: none;
+  background-color: #eee;
+  padding: 3px;
+  margin: 0px ;
+  border: 1px solid #7EA610;
+}

@@ -56,8 +56,10 @@ $_SESSION['last_data'] = $data;
 <title><?php echo $site_title; ?></title>
 <?php
 include_stylesheet('jquery-ui-1.8.9-files/css/ui-darkness/jquery-ui-1.8.9.custom.css');
-include_stylesheet('style.css', true);
-include_stylesheet('dialog.css', true);
+include_stylesheet('common.css', true);
+include_stylesheet('form-controls.css', true);
+include_stylesheet('main-layout.css', true);
+include_stylesheet('torrents.css', true);
 ?>
 <script type="text/javascript">
 var config = {
@@ -99,7 +101,7 @@ include_script('index.js');
 ?>
 <!--[if lt IE 8]>
 <?php
-include_stylesheet('ie.css');
+include_stylesheet('ie.css', true);
 include_script('ie.js');
 ?>
 <![endif]-->

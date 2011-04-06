@@ -45,8 +45,8 @@ if(!isset($r_hilitedir)) $r_hilitedir = '';
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <?php
-include_stylesheet('style.css', true);
-include_stylesheet('dialog.css', true);
+include_stylesheet('common.css', true);
+include_stylesheet('dialogs.css', true);
 ?>
 </head>
 <?php

@@ -90,7 +90,9 @@ function characterData($parser, $data) {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
 <title>rtGui</title>
-<link href="style.css" rel="stylesheet" type="text/css" />
+<?php
+include_stylesheet('feed-reader.css', true);
+?>
 <script type="text/javascript">
 function toggleLayer( whichLayer ) {
   var elem, vis;
