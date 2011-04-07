@@ -117,9 +117,6 @@ switch($r_cmd) {
 }
 
 if(!$r_ajax) {
-  rtgui_session_start();
-  $_SESSION['must_get_all'] = true;
-  session_write_close();
   $hash = ($r_tab ? "#$r_tab" : '');
   @header('Location: ' . $_SERVER['HTTP_REFERER'] . $hash);
 }

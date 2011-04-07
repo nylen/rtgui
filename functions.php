@@ -551,7 +551,7 @@ function scgi_send($host, $port, $data, $timeout=5) {
 }
 
 
-// ---------- Old functions that should probably go away one day
+// ---------- Old functions
 
 // multibyte-safe replacement for wordwrap.
 // (See http://code.google.com/p/rtgui/issues/detail?id=71 - Thanks llamaX)

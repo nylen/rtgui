@@ -18,7 +18,7 @@
 
 require_once 'config.php';
 require_once 'functions.php';
-rtgui_session_start();
+
 import_request_variables('gp', 'r_');
 
 if(isset($r_select)) {
@@ -51,13 +51,7 @@ include_script('view.js');
 
 
 // Get torrent info...  (get all downloads, then filter out just this one by the hash)
-if(is_array($_SESSION['last_data']) && !$_SESSION['must_get_all']) {
-  $all_torrents = $_SESSION['last_data']['torrents'];
-} else {
-  $_SESSION['must_get_all'] = false;
-  $all_torrents = get_all_torrents(true);
-}
-session_write_close();
+$all_torrents = get_all_torrents(true);
 
 $this_torrent = false;
 foreach($all_torrents as $torrent) {
