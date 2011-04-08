@@ -11,6 +11,16 @@
   background-color: red;
 }
 
+#error {
+  position: absolute;
+  top: 15px;
+  left: 148px;
+  font-weight: bold;
+  text-shadow: 0 -1px 1px #1d1d1d;
+  color: #dd2222;
+  font-size: 18px;
+}
+
 #header {
   position: relative;
   height: 80px;

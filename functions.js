@@ -101,7 +101,7 @@ function updateTorrentsData() {
       try {
         changes = JSON.parse(d);
       } catch(_) {
-        $('#error').html(current.error = d).show();
+        $('#error').html(current.error = d.replace(/<[^>]+>/g, '')).show();
         return false;
       }
 
