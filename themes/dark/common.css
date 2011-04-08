@@ -1,0 +1,228 @@
+body {
+  font-family: Verdana, Arial, helvetica, sans-serif;
+  color: #333;
+  font-size: 11px;
+  background-color: #f6f6f6;
+  text-align: center;
+  margin: 0px;
+  padding: 0px;
+}
+a {
+  text-decoration: none;
+  color: #1265BC;
+}
+a:hover {
+  text-decoration: underline;
+}
+th {
+  font-family: Verdana, Arial, helvetica, sans-serif;
+}
+td {
+  font-family: Verdana, Arial, helvetica, sans-serif;
+  vertical-align: top;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 0px 0px 0px 0px;
+}
+div {
+  margin: 0px;
+  padding: 0px;
+}
+img {
+  border: 0px solid #ffffff;
+}
+p {
+  margin: 2px 0px 2px 0px;
+}
+
+form {
+  margin: 0px 0px 0px 0px;
+}
+div.container {
+  margin: 0px;
+  padding: 0px;
+  background-color: #fff;
+  border: none;
+  border-left: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+  clear: both;
+}
+div.namecol {
+  width: 100%;
+  margin: 3px 3px 3px 3px;
+}
+div.errorcol {
+  margin-left: 2px;
+  font-size: 80%;
+  color: #999;
+  margin: 3px 3px 1px 3px;
+}
+div.headcol {
+  float: left;
+  color: #999;
+  text-align: center;
+}
+div.headcol a, div.headrow a, div.headcollast a {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  *font-size: 12px;
+  line-height: 27px;
+  color: #b2b2b2;
+  text-transform: uppercase;
+  text-shadow: 0 -2px 1px #1d1d1d;
+  font-weight: bold;
+}
+div.headcol a:hover, div.headrow a:hover, div.headcollast a:hover {
+  color: #f7f6f6;
+  text-decoration: none;
+}
+div.headcollast {
+  float: left;
+  width: 74px;
+  font-weight: bold;
+  text-align: center;
+  background-color: #333;
+  border: none;
+}
+div.viewheadcol {
+  background-color: #333;
+  float: left;
+  line-height: 30px;
+  font-size: 80%;
+  font-weight: bold;
+  color: #fff;
+  padding-left: 3px;
+}
+div.floatright {
+  float: right;
+  margin-right: 0px;
+}
+div.floatleft {
+  float: left;
+  margin-right: 6px;
+}
+div.datacol {
+  float: left;
+  border-right: 1px dotted #aaa;
+  text-align: center;
+}
+div.datacollast {
+  float: left;
+  border-right: none;
+  text-align: center;
+}
+div.spacer {
+  clear: both;
+  font-size: 10%;
+  height: 0px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.hidden {
+  display: none;
+}
+
+.smalltext {
+  font-size: smaller;
+}
+.smalltext a, .smalltext a:hover {
+  text-decoration:none;
+}
+.mediumtext {
+  font-size: 90%;
+}
+
+.row {
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin: 0px;
+  padding: 0px 0px 4px 0px;
+  border: none;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ccc;
+  background: #eee url('./images/bg-row-light.gif') repeat-x top left;
+}
+.row:hover {
+  border-bottom: 1px solid #aaa;
+  background: #ddd url('./images/bg-row-mid.gif') repeat-x top left;
+}
+
+#navcontainer {
+  position: relative;
+  background:   url('./images/bg-menu-main-tile.gif') repeat-x top center;
+  height: 35px;
+  border-top: 1px solid #383838;
+  border-bottom: 1px solid #1a1a1a;
+  margin: 0px;
+  padding: 0px;
+}
+
+#navlist a, #torrents-header a, #filter-container a {
+  outline: none;
+}
+
+#navlist {
+  padding: 5px 0px 0px 10px;
+  margin: 0px 0px 0px 0px;
+}
+
+#navlist li {
+  list-style: none;
+  margin: 0;
+  display: inline;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+}
+
+#navlist li a {
+  padding: 5px 1em 4px 1em;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  *font-size: 15px;
+  font-weight: bold;
+  line-height: 26px;
+  color: #b2b2b2;
+  text-transform: uppercase;
+  text-shadow: 0 -2px 1px #1d1d1d;
+}
+
+#navlist li a:link, #navlist li a:visited {
+  color: #b2b2b2;
+}
+
+#navlist li a.view.current:hover {
+  cursor: default;
+}
+#navlist li a:hover, #navlist li a.current {
+  background-color: #3a3a3a;
+  border: 1px solid #1f1f1f;
+  border-right: none;
+  border-bottom: none;
+  margin: -1px;
+  margin-right: 0px;
+  -webkit-box-shadow: 1px 1px 1px #606060;
+  -moz-box-shadow: 1px 1px 1px #606060;
+  border-radius: 1em;
+  -webkit-border-radius: 1em;
+  -moz-border-radius: 1em;
+  color: #b2b2b2;
+  text-decoration: none;
+}
+
+.modal h1, .modal h3, .ui-dialog .ui-dialog-titlebar {
+  padding: 5px 1em 4px 1em;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  *font-size: 15px;
+  font-weight: bold;
+  color: #b2b2b2;
+  text-transform: uppercase;
+  text-shadow: 0 -2px 1px #1d1d1d;
+  background: #262626 url('./images/bg-wrap.gif') no-repeat -1px center;
+  border-bottom: 1px solid #1a1a1a;
+  height: 18px;
+}
+.ui-dialog .ui-dialog-titlebar .ui-dialog-title {
+  float: none;
+}

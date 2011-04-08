@@ -1,0 +1,95 @@
+.column-name-grp {
+  width: 109px;
+}
+.column-status {
+  width: 89px;
+}
+.column-done {
+  width: 89px;
+}
+.column-remain {
+  width: 89px;
+}
+.column-size {
+  width: 89px;
+}
+.column-down {
+  width: 89px;
+}
+.column-up {
+  width: 89px;
+}
+.column-seeded {
+  width: 89px;
+}
+.column-ratio {
+  width: 70px;
+}
+.column-peers {
+  width: 99px;
+}
+.column-priority {
+  width: 71px;
+}
+.column-tracker-date {
+  width: 115px;
+}
+#wrap {
+  /* This should be the width of all the columns plus one pixel per column
+   * (for the border applied to the main columns).
+   */
+  width: 1100px;
+}
+
+.group {
+  font-size: x-small;
+}
+
+.trackerurl {
+  float: right;
+  font-size: 90%;
+  margin: 2px;
+}
+
+.completeactive {
+  color: #339933;
+  font-weight: bold;
+}
+.incompleteactive {
+  color: #333399;
+}
+.completeinactive {
+  color: #115511;
+  font-weight: bold;
+  }
+.incompleteinactive {
+  color: #555555;
+}
+
+.datacol {
+  border-right: 1px dotted #999999;
+}
+.download {
+  color: #66CC66;
+}
+.upload {
+  color: #CC3333;
+}
+.gray {
+  color: #666;
+}
+
+.torrent .checkbox {
+  margin: -1px 3px -1px -1px;
+  position: relative;
+  left: 2px;
+  top: 2px;
+}
+
+div.tracker {
+  font-size: 10px;
+  float: right;
+  clear: both;
+  margin-right: 8px;
+  padding: 0px;
+}

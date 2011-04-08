@@ -1,0 +1,38 @@
+select.themed {
+  color: #333;
+  text-align: left;
+  margin-left: 10px;
+}
+input.themed, select.themed {
+  color: #b2b2b2;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  *font-size: 11px;
+  line-height: 12px;
+  text-transform: uppercase;
+  text-shadow: 0 -1px 1px #1d1d1d;
+  background-color: #333;
+  border: 1px solid #1a1a1a;
+  border-right: none;
+  border-bottom: none;
+  margin: -1px 0px -1px -1px;
+  padding: 2px;
+
+  box-shadow: 1px 1px 1px #606060;
+  -webkit-box-shadow: 1px 1px 1px #606060;
+  -moz-box-shadow: 1px 1px 1px #606060;
+
+  border-radius: 1em;
+  -webkit-border-radius: 1em;
+  -moz-border-radius: 1em;
+}
+input.themed:hover, select.themed:hover {
+  background-color: #3a3a3a;
+}
+input.multi {
+  border: none;
+
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+}

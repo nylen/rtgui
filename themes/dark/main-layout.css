@@ -1,0 +1,201 @@
+
+#wrap {
+  height: 100%;
+  margin: 0 auto;
+  padding: 0px;
+  text-align: left;
+  border: 1px solid #262626;
+  border-top: none;
+  -webkit-box-shadow: 0px 0px 20px #1a1a1a;
+  -moz-box-shadow: 0px 0px 10px #1a1a1a;
+}
+
+#header {
+  position: relative;
+  top: 0px;
+  width: 1100px;
+  height: 80px;
+  border-bottom: 1px solid #262626;
+  background: #262626 url('./images/bg-wrap.gif') no-repeat top center;
+  clear: both;
+  margin: 0px;
+  padding: 0px;
+}
+
+#header h1 {
+  margin: 0px 0px 0px 18px;
+  padding: 0;
+  position: absolute;
+  font: bolder 5.1em Tahoma, Arial, Sans-serif;
+  letter-spacing: -5px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 5.1em;
+  *font-size: 13px;
+  color: #b2b2b2;
+  text-shadow: -1px -1px 1px #b3b3b3;
+  font-weight: bold;
+}
+#header a:hover {
+  text-decoration: none;
+}
+.green {
+  color: #7Ea610;
+}
+#header-links {
+  position: absolute;
+  top: 43px;
+  left: 150px;
+}
+
+#boxright {
+  float: right;
+  display: block;
+  text-align: right;
+  margin: 0px 14px 0px 0px;
+}
+#header-links, #boxright {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  *font-size: 13px;
+  line-height: 14px;
+  color: #b2b2b2;
+  text-shadow: 0 -1px 1px #1d1d1d;
+  font-weight: bold;
+}
+
+#header input {
+  font-size: 80%;
+}
+.diskalert {
+  font-size: 16px;
+  color: red;
+  font-weight: bold;
+}
+#filter-container {
+  float: right;
+  clear: both;
+
+  *display: inline;
+  height: 23px;
+  width: 220px;
+
+  margin: 5px 10px 0px 0px;
+  padding: 0px 0px 0px 2px;
+
+  color: #b2b2b2;
+  background-color: #343434;
+
+  border: 1px solid #262626;
+  border-right: none;
+  border-bottom: none;
+
+  border-radius: 0.7em;
+  -webkit-border-radius: 0.7em;
+  -moz-border-radius: 0.7em;
+
+  box-shadow: 1px 1px 1px #4c4c4c;
+  -webkit-box-shadow: 1px 1px 1px #4c4c4c;
+  -moz-box-shadow: 1px 1px 1px #4c4c4c;
+}
+#filter-container #filter {
+  padding: 2px;
+  margin: 0px;
+  text-transform: none;
+  float: left;
+  font: 14px arial, geneva, verdana, sans-serif;
+  width: 192px;
+  background-color: #343434;
+  margin-top: 2px;
+  color: #919191;
+  border: none;
+
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+}
+a.btn-clear-filter {
+  background: transparent url("./images/btn-clear-filter.gif") no-repeat 0px 0px;
+  float: right;
+  width: 16px;
+  height: 16px;
+  margin: 4px 4px 0px 0px;
+  padding: 0px;
+}
+a.btn-clear-filter:hover {
+  background-position: -16px 0px;
+}
+
+#torrents-header {
+  background: #262626 url('./images/bg-menu-main-tile.gif') repeat-x top center;
+  border-top: 1px solid #383838;
+  height: 28px;
+}
+
+#torrents-header a.sort {
+  padding: 0 7px;
+}
+#torrents-header a.sort-asc {
+  background: url('images/uparrow.gif') no-repeat center right;
+}
+#torrents-header a.sort-desc {
+  background: url('images/downarrow.gif') no-repeat center right;
+}
+
+#torrents-header .headcol {
+  /* This 1-pixel margin is intended to match the 1-pixel dotted border
+   * on the torrents' data columns.
+   */
+  margin-right: 1px;
+}
+
+#debug {
+  background-color: #eee;
+  margin: 0px;
+  padding: 0px 0px 0px 0px;
+  border-bottom: 1px solid #262626;
+  height: 250px;
+  overflow: auto;
+  clear: both;
+}
+.bottomtab {
+  padding: 6px 4px 4px 8px;
+  background: #0d0d0d url("./images/bg-footer.jpg") no-repeat top center;
+  height: 22px;
+}
+.bottomtab .themed {
+  position: relative;
+  top: -3px;
+}
+.bottomtab #leave-checked {
+  margin-left: 12px;
+}
+.gray-text {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  *font-size: 14px;
+  color: #b2b2b2;
+  text-shadow: -1px -1px 1px #1a1a1a;
+  font-weight: bold;
+}
+
+
+#footer {
+  padding: 4px;
+  background: #0d0d0d url('./images/bg-footer.jpg') no-repeat top center;
+  color: #7a7a7a;
+}
+
+#dialog-iframe {
+  margin: 0;
+  padding: 0;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+#dialog {
+  padding: 0;
+}
