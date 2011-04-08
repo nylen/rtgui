@@ -71,7 +71,13 @@
   color: #66cc66;
 }
 .upload {
-  color: #cc3333;
+  color: #ee3333;
+}
+.column-down {
+  color: #228822;
+}
+.column-up {
+  color: #ee3333;
 }
 
 .gray {

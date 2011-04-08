@@ -70,11 +70,18 @@
   border-right: 1px dotted #999999;
 }
 .download {
-  color: #66CC66;
+  color: #66cc66;
 }
 .upload {
-  color: #CC3333;
+  color: #ee3333;
 }
+.column-down {
+  color: #228822;
+}
+.column-up {
+  color: #ee3333;
+}
+
 .gray {
   color: #666;
 }
