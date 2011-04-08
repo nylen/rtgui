@@ -2,7 +2,7 @@
   text-align: left;
   margin: 0px;
   padding: 0px;
-  background:  #262626;
+  background: #262626;
   width: 100%;
   height: 100%;
   border: none;
@@ -77,23 +77,6 @@
   color: #ccc;
 }
 
-.modal h1, .modal h3, .ui-dialog .ui-dialog-titlebar {
-  padding: 5px 1em 4px 1em;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  *font-size: 15px;
-  font-weight: bold;
-  color: #b2b2b2;
-  text-transform: uppercase;
-  text-shadow: 0 -2px 1px #1d1d1d;
-  background: #262626 url('./images/bg-wrap.gif') no-repeat -1px center;
-  border-bottom: 1px solid #1a1a1a;
-  height: 18px;
-}
-.ui-dialog .ui-dialog-titlebar .ui-dialog-title {
-  float: none;
-}
-
 .modal #options {
   border-top: 1px solid #383838;
   margin: 0px;
@@ -105,7 +88,7 @@ div.controls {
   float: left;
 }
 div.controlcontainer {
-  background: #262626 url('./images/bg-header2.gif') no-repeat bottom left;
+  background: #333;
   text-align: center;
   padding: 3px 0 5px 0;
 }
@@ -145,6 +128,9 @@ div.controlcontainer {
 }
 #tab-storage fieldset legend {
   padding: 2px 4px;
+}
+#tab-debug {
+  color: #aaa;
 }
 
 .dirbrowse {

@@ -211,3 +211,17 @@ div.spacer {
   border-right: 1px solid #262626;
   border-bottom: 1px solid #262626;
 }
+
+.modal h1, .modal h3, .ui-dialog .ui-dialog-titlebar {
+  padding: 5px 1em 4px 1em;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  *font-size: 15px;
+  font-weight: bold;
+  color: #e0e0e0;
+  text-shadow: 0 -1px 1px black;
+  height: 18px;
+}
+.ui-dialog .ui-dialog-titlebar .ui-dialog-title {
+  float: none;
+}
