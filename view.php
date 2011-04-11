@@ -44,7 +44,9 @@ var currentHash = '<?php echo $r_hash; ?>';
 include_stylesheet('common.css', true);
 include_stylesheet('form-controls.css', true);
 include_stylesheet('dialogs.css', true);
+include_stylesheet('tipTip.css', true);
 include_script('jquery.js');
+include_script('jquery.tipTip.js');
 include_script('confirmMessages.js');
 include_script('view.js');
 
@@ -294,7 +296,8 @@ HTML;
       echo <<<HTML
       <div class="$thisrow">
         <div class="namecol smalltext">
-          <a href="http://www.who.is/whois-ip/ip-address/$item[get_address]/" target="_blank" class="ip-address">
+          <a href="http://www.who.is/whois-ip/ip-address/$item[get_address]/"
+            target="_blank" class="ip-address" data-ip="$item[get_address]">
             $item[get_address]
           </a>:
           $item[get_port]&nbsp;&nbsp;<i>$item[get_client_version]</i>&nbsp;&nbsp;$flags

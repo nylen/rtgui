@@ -34,6 +34,22 @@ $(function() {
   $('#directory-form').submit(function() {
     $(this).attr('action', 'control.php?tab=' + getHash());
   });
+
+  $('a.ip-address').each(function() {
+    var $a = $(this);
+    $.get('lookup-ip.php', {
+      ip: $(this).data('ip')
+    }, function(d) {
+      d = JSON.parse(d);
+      $a
+      .text(d.hostname)
+      .attr('title', d.ip + '<br />' + d.location + '<br />Click for whois')
+      .tipTip({
+        delay: 100,
+        fadeOut: 0
+      });
+    });
+  });
 });
 
 function onDirBrowserLoaded(dir) {
