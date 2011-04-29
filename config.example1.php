@@ -18,17 +18,14 @@
 
 
 // Connection information for your local RPC/rTorrent connection:
-$scgi_host = 'htpc';
-$scgi_port = 5202;
-// To connect to a local socket:
-// $scgi_local = '/path/to/socket/file';
+$scgi_local = '/tmp/rtorrent-james.sock';
 $scgi_timeout = 5; // seconds
 
 // Site title (change from rtGui if you have multiple)
-$site_title = 'rtGui (htpc)';
+$site_title = 'rtGui (main)';
 
 // rtorrent 'watch' directory (used for upload torrent)
-$watch_dir = '/media/htpc/bit.torrents/';
+$watch_dir = '/media/bit.torrents/';
 
 // Start download immediately after loading torrent
 $load_start = true;
@@ -42,14 +39,14 @@ $default_user_settings = array(
   'refresh_interval' => 5000,
 
   // Default sort variable
-  'sort_var' => 'date_added',
+  'sort_var' => 'name',
 
   // Whether to sort descending by default ('yes' or 'no')
-  'sort_desc' => 'yes'
+  'sort_desc' => 'no'
 );
 
 // Path to report disk usage
-$download_dir = '/media/htpc/bit.torrents/';
+$download_dir = '/media/1000/';
 
 // Threshold for disk usage alert (%)
 $disk_alert_threshold = 15;
@@ -100,58 +97,36 @@ $tmp_add_dir = 'tmp';
  * get_torrent_group() function will handle that situation.
  */
 $use_groups = true;
-$all_groups = array('tv', 'movies');
-$default_group = 'tv';
+$all_groups = array('music', 'other-music', 'linux', 'windows', 'porn', 'other');
+$default_group = 'music';
 function get_torrent_group($t) {
   return basename($t['is_multi_file'] ? dirname($t['directory']) : $t['directory']);
-}
-
-/* If rTorrent is running on another PC, you can define the get_local_torrent_path($path)
- * function to change a remote path for a .torrent file into a local path (this means the
- * remote directory containing your .torrent files has to be mounted on the web server).
- * This will make "date added" work properly since it is based on the modification date
- * of the .torrent file tied to each download.
- */
-function get_local_torrent_path($path) {
-  return str_replace('/media/bit.torrents/', '/media/htpc/bit.torrents/', $path);
 }
 
 /* Define a function that will be run every time a page is requested.  It can be used to
  * check if rTorrent is running, or to mount the rTorrent directories if rTorrent is
  * running on another machine.
  */
-function on_page_requested() {
-  require_once 'session.php';
-  rtgui_session_start();
-  if(!$_SESSION['mounted']) {
-    exec('mount | grep //htpc/bit.torrents && mount | grep //htpc/rtorrent || sudo mount-htpc 2>&1', $out, $err);
-    if($err) {
-      die('<h1>Could not mount rTorrent directories</h1><pre>' . implode("\n", $out) . '</pre>');
-    }
-    $_SESSION['mounted'] = true;
-  }
-}
-
-/* Functions to make the directory browser work on a remote PC (the functions provided
- * here rely on the fact that /media/rtorrent is mounted at /media/htpc/rtorrent)
- */
-function dirbrowser_translate($dir) {
-  // Just a helper function - not called by dirbrowser code
-  return str_replace('/media/rtorrent/', '/media/htpc/rtorrent/', $dir);
-}
-function dirbrowser_scandir($dir) {
-  return @scandir(dirbrowser_translate($dir));
-}
-function dirbrowser_isdir($dir) {
-  return is_dir(dirbrowser_translate($dir));
-}
-function dirbrowser_isrootdir($dir) {
-  return (rtrim($dir, '/') == '/media/rtorrent');
-}
+// function on_page_requested() { ... }
 
 // Define some links that will be shown in the header
 $header_links = array(
-  'main' => '../main/'
+  'htpc' => '../htpc/',
+  'music users' => '/music-users/'
 );
+
+// Define an action to take when adding a torrent
+function on_add_torrent($name, $hash, $group, $filename) {
+  if($group == 'other-music'
+  && $fp = fopen('/media/rtorrent/users.txt', 'ab')) {
+    $user = $_SERVER['REMOTE_USER'];
+    // This is probably for Drew
+    if(!$user || $user == 'james') {
+      $user = 'drew';
+    }
+    fwrite($fp, "$hash,$user,$name\n");
+    fclose($fp);
+  }
+}
 
 ?>
