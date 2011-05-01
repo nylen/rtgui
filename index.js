@@ -209,9 +209,6 @@ $(function() {
       if($(this).hasClass('leave-checked')) {
         $('#leave-checked').attr('checked', $(this).find(':checkbox').attr('checked'));
       }
-      if($(this).hasClass('no-hide')) {
-        return false;
-      }
     },
     onHide: function(e, context) {
       if(!window.allowHideContextMenu) {

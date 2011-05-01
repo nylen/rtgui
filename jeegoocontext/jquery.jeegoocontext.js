@@ -125,6 +125,7 @@
     _menus[id] = $.extend({
             hoverClass: 'hover',
             noHoverClass: 'no-hover',
+            noHideClass: 'no-hide',
             submenuClass: 'submenu',
             separatorClass: 'separator',
             operaEvent: 'ctrl+click',
@@ -230,6 +231,10 @@
 
             // Default behavior.
             //====================================================//
+
+            if($(this).hasClass(_menus[id].noHideClass)) {
+              return false;
+            }
 
             // Reset menu
             _resetMenu();
