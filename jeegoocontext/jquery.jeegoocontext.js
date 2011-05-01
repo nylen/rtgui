@@ -78,6 +78,11 @@
     };
 
     var _globalHide = function(e){
+
+    if(!_menus[_global.activeId].allowHide) {
+      return false;
+    }
+
         // Invoke onHide callback if set, 'this' refers to the menu.
     // Discontinue default behavior if callback returns false.
     if(_global.activeId && _menus[_global.activeId].onHide)
@@ -314,6 +319,12 @@
 
             // Default behavior.
             // =================================================== //
+
+            // Work around a bug that sometimes causes the menu to be hidden immediately after it is shown.
+            _menus[id].allowHide = false;
+            window.setTimeout(function() {
+              _menus[id].allowHide = true;
+            }, 10);
 
             // Reset last active menu.
             _resetMenu();

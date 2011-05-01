@@ -160,15 +160,8 @@ $(function() {
 
   // Set up context menu
 
-  // Work around bug that sometimes causes context menu to not show
-  window.allowHideContextMenu = false;
-
   $('.torrent-container').jeegoocontext('context-menu', {
     onShow: function(e, context) {
-      window.allowHideContextMenu = false;
-      setTimeout(function() {
-        window.allowHideContextMenu = true;
-      }, 10);
       // There's a problem with this logic: the number of visible checked
       // torrents could change in between refreshes due to filters or views.
       // These changes won't be reflected.
@@ -208,11 +201,6 @@ $(function() {
       }
       if($(this).hasClass('leave-checked')) {
         $('#leave-checked').attr('checked', $(this).find(':checkbox').attr('checked'));
-      }
-    },
-    onHide: function(e, context) {
-      if(!window.allowHideContextMenu) {
-        return false;
       }
     }
   });
