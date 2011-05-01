@@ -157,4 +157,66 @@ $(function() {
     });
     return false;
   });
+
+  // Set up context menu
+
+  // Work around bug that sometimes causes context menu to not show
+  window.allowHideContextMenu = false;
+
+  $('.torrent-container').jeegoocontext('context-menu', {
+    onShow: function(e, context) {
+      window.allowHideContextMenu = false;
+      setTimeout(function() {
+        window.allowHideContextMenu = true;
+      }, 10);
+      // There's a problem with this logic: the number of visible checked
+      // torrents could change in between refreshes due to filters or views.
+      // These changes won't be reflected.
+      //
+      // Speed may also be an issue.  Maybe :checked should be cached like
+      // :visible is?
+      var $torrents = $('.torrent-container:has(:checked)').filter(function() {
+        return window.data.torrents[this.id].visible;
+      });
+      if($.inArray(context, $torrents) == -1) {
+        $torrents.find(':checked').attr('checked', false);
+        $torrents = $(context);
+        $torrents.find(':checkbox').attr('checked', true);
+      }
+      $(this).find('.selected-torrents')
+      .text($torrents.length > 1
+        ? $torrents.length + ' torrents selected'
+        : window.data.torrents[$torrents[0].id].name);
+      $(this).find('.leave-checked :checkbox')
+      .attr('checked', $('#leave-checked').attr('checked'));
+    },
+    onSelect: function(e, context) {
+      if($(this).data('command')) {
+        // Just piggyback off of the control-form logic
+        // HACK: this should probably be changed
+        $('#bulk-action').val($(this).data('command'));
+        $('#control-form').submit();
+      }
+      if($(this).data('tag')) {
+        // TODO
+      }
+      if($(this).hasClass('toggle')) {
+        var $ch = $(this).find(':checkbox').not(e.target);
+        if($ch.length) {
+          $ch.attr('checked', !$ch.attr('checked'));
+        }
+      }
+      if($(this).hasClass('leave-checked')) {
+        $('#leave-checked').attr('checked', $(this).find(':checkbox').attr('checked'));
+      }
+      if($(this).hasClass('no-hide')) {
+        return false;
+      }
+    },
+    onHide: function(e, context) {
+      if(!window.allowHideContextMenu) {
+        return false;
+      }
+    }
+  });
 });

@@ -57,6 +57,7 @@ $_SESSION['last_data'] = $data;
 <?php
 include_stylesheet('jquery-ui-1.8.9-files/css/ui-darkness/jquery-ui-1.8.9.custom.css');
 include_stylesheet('common.css', true);
+include_stylesheet('jeegoocontext/skins/cm_default/style.css', true);
 include_stylesheet('form-controls.css', true);
 include_stylesheet('main-layout.css', true);
 include_stylesheet('torrents.css', true);
@@ -91,6 +92,7 @@ include_script('jquery.js');
 include_script('jquery.form.js');
 include_script('jquery-ui-1.8.9-files/js/jquery-ui-1.8.9.custom.min.js');
 include_script('jquery.cookie.js');
+include_script('jeegoocontext/jquery.jeegoocontext.js');
 include_script('json2.min.js');
 include_script('php.min.js');
 include_script('patience_sort.js');
@@ -107,6 +109,31 @@ include_script('ie.js');
 <![endif]-->
 </head>
 <body>
+  <ul id="context-menu" class="jeegoocontext cm_default">
+    <li class="selected-torrents no-hover no-hide title">Torrent name / Selected N torrents</li>
+    <li data-command="stop">Stop</li>
+    <li data-command="start">Start</li>
+    <li data-command="delete">Delete</li>
+    <li data-command="hashcheck">Re-check</li>
+    <li class="separator" />
+    <li class="no-hide">
+      Priority
+      <ul>
+        <li data-command="pri_high">High</li>
+        <li data-command="pri_normal">Normal</li>
+        <li data-command="pri_low">Low</li>
+        <li data-command="pri_off">Off</li>
+      </ul>
+    </li>
+    <li class="no-hide">
+      Tags
+      <ul class="tags-list">
+        <li>tag1</li>
+      </ul>
+    </li>
+    <li class="leave-checked no-hide toggle"><input type="checkbox" />Leave checked</li>
+  </ul>
+
   <div id="wrap">
     <form action="control.php" method="post" name="control" id="control-form">
       <div id="header">
@@ -247,7 +274,7 @@ if($debug_mode) { ?>
       <div class="bottomtab">
         <input type="button" class="select-all themed" value="Select All" />
         <input type="button" class="unselect-all themed" value="Unselect All" />
-        <select name="bulkaction" class="themed">
+        <select name="bulkaction" class="themed" id="bulk-action">
           <optgroup label="With Selected...">
             <option value="stop">Stop</option>
             <option value="start">Start</option>
