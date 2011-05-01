@@ -160,6 +160,7 @@ $(function() {
 
   // Set up context menu
 
+  var selectedByMenuClick = null;
   $('.torrent-container').jeegoocontext('context-menu', {
     onShow: function(e, context) {
       // There's a problem with this logic: the number of visible checked
@@ -172,9 +173,10 @@ $(function() {
         return window.data.torrents[this.id].visible;
       });
       if($.inArray(context, $torrents) == -1) {
-        $torrents.find(':checked').attr('checked', false);
+        $torrents.find(':checkbox').attr('checked', false);
         $torrents = $(context);
         $torrents.find(':checkbox').attr('checked', true);
+        selectedByMenuClick = context;
       }
       $(this).find('.selected-torrents')
       .text($torrents.length > 1
@@ -208,6 +210,12 @@ $(function() {
       }
       if($(this).hasClass('leave-checked')) {
         $('#leave-checked').attr('checked', $(this).find(':checkbox').attr('checked'));
+      }
+    },
+    onHide: function(e, context) {
+      if(selectedByMenuClick !== null) {
+        $(selectedByMenuClick).find(':checkbox').attr('checked', false);
+        selectedByMenuClick = null;
       }
     }
   });
