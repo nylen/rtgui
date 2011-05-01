@@ -194,8 +194,15 @@ $(function() {
         // TODO
       }
       if($(this).hasClass('toggle')) {
-        var $ch = $(this).find(':checkbox').not(e.target);
-        if($ch.length) {
+        var $ch = $(this).find(':checkbox');
+        if($ch.filter(e.target).length) {
+          // Need to do this because otherwise something "resets" the checked state
+          // of the checkbox to what it was before this event handler was called.
+          var checked = $ch.attr('checked');
+          window.setTimeout(function() {
+            $ch.attr('checked', checked);
+          }, 10);
+        } else {
           $ch.attr('checked', !$ch.attr('checked'));
         }
       }
