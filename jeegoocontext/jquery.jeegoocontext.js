@@ -25,13 +25,14 @@
         if(_menus[_global.activeId].currentHover)
         {
             // Hover the first visible menu-item from the next or previous siblings and skip any separator items.
-            var prevNext = down ?
-            _menus[_global.activeId].currentHover.nextAll(':not(.' + _menus[_global.activeId].separatorClass + '):visible:first') :
-            _menus[_global.activeId].currentHover.prevAll(':not(.' + _menus[_global.activeId].separatorClass + '):visible:first');
+            var selector = ':not(.' + _menus[_global.activeId].separatorClass + ')'
+                         + ':not(.' + _menus[_global.activeId].noHoverClass + ')'
+                         + ':visible';
+            var prevNext = _menus[_global.activeId].currentHover[down ? 'nextAll' : 'prevAll'](selector + ':first');
             // If nothing is found, hover the first or last visible sibling.
             if(prevNext.length == 0)
             {
-                prevNext = _menus[_global.activeId].currentHover.parent().find('> li:visible');
+                prevNext = _menus[_global.activeId].currentHover.parent().find('> li' + selector);
                 prevNext = (down ? $(prevNext[0]) : $(prevNext[prevNext.length - 1]));
             }
             prevNext.mouseover();
@@ -123,6 +124,7 @@
     // onHide, function
     _menus[id] = $.extend({
             hoverClass: 'hover',
+            noHoverClass: 'no-hover',
             submenuClass: 'submenu',
             separatorClass: 'separator',
             operaEvent: 'ctrl+click',
@@ -155,8 +157,10 @@
             $('#' + id).find('*').removeClass(_menus[id].hoverClass);
 
             // Set hover state on self, direct children, ancestors and ancestor direct children.
-            var $parents = $this.parents('li');
-            $this.add($this.find('> *')).add($parents).add($parents.find('> *')).addClass(_menus[id].hoverClass);
+            if(!$this.hasClass(_menus[id].noHoverClass)) {
+              var $parents = $this.parents('li');
+              $this.add($this.find('> *')).add($parents).add($parents.find('> *')).addClass(_menus[id].hoverClass);
+            }
 
             // Invoke onHover callback if set, 'this' refers to the hovered list-item.
             // Discontinue default behavior if callback returns false.
