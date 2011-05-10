@@ -104,6 +104,14 @@ $(function() {
   $('div.torrent-container').live('click', function(e) {
     var thisHash = this.id;
     var $thisCheckbox = $(this).find('input[type=checkbox]');
+    if(window.menuShowing) {
+      if($thisCheckbox.filter(e.target).length) {
+        $thisCheckbox.attr('checked', function() {
+          return !this.checked;
+        });
+      }
+      return;
+    }
     $thisCheckbox.not(e.target).attr('checked', function() {
       return !this.checked;
     });
@@ -163,6 +171,7 @@ $(function() {
   var selectedByMenuClick = null;
   $('.torrent-container').jeegoocontext('context-menu', {
     onShow: function(e, context) {
+      window.menuShowing = true;
       // There's a problem with this logic: the number of visible checked
       // torrents could change in between refreshes due to filters or views.
       // These changes won't be reflected.
@@ -213,6 +222,9 @@ $(function() {
       }
     },
     onHide: function(e, context) {
+      setTimeout(function() {
+        window.menuShowing = false;
+      }, 10);
       if(selectedByMenuClick !== null) {
         $(selectedByMenuClick).find(':checkbox').attr('checked', false);
         selectedByMenuClick = null;
