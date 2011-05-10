@@ -11,6 +11,7 @@
 (function($){
     var _global;
     var _menus;
+    var _nextId = 1;
 
     // Detect overflow.
     var _overflow = function(x, y){
@@ -40,7 +41,7 @@
         else
         {
             // Current hover is null, select the last visible submenu.
-            var visibleMenus = $('#' + _global.activeId + ', #' + _global.activeId + ' ul').filter(function(){
+            var visibleMenus = $(_global.activeMenu).add('ul', _global.activeMenu).filter(function(){
                 return ($(this).is(':visible') && $(this).parents(':hidden').length == 0);
             });
             if(visibleMenus.length > 0)
@@ -63,16 +64,21 @@
     // Reset menu.
     var _resetMenu = function(){
         // Hide active menu and it's submenus.
-        if(_global.activeId)$('#' + _global.activeId).add('#' + _global.activeId + ' ul').hide();
+        if(_global.activeId) {
+          $(_global.activeMenu).add('ul', _global.activeMenu).hide();
+        }
         // Stop key up/down interval.
         clearInterval(_global.keyUpDown);
         _global.keyUpDownStop = false;
         // Clear current hover.
-        if(_menus[_global.activeId])_menus[_global.activeId].currentHover = null;
+        if(_menus[_global.activeId]) {
+          _menus[_global.activeId].currentHover = null;
+        }
         // Clear active menu.
         _global.activeId = null;
+        _global.activeMenu = null;
     // Unbind click and mouseover functions bound to the document
-    $(document).unbind('.jeegoocontext');
+    $(document).unbind('click.jeegoocontext').unbind('mouseover.jeegoocontext');
     // Unbind resize event bound to the window.
     $(window).unbind('resize.jeegoocontext');
     };
@@ -87,7 +93,7 @@
     // Discontinue default behavior if callback returns false.
     if(_global.activeId && _menus[_global.activeId].onHide)
     {
-      if(_menus[_global.activeId].onHide.apply($('#' + _global.activeId), [e, _menus[_global.activeId].context]) == false)
+      if(_menus[_global.activeId].onHide.apply($(_global.activeMenu), [e, _menus[_global.activeId].context]) == false)
       {
         return false;
       }
@@ -102,7 +108,7 @@
     _resetMenu();
     };
 
-  $.fn.jeegoocontext = function(id, options){
+  $.fn.jeegoocontext = function(selector, options){
 
         if(!_global) _global = {};
         if(!_menus) _menus = {};
@@ -116,9 +122,11 @@
         // Only set _global.activeClass if not set.
         if(!_global.activeClass)_global.activeClass = 'active';
 
+        var id = _nextId++;
+        var menuEl = this[0];
+
     // Default undefined:
-    // livequery, bool
-      // event, string
+    // event, string
     // openBelowContext, bool
     // ignoreWidthOverflow, bool
     // ignoreHeightOverflow, bool
@@ -148,10 +156,11 @@
         }, options || {});
 
         // All context bound to this menu.
-        _menus[id].allContext = this.selector;
+        _menus[id].selector = selector;
 
         // Add mouseover and click handlers to the menu's items.
-        $('#' + id).find('li')[_menus[id].livequery ? 'expire' : 'unbind']('.jeegoocontext')[_menus[id].livequery ? 'livequery' : 'bind']('mouseover.jeegoocontext', function(e){
+        $(document).unbind('.jeegoocontext');
+        $('li', menuEl).live('mouseover.jeegoocontext', function(e){
 
             var $this = _menus[id].currentHover = $(this);
 
@@ -160,7 +169,7 @@
             clearTimeout(_menus[id].hide);
 
             // Clear all hover state.
-            $('#' + id).find('*').removeClass(_menus[id].hoverClass);
+            $(menuEl).find('*').removeClass(_menus[id].hoverClass);
 
             // Set hover state on self, direct children, ancestors and ancestor direct children.
             if(!$this.hasClass(_menus[id].noHoverClass)) {
@@ -222,7 +231,7 @@
                 $submenu.fadeIn(_menus[id].fadeIn);
             }
             e.stopPropagation();
-        })[_menus[id].livequery ? 'livequery' : 'bind']('click.jeegoocontext', function(e){
+        }).live('click.jeegoocontext', function(e){
 
             // Invoke onSelect callback if set, 'this' refers to the selected listitem.
             // Discontinue default behavior if callback returns false.
@@ -274,13 +283,13 @@
         }
 
         // Add menu invocation handler to the context.
-        return this[_menus[id].livequery ? 'livequery' : 'bind'](eventType, function(e){
+        return $(selector).live(eventType, function(e){
             // Check for the modifier if any.
       if (typeof _menus[id].modifier == 'string' && !e[_menus[id].modifier]) return;
 
       // Save context(i.e. the current area to which the menu belongs).
             _menus[id].context = this;
-            var $menu = $('#' + id);
+            var $menu = $(menuEl);
 
             // Determine start position.
             var startLeft, startTop;
@@ -329,11 +338,12 @@
             // Reset last active menu.
             _resetMenu();
 
-            // Set this id as active menu id.
+            // Set this menu as active menu.
+            _global.activeMenu = menuEl;
             _global.activeId = id;
 
             // Hide current menu and all submenus, on first page load this is neccesary for proper keyboard support.
-            $('#' + _global.activeId).add('#' + _global.activeId + ' ul').hide();
+            $(menuEl).add('ul', menuEl).hide();
 
             // Clear all active context on page.
             _clearActive();
@@ -368,7 +378,7 @@
       // Bind mouseover, keyup/keydown and click events to the document.
       $(document).bind('mouseover.jeegoocontext', function(e){
         // Remove hovers from last-opened submenu and hide any open relatedTarget submenu's after timeout.
-        if($(e.relatedTarget).parents('#' + id).length > 0)
+        if($(e.relatedTarget).parents(menuEl).length > 0)
         {
           // Clear show submenu timeout.
           clearTimeout(_menus[id].show);
@@ -405,7 +415,7 @@
                   }
                   else
                   {
-                      var visibleMenus = $('#' + _global.activeId + ', #' + _global.activeId + ' ul:visible');
+                      var visibleMenus = $(_global.activeMenu).add('ul:visible', _global.activeMenu);
                       if(visibleMenus.length > 0)
                       {
                           $(visibleMenus[visibleMenus.length - 1]).find(':visible:first').mouseover();
@@ -427,7 +437,7 @@
                   }
                         else
                         {
-                            var hoveredLi = $('#' + _global.activeId + ' li.' + _menus[_global.activeId].hoverClass);
+                            var hoveredLi = $('li.' + _menus[_global.activeId].hoverClass, _global.activeMenu);
                             if(hoveredLi.length > 0)$(hoveredLi[hoveredLi.length - 1]).mouseover();
                         }
                         return false;

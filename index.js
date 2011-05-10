@@ -169,7 +169,7 @@ $(function() {
   // Set up context menu
 
   var selectedByMenuClick = null;
-  $('.torrent-container').jeegoocontext('context-menu', {
+  $('#context-menu').jeegoocontext('.torrent-container', {
     onShow: function(e, context) {
       window.menuShowing = true;
       // There's a problem with this logic: the number of visible checked
