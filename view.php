@@ -296,7 +296,7 @@ HTML;
       echo <<<HTML
       <div class="$thisrow">
         <div class="namecol smalltext">
-          <a href="http://www.who.is/whois-ip/ip-address/$item[get_address]/"
+          <a href="http://whois.arin.net/rest/nets;q=$item[get_address]?showDetails=true&showARIN=false"
             target="_blank" class="ip-address" data-ip="$item[get_address]">
             $item[get_address]
           </a>:
