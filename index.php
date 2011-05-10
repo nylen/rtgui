@@ -57,10 +57,10 @@ $_SESSION['last_data'] = $data;
 <?php
 include_stylesheet('jquery-ui-1.8.9-files/css/ui-darkness/jquery-ui-1.8.9.custom.css');
 include_stylesheet('common.css', true);
-include_stylesheet('jeegoocontext/skins/cm_default/style.css', true);
 include_stylesheet('form-controls.css', true);
 include_stylesheet('main-layout.css', true);
 include_stylesheet('torrents.css', true);
+include_stylesheet('context-menu.css', true);
 ?>
 <script type="text/javascript">
 var config = {
@@ -92,7 +92,7 @@ include_script('jquery.js');
 include_script('jquery.form.js');
 include_script('jquery-ui-1.8.9-files/js/jquery-ui-1.8.9.custom.min.js');
 include_script('jquery.cookie.js');
-include_script('jeegoocontext/jquery.jeegoocontext.js');
+include_script('jquery.jeegoocontext.js');
 include_script('json2.min.js');
 include_script('php.min.js');
 include_script('patience_sort.js');
