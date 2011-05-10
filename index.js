@@ -169,6 +169,15 @@ $(function() {
   // Set up context menu
 
   var selectedByMenuClick = null;
+  var onMenuHide = function(clearCheckbox) {
+    setTimeout(function() {
+      window.menuShowing = false;
+    }, 10);
+    if(clearCheckbox && selectedByMenuClick !== null) {
+      $(selectedByMenuClick).find(':checkbox').attr('checked', false);
+      selectedByMenuClick = null;
+    }
+  };
   $('#context-menu').jeegoocontext('.torrent-container', {
     onShow: function(e, context) {
       window.menuShowing = true;
@@ -195,6 +204,9 @@ $(function() {
       .attr('checked', $('#leave-checked').attr('checked'));
     },
     onSelect: function(e, context) {
+      if(!$(this).hasClass('no-hide')) {
+        onMenuHide(false);
+      }
       if($(this).data('command')) {
         // Just piggyback off of the control-form logic
         // HACK: this should probably be changed
@@ -222,13 +234,7 @@ $(function() {
       }
     },
     onHide: function(e, context) {
-      setTimeout(function() {
-        window.menuShowing = false;
-      }, 10);
-      if(selectedByMenuClick !== null) {
-        $(selectedByMenuClick).find(':checkbox').attr('checked', false);
-        selectedByMenuClick = null;
-      }
+      onMenuHide(true);
     }
   });
 });
