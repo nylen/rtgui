@@ -152,13 +152,7 @@ $(function() {
       hashes: selectedTorrentHashes,
       add_tags: $('#context-menu li.tag.state-true').map(returnTag).toArray(),
       remove_tags: $('#context-menu li.tag.state-false').map(returnTag).toArray()
-    }, function() {
-      if(!$('#leave-checked:checked').length) {
-        $('div.torrent-container input[type=checkbox]')
-        .attr('checked', false);
-      }
-      updateTorrentsNow();
-    });
+    }, onAjaxRequestDone);
     $.hidejeegoocontext();
   });
 

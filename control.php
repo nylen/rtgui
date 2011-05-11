@@ -16,6 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
+error_reporting(E_ALL & ~E_NOTICE);
+
 require_once 'config.php';
 require_once 'functions.php';
 require_once 'PersistentObject.php';

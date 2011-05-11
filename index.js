@@ -1,3 +1,15 @@
+function onAjaxRequestDone(data) {
+  if(!$('#leave-checked:checked').length) {
+    $('div.torrent-container input[type=checkbox]')
+    .attr('checked', false);
+  }
+  updateTorrentsNow();
+  data = $.trim(data);
+  if(data) {
+    alert('Server error:\n\n' + data);
+  }
+}
+
 $(function() {
   // Perform initialization functions
 
@@ -92,13 +104,7 @@ $(function() {
         value: true
       });
     },
-    success: function() {
-      if(!$('#leave-checked:checked').length) {
-        $('div.torrent-container input[type=checkbox]')
-        .attr('checked', false);
-      }
-      updateTorrentsNow();
-    }
+    success: onAjaxRequestDone
   });
 
   $('div.torrent-container').live('click', function(e) {
