@@ -143,6 +143,7 @@ $(function() {
   });
 
   $('#context-menu li.tag-controls .save').click(function() {
+    addTags();
     var returnTag = function() {
       return $(this).data('tag');
     };
