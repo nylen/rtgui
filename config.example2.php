@@ -92,6 +92,9 @@ $cookies_file = 'cookies.txt';
 // Temporary directory to be used for adding .torrent files
 $tmp_add_dir = 'tmp';
 
+// Private storage directory to be used for storing information like torrent tags
+$private_storage_dir = 'private';
+
 
 /* Define whether to use torrent groups.  A torrent group should split your torrents
  * up into categories, and should not change over the lifetime of the torrent.  A

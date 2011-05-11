@@ -466,8 +466,8 @@ function getTorrentsComparer() {
     var tb = window.data.torrents[b.id];
     var va = ta[userSettings.sortVar];
     var vb = tb[userSettings.sortVar];
-    if(va.toLowerCase) va = va.toLowerCase();
-    if(vb.toLowerCase) vb = vb.toLowerCase();
+    if(va && va.toLowerCase) va = va.toLowerCase();
+    if(vb && vb.toLowerCase) vb = vb.toLowerCase();
     return (va < vb ? -cmp : (va > vb ? cmp : ta.sortPos - tb.sortPos));
   };
 }

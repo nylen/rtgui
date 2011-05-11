@@ -104,7 +104,7 @@ $(function() {
   $('div.torrent-container').live('click', function(e) {
     var thisHash = this.id;
     var $thisCheckbox = $(this).find('input[type=checkbox]');
-    if(window.menuShowing) {
+    if(window.contextMenuShowing) {
       if($thisCheckbox.filter(e.target).length) {
         $thisCheckbox.attr('checked', function() {
           return !this.checked;
@@ -164,77 +164,5 @@ $(function() {
       updateTorrentsNow();
     });
     return false;
-  });
-
-  // Set up context menu
-
-  var selectedByMenuClick = null;
-  var onMenuHide = function(clearCheckbox) {
-    setTimeout(function() {
-      window.menuShowing = false;
-    }, 10);
-    if(clearCheckbox && selectedByMenuClick !== null) {
-      $(selectedByMenuClick).find(':checkbox').attr('checked', false);
-      selectedByMenuClick = null;
-    }
-  };
-  $('#context-menu').jeegoocontext('.torrent-container', {
-    onShow: function(e, context) {
-      window.menuShowing = true;
-      // There's a problem with this logic: the number of visible checked
-      // torrents could change in between refreshes due to filters or views.
-      // These changes won't be reflected.
-      //
-      // Speed may also be an issue.  Maybe :checked should be cached like
-      // :visible is?
-      var $torrents = $('.torrent-container:has(:checked)').filter(function() {
-        return window.data.torrents[this.id].visible;
-      });
-      if($.inArray(context, $torrents) == -1) {
-        $torrents.find(':checkbox').attr('checked', false);
-        $torrents = $(context);
-        $torrents.find(':checkbox').attr('checked', true);
-        selectedByMenuClick = context;
-      }
-      $(this).find('.selected-torrents')
-      .text($torrents.length > 1
-        ? $torrents.length + ' torrents selected'
-        : window.data.torrents[$torrents[0].id].name);
-      $(this).find('.leave-checked :checkbox')
-      .attr('checked', $('#leave-checked').attr('checked'));
-    },
-    onSelect: function(e, context) {
-      if(!$(this).hasClass('no-hide')) {
-        onMenuHide(false);
-      }
-      if($(this).data('command')) {
-        // Just piggyback off of the control-form logic
-        // HACK: this should probably be changed
-        $('#bulk-action').val($(this).data('command'));
-        $('#control-form').submit();
-      }
-      if($(this).data('tag')) {
-        // TODO
-      }
-      if($(this).hasClass('toggle')) {
-        var $ch = $(this).find(':checkbox');
-        if($ch.filter(e.target).length) {
-          // Need to do this because otherwise something "resets" the checked state
-          // of the checkbox to what it was before this event handler was called.
-          var checked = $ch.attr('checked');
-          window.setTimeout(function() {
-            $ch.attr('checked', checked);
-          }, 10);
-        } else {
-          $ch.attr('checked', !$ch.attr('checked'));
-        }
-      }
-      if($(this).hasClass('leave-checked')) {
-        $('#leave-checked').attr('checked', $(this).find(':checkbox').attr('checked'));
-      }
-    },
-    onHide: function(e, context) {
-      onMenuHide(true);
-    }
   });
 });

@@ -127,7 +127,7 @@ var templates = {
         '</div>',
         '<input type="checkbox" name="select[]" class="checkbox" id="@checkbox" value="$hash" />',
         '<a class="dialog $status_class" rel="600:550" href="view.php?hash=$hash">$name</a>',
-        (config.useGroups ? '<span class="group">(<a class="filter" href="#" id="@group" rel="group:$group">$group</a>)</span>' : ''),
+        '<span class="tags" id="@tags">$</span>',
       '</div>',
       '<div class="errorcol"><span id="@eta">$</span> <span id="@message">$</span></div>',
       '<div class="datacol column-name-grp">',
@@ -222,6 +222,22 @@ var formatHandlers = {
   },
   message: function(m) {
     return (m ? m : false);
+  },
+  tags: function(t) {
+    if(!t) {
+      return false;
+    }
+    var tags = t.split(',');
+    var html = '(';
+    var first = true;
+    for(var i in tags) {
+      var tag = tags[i];
+      if(!first) html += ', ';
+      first = false;
+      html += '<a class="tag" href="#">' + tag + '</a>';
+    }
+    html += ')';
+    return html;
   },
 
   percent_complete: function(n) {

@@ -123,7 +123,7 @@ function do_xmlrpc($request) {
 
 // Get full list - retrieve full list of torrents
 function get_all_torrents($torrents_only=false, $for_script=false, $view='main') {
-  global $download_dir, $use_groups;
+  global $download_dir;
   global $tracker_highlight, $tracker_highlight_default;
 
   $torrents = rtorrent_multicall('d', $view, array(
@@ -260,15 +260,18 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
           }
         }
       }
-      if($use_groups) {
-        $s['group'] = get_torrent_group($t);
-      }
       $fn = $t['tied_to_file'];
       if(function_exists('get_local_torrent_path')) {
         $fn = get_local_torrent_path($fn);
       }
       $s['date_added'] = filemtime($fn);
       $_SESSION['persistent'][$hash] = $s;
+    }
+
+    if(is_array($_SESSION['tags'][$hash])) {
+      $t['tags'] = implode(',', $_SESSION['tags'][$hash]);
+    } else {
+      $t['tags'] = '';
     }
 
     $t['tracker_hostname'] = $s['tracker_hostname'];

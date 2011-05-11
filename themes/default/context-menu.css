@@ -57,3 +57,17 @@ body ul.cm_default li.toggle input {
   left: 2px;
   top: 3px;
 }
+
+body ul.cm_default li input, body ul.cm_default li.new-tag a.add-new-tag {
+  font-size: 11px;
+}
+body ul.cm_default li.new-tag input {
+  width: 120px;
+}
+
+body ul.cm_default li.tag.state-undefined {
+  font-style: italic;
+}
+body ul.cm_default li.tag.state-false {
+  text-decoration: line-through;
+}

@@ -1,4 +1,6 @@
 .htaccess
+private/*
+!private/.htaccess
 config.php
 cookies.txt
 tmp

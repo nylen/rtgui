@@ -18,6 +18,7 @@
 
 require_once 'config.php';
 require_once 'functions.php';
+require_once 'PersistentObject.php';
 import_request_variables('gp', 'r_');
 
 // Bulk stop/start/delete torrents...
@@ -62,6 +63,28 @@ if(isset($r_bulkaction) && is_array($r_select)) {
   $r_cmd = '';
 }
 
+// Set tags...
+if($r_bulkaction == 'set_tags') {
+  if(is_array($r_hashes)) {
+    if(!is_array($r_add_tags)) {
+      $r_add_tags = array();
+    }
+    if(!is_array($r_remove_tags)) {
+      $r_remove_tags = array();
+    }
+    $tags_filename = "$private_storage_dir/tags.txt";
+    $tags = new PersistentObject($tags_filename);
+    foreach($r_hashes as $hash) {
+      if(!is_array($tags->data[$hash])) {
+        $tags->data[$hash] = array();
+      }
+      $tags->data[$hash] = array_unique(array_merge(
+        array_diff($tags->data[$hash], $r_remove_tags), $r_add_tags));
+      sort($tags->data[$hash]);
+    }
+    $tags->save();
+  }
+}
 
 
 // Set file priorities...

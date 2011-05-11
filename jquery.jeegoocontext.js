@@ -467,6 +467,10 @@
         });
     };
 
+    $.hidejeegoocontext = function() {
+      _globalHide();
+    };
+
   // Unbind context from context menu.
     $.fn.nojeegoocontext = function(){
         this.unbind('.jeegoocontext');

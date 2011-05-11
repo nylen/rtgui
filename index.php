@@ -65,7 +65,6 @@ include_stylesheet('context-menu.css', true);
 <script type="text/javascript">
 var config = {
   diskAlertThreshold: <?php echo $disk_alert_threshold; ?>,
-  useGroups: <?php echo $use_groups ? 1 : 0; ?>,
   debugTab: <?php echo $debug_mode ? 1 : 0; ?>,
   dateAddedFormat: '<?php echo addslashes($date_added_format); ?>',
   rtGuiPath: '<?php echo addslashes(get_rtgui_path()); ?>',
@@ -100,6 +99,7 @@ include_script('functions.js');
 include_script('templates.js');
 include_script('confirmMessages.js');
 include_script('index.js');
+include_script('context-menu.js');
 ?>
 <!--[if lt IE 8]>
 <?php
@@ -128,7 +128,20 @@ include_script('ie.js');
     <li class="no-hide">
       Tags
       <ul class="tags-list">
-        <li>tag1</li>
+        <li class="new-tag no-hide">
+          <input type="text" class="new-tag-name" value="" />
+          <a href="#" class="add-new-tag">add</a>
+        </li>
+<?php foreach($_SESSION['used_tags'] as $tag) {
+  echo <<<HTML
+        <li class="tag no-hide toggle" data-tag="$tag"><input type="checkbox" />$tag</li>
+
+HTML;
+} ?>
+        <li class="tag-controls no-hide">
+          <input type="button" class="save" value="Save" />
+          <input type="button" class="cancel" value="Cancel" />
+        </li>
       </ul>
     </li>
     <li class="leave-checked no-hide toggle"><input type="checkbox" />Leave checked</li>
@@ -221,7 +234,7 @@ if($debug_mode) { ?>
 
       <div id="torrents-header">
         <div class="headcol column-name-grp">
-          <a class="sort" href="#" rel="name:asc:true">Name</a>|<a class="sort" href="#" rel="group:asc">Grp</a>
+          <a class="sort" href="#" rel="name:asc:true">Name</a>|<a class="sort" href="#" rel="tags:asc">Tags</a>
         </div>
         <div class="headcol column-status">
           <a class="sort" href="#" rel="status:asc">Status</a>
