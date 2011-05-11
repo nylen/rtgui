@@ -122,7 +122,11 @@ $(function() {
       var tag = tags[i];
       if(!tag) continue;
       if(!$('#context-menu li.tag[data-tag=' + tag + ']').length) {
-        $('#context-menu li.tag-controls').before(
+        var $addAfter = $('#context-menu li.new-tag');
+        while($addAfter.next('li').is('.tag') && $addAfter.next('li').data('tag') < tag) {
+          $addAfter = $addAfter.next('li');
+        }
+        $addAfter.after(
             '<li class="tag no-hide toggle state-true" data-tag="' + tag + '">'
             + '<input type="checkbox" checked="checked" />' + tag
           + '</li>');
