@@ -28,7 +28,12 @@ function rtgui_session_start() {
         }
       }
       $used_tags = array_keys($used_tags);
-      if(count($used_tags)) sort($used_tags);
+      if(is_array($always_show_tags)) {
+        $used_tags = array_unique(array_merge($used_tags, $always_show_tags));
+      }
+      if(count($used_tags)) {
+        sort($used_tags);
+      }
       $_SESSION['tags'] = $tags->data;
     } else {
       $_SESSION['tags'] = array();

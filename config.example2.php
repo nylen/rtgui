@@ -95,18 +95,30 @@ $tmp_add_dir = 'tmp';
 // Private storage directory to be used for storing information like torrent tags
 $private_storage_dir = 'private';
 
+// Define a list of tags that should always be shown, even if no torrents are using them.
+$always_show_tags = array('tv', 'movies');
 
-/* Define whether to use torrent groups.  A torrent group should split your torrents
- * up into categories, and should not change over the lifetime of the torrent.  A
- * good use case for torrent groups is if you have rTorrent watching several folders
- * for .torrent files, and putting the downloads in separate places.  The provided
- * get_torrent_group() function will handle that situation.
+
+/* If the get_watchdir_from_tags() function exists, it will be used to set the watch
+ * directory for a newly added torrent.  It takes a single argument which is an array
+ * of the tags that the user has added to this torrent.  Its default behavior should
+ * be to return $watch_dir.
+ *
+ * Any number of structures are possible here - I use a setup similar to
+ * http://libtorrent.rakshasa.no/wiki/RTorrentCommonTasks#Movecompletedtorrentstodifferentdirectorydependingonwatchdirectory
+ * where $watch_dir is the base watch directory (which is not actually watched
+ * for .torrent files) and there are watched subdirectories which will download
+ * to different folders.  So at least one of the tags that represent a watch
+ * directory needs to be present.
  */
-$use_groups = true;
-$all_groups = array('tv', 'movies');
-$default_group = 'tv';
-function get_torrent_group($t) {
-  return basename($t['is_multi_file'] ? dirname($t['directory']) : $t['directory']);
+$valid_watchdir_tags = $always_show_tags;
+function get_watchdir_from_tags($tags) {
+  global $valid_watchdir_tags;
+  $found_tags = array_intersect($tags, $valid_watchdir_tags);
+  if(count($found_tags) != 1) {
+    throw new ErrorException("Must choose ONE tag in '" . implode("', '", $valid_watchdir_tags) . "' for this torrent.");
+  }
+  return rtrim($watch_dir, '/') . "/$found_tags[0]";
 }
 
 /* If rTorrent is running on another PC, you can define the get_local_torrent_path($path)

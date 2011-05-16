@@ -4,16 +4,20 @@ $(function() {
     return true;
   }
 
+  var tagsStr = '';
+
   $('#form1').ajaxForm({
     beforeSubmit: function(formData, form, options) {
       $('#next').attr('disabled', true).after($.hsjn(
         ['img.loading', {src: 'images/loading.gif'}]
       ));
+      tagsStr = '';
       for(var i = 0; i < formData.length; i++) {
-        if(formData[i].name == 'group') {
-          $('#form2 input[name=group]').attr('value', formData[i].value);
+        if(formData[i].name == 'tags[]') {
+          tagsStr += (tagsStr ? ',' : '') + formData[i].value;
         }
       }
+      $('#form2 input[name=tags]').val(tagsStr);
     },
     success: function(d) {
       $('img.loading').remove();
@@ -71,7 +75,8 @@ $(function() {
           return;
         }
         var data = {
-          'action': 'process_' + f.type
+          action: 'process_' + f.type,
+          tags: tagsStr
         };
         data[f.type] = f.value;
 

@@ -1,6 +1,7 @@
 <?php
 require_once 'config.php';
 require_once 'functions.php';
+rtgui_session_start();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -40,19 +41,16 @@ include_script('add-torrents.js');
     <td class="left">Upload file(s):</td>
     <td class="right input"><input name="add_files[]" type="file" class="multi themed" /></td>
   </tr>
-<?php if($use_groups) { ?>
   <tr class="controls">
-    <td class="left">Torrent type:</td>
+    <td class="left">Torrent tags:</td>
     <td class="right">
-<?php for($i = 0; $i < count($all_groups); $i++) {
-  $value = $all_groups[$i];
-  $checked = ($value == $default_group ? ' checked="checked"' : '');
-  echo "  <input type=\"radio\" name=\"group\" value=\"$value\" id=\"group-$value\"$checked>";
-  echo "<label for=\"group-$value\">$value</label>\n";
+<?php foreach($_SESSION['used_tags'] as $tag) {
+  $checked = (strpos(',' . get_user_setting('new_torrent_tags') . ',', ",$tag,") !== false ? ' checked="checked"' : '');
+  echo "  <input type=\"checkbox\" name=\"tags[]\" value=\"$tag\" id=\"tag-$tag\"$checked>";
+  echo "<label for=\"tag-$tag\">$tag</label>\n";
 } ?>
     </td>
   </tr>
-<?php } ?>
   <tr id="row-next">
     <td class="left"></td>
     <td class="right"><input type="submit" id="next" class="themed" value="Next &gt;&gt;" /></td>
@@ -71,7 +69,7 @@ include_script('add-torrents.js');
   <div id="to-add"></div>
 
   <input type="hidden" name="action" value="add" />
-  <input type="hidden" name="group" value="" />
+  <input type="hidden" name="tags" value="" />
   <input type="submit" id="add" class="themed" value="Add selected" disabled="disabled" />
 </form>
 

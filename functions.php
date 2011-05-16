@@ -71,6 +71,28 @@ function file_path_mtime($filename) {
   return $filename . '?_=' . filemtime($filename);
 }
 
+function set_torrent_tags($hashes, $add_tags, $remove_tags) {
+  global $private_storage_dir;
+  if(is_array($hashes)) {
+    if(!is_array($add_tags)) {
+      $add_tags = array();
+    }
+    if(!is_array($remove_tags)) {
+      $remove_tags = array();
+    }
+    $tags = new PersistentObject("$private_storage_dir/tags.txt");
+    foreach($hashes as $hash) {
+      if(!is_array($tags->data[$hash])) {
+        $tags->data[$hash] = array();
+      }
+      $tags->data[$hash] = array_unique(array_merge(
+        array_diff($tags->data[$hash], $remove_tags), $add_tags));
+      sort($tags->data[$hash]);
+    }
+    $tags->save();
+  }
+}
+
 function include_script($script_filename) {
   echo '<script type="text/javascript" src="'
     . file_path_mtime($script_filename) . "\"></script>\n";
@@ -276,9 +298,6 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
 
     $t['tracker_hostname'] = $s['tracker_hostname'];
     $t['tracker_color'] = $s['tracker_color'];
-    if($use_groups) {
-      $t['group'] = $s['group'];
-    }
     $t['date_added'] = $s['date_added'];
 
     $total_down_rate += $t['down_rate'];

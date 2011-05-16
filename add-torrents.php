@@ -12,6 +12,9 @@ function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
     // error was suppressed with the @-operator
     return false;
   }
+  if($errno & E_NOTICE) {
+    return false;
+  }
   throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 }
 
@@ -97,6 +100,24 @@ function process_torrent_data($content, $filename, $create_file=true) {
 }
 
 import_request_variables('gp', 'r_');
+if(!is_array($r_tags)) {
+  $r_tags = explode(',', $r_tags);
+}
+
+$this_watch_dir = $watch_dir;
+switch($r_action) {
+  case 'process_url':
+  case 'process_file':
+  case 'add':
+    if(function_exists('get_watchdir_from_tags')) {
+      try {
+        $this_watch_dir = "$watch_dir/" . get_watchdir_from_tags($r_tags);
+      } catch(Exception $e) {
+        json_error($e->getMessage());
+      }
+    }
+    break;
+}
 
 switch($r_action) {
 
@@ -232,14 +253,8 @@ switch($r_action) {
 
 
   case 'add':
+    print '<style>body { background: white; color: black; }</style>';
     $errors = array();
-    $this_watch_dir = $watch_dir;
-    if($use_groups) {
-      if(!in_array($r_group, $all_groups)) {
-        $errors[] = "Unknown group '$r_group'";
-      }
-      $this_watch_dir = "$watch_dir/$r_group";
-    }
 
     foreach($r_add_torrent as $hash) {
       if($data = $_SESSION['to_add_data'][$hash]) {
@@ -247,7 +262,7 @@ switch($r_action) {
         $name = $data['name'];
         if(copy("$tmp_add_dir/$filename", "$this_watch_dir/$filename")) {
           if(function_exists('on_add_torrent')) {
-            on_add_torrent($name, $hash, $r_group, "$this_watch_dir/$filename");
+            on_add_torrent($name, $hash, $r_tags, "$this_watch_dir/$filename");
           }
         } else {
           $errors[] = "Failed to copy torrent \"$name\"";
@@ -259,6 +274,17 @@ switch($r_action) {
       array_unshift($errors, "One or more errors occurred:\n");
       $script = 'alert(' . json_encode($errors) . '.join("\n"))';
     } else {
+      if(is_array($r_tags)) {
+        set_error_handler('handleError');
+        try {
+          set_torrent_tags($r_add_torrent, $r_tags, array());
+          set_user_setting('new_torrent_tags', implode(',', $r_tags));
+        } catch(Exception $e) {
+          restore_error_handler();
+          die('Error setting tags: ' . $e->getMessage());
+        }
+        restore_error_handler();
+      }
       $script = 'top.hideDialog(true);';
     }
 
