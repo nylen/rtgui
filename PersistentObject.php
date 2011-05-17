@@ -11,7 +11,12 @@ class PersistentObject {
     if($filename !== null) {
       $this->filename = $filename;
     }
-    return file_put_contents($this->filename, json_encode($this->data));
+    $tmp = tempnam(sys_get_temp_dir(), 'PO');
+    if(file_put_contents($tmp, json_encode($this->data))) {
+      return rename($tmp, $this->filename);
+    } else {
+      return false;
+    }
   }
 
   public function load($filename=null) {
