@@ -46,8 +46,13 @@ include_script('add-torrents.js');
     <td class="right">
 <?php foreach($_SESSION['used_tags'] as $tag) {
   $checked = (strpos(',' . get_user_setting('new_torrent_tags') . ',', ",$tag,") !== false ? ' checked="checked"' : '');
-  echo "  <input type=\"checkbox\" name=\"tags[]\" value=\"$tag\" id=\"tag-$tag\"$checked>";
-  echo "<label for=\"tag-$tag\">$tag</label>\n";
+  echo <<<HTML
+      <div class="tag-checkbox">
+        <input type="checkbox" name="tags[]" value="$tag" id="tag-$tag"$checked>
+        <label for="tag-$tag">$tag</label>
+      </div>
+
+HTML;
 } ?>
     </td>
   </tr>

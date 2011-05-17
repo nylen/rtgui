@@ -10,8 +10,16 @@ table#upload-form {
 #upload-form td.input textarea, #upload-form td.input input {
   width: 100%;
 }
+
 #upload-form label {
   margin-right: 1em;
+}
+#upload-form .tag-checkbox {
+  float: left;
+}
+#upload-form .tag-checkbox input {
+  position: relative;
+  top: 2px;
 }
 
 img.loading {
