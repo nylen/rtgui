@@ -95,7 +95,8 @@ $tmp_add_dir = 'tmp';
 // Private storage directory to be used for storing information like torrent tags
 $private_storage_dir = 'private';
 
-// Define a list of tags that should always be shown, even if no torrents are using them.
+// Define a list of tags that should always be shown in the tag editing menu and the
+// add torrents dialog, even if no torrents are using them.
 $always_show_tags = array('tv', 'movies');
 
 
@@ -104,12 +105,17 @@ $always_show_tags = array('tv', 'movies');
  * of the tags that the user has added to this torrent.  Its default behavior should
  * be to return $watch_dir.
  *
+ * NOTE: If this function exists and does NOT return $watch_dir for a given torrent,
+ * then the program will behave as if $load_start above is set to false.  This means
+ * that rTorrent must be set up to watch the destination directory for new files, and
+ * there may be a delay of a few seconds in between when a torrent is added and when
+ * it shows up in the list.
+ *
  * Any number of structures are possible here - I use a setup similar to
- * http://libtorrent.rakshasa.no/wiki/RTorrentCommonTasks#Movecompletedtorrentstodifferentdirectorydependingonwatchdirectory
- * where $watch_dir is the base watch directory (which is not actually watched
- * for .torrent files) and there are watched subdirectories which will download
- * to different folders.  So at least one of the tags that represent a watch
- * directory needs to be present.
+ * http://tinyurl.com/rTorrentMultipleWatchDirs where $watch_dir is the base watch
+ * directory (which is not actually watched for .torrent files) and there are watched
+ * subdirectories which will download to different folders.  So at least one of the
+ * tags that represent a watch directory needs to be present.
  */
 function get_watchdir_from_tags($tags) {
   global $watch_dir; // don't forget this!

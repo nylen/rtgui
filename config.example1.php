@@ -21,10 +21,10 @@
 $scgi_local = '/tmp/rtorrent-james.sock';
 $scgi_timeout = 5; // seconds
 
-// Site title (change from rtGui if you have multiple)
-$site_title = 'rtGui (main)';
+// Site title (change from 'rtGui' if you have multiple)
+$site_title = 'rtGui';
 
-// rtorrent 'watch' directory (used for upload torrent)
+// rtorrent 'watch' directory (used for uploading torrents)
 $watch_dir = '/media/bit.torrents/';
 
 // Start download immediately after loading torrent
@@ -92,7 +92,8 @@ $tmp_add_dir = 'tmp';
 // Private storage directory to be used for storing information like torrent tags
 $private_storage_dir = 'private';
 
-// Define a list of tags that should always be shown, even if no torrents are using them.
+// Define a list of tags that should always be shown in the tag editing menu and the
+// add torrents dialog, even if no torrents are using them.
 $always_show_tags = array('music', 'other-music', 'linux', 'windows', 'other');
 
 /* If the get_watchdir_from_tags() function exists, it will be used to set the watch
@@ -100,11 +101,11 @@ $always_show_tags = array('music', 'other-music', 'linux', 'windows', 'other');
  * of the tags that the user has added to this torrent.  Its default behavior should
  * be to return $watch_dir.
  *
- * Any number of structures are possible here - I use a setup similar to
- * http://tinyurl.com/rTorrentMultipleWatchDirs where $watch_dir is the base watch
- * directory (which is not actually watched for .torrent files) and there are watched
- * subdirectories which will download to different folders.  So at least one of the
- * tags that represent a watch directory needs to be present.
+ * NOTE: If this function exists and does NOT return $watch_dir for a given torrent,
+ * then the program will behave as if $load_start above is set to false.  This means
+ * that rTorrent must be set up to watch the destination directory for new files, and
+ * there may be a delay of a few seconds in between when a torrent is added and when
+ * it shows up in the list.
  */
 //function get_watchdir_from_tags($tags) { ... }
 
@@ -112,13 +113,7 @@ $always_show_tags = array('music', 'other-music', 'linux', 'windows', 'other');
  * check if rTorrent is running, or to mount the rTorrent directories if rTorrent is
  * running on another machine.
  */
-// function on_page_requested() { ... }
-
-// Define some links that will be shown in the header
-$header_links = array(
-  'htpc' => '../htpc/',
-  'music users' => '/music-users/'
-);
+//function on_page_requested() { ... }
 
 // Define an action to take when adding a torrent
 //function on_add_torrent($name, $hash, $tags, $filename) { ... }
