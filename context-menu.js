@@ -137,7 +137,11 @@ $(function() {
 
   $tagName.keyup(function(e) {
     if(e.keyCode == 13) {
-      addTags();
+      if($(this).val()) {
+        addTags();
+      } else {
+        $('#context-menu li.tag-controls .save').trigger('click');
+      }
     }
   });
 
