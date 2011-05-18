@@ -111,11 +111,13 @@ $always_show_tags = array('tv', 'movies');
  * to different folders.  So at least one of the tags that represent a watch
  * directory needs to be present.
  */
-$valid_watchdir_tags = $always_show_tags;
 function get_watchdir_from_tags($tags) {
-  global $valid_watchdir_tags;
+  global $watch_dir; // don't forget this!
+  global $always_show_tags;
+  $valid_watchdir_tags = $always_show_tags;
   $found_tags = array_intersect($tags, $valid_watchdir_tags);
   if(count($found_tags) != 1) {
+    // This error will be carried through and shown in the browser.
     throw new ErrorException("Must choose ONE tag in '" . implode("', '", $valid_watchdir_tags) . "' for this torrent.");
   }
   return rtrim($watch_dir, '/') . "/$found_tags[0]";

@@ -106,15 +106,7 @@ $always_show_tags = array('music', 'other-music', 'linux', 'windows', 'other');
  * subdirectories which will download to different folders.  So at least one of the
  * tags that represent a watch directory needs to be present.
  */
-$valid_watchdir_tags = $always_show_tags;
-function get_watchdir_from_tags($tags) {
-  global $valid_watchdir_tags;
-  $found_tags = array_intersect($tags, $valid_watchdir_tags);
-  if(count($found_tags) != 1) {
-    throw new ErrorException("Must choose ONE tag in '" . implode("', '", $valid_watchdir_tags) . "' for this torrent.");
-  }
-  return rtrim($watch_dir, '/') . "/$found_tags[0]";
-}
+//function get_watchdir_from_tags($tags) { ... }
 
 /* Define a function that will be run every time a page is requested.  It can be used to
  * check if rTorrent is running, or to mount the rTorrent directories if rTorrent is

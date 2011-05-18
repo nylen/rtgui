@@ -105,18 +105,18 @@ if(!is_array($r_tags)) {
 }
 
 $this_watch_dir = $watch_dir;
-switch($r_action) {
-  case 'process_url':
-  case 'process_file':
-  case 'add':
-    if(function_exists('get_watchdir_from_tags')) {
+if(function_exists('get_watchdir_from_tags')) {
+  switch($r_action) {
+    case 'process_url':
+    case 'process_file':
+    case 'add':
       try {
-        $this_watch_dir = "$watch_dir/" . get_watchdir_from_tags($r_tags);
+        $this_watch_dir = get_watchdir_from_tags($r_tags);
       } catch(Exception $e) {
         json_error($e->getMessage());
       }
-    }
-    break;
+      break;
+  }
 }
 
 switch($r_action) {
@@ -261,6 +261,9 @@ switch($r_action) {
         $filename = $data['filename'];
         $name = $data['name'];
         if(copy("$tmp_add_dir/$filename", "$this_watch_dir/$filename")) {
+          if($load_start && $this_watch_dir == $watch_dir) {
+            rtorrent_xmlrpc('load_start', "$this_watch_dir/$filename");
+          }
           if(function_exists('on_add_torrent')) {
             on_add_torrent($name, $hash, $r_tags, "$this_watch_dir/$filename");
           }
