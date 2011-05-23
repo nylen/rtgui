@@ -94,7 +94,7 @@ $private_storage_dir = 'private';
 
 // Define a list of tags that should always be shown in the tag editing menu and the
 // add torrents dialog, even if no torrents are using them.
-$always_show_tags = array('music', 'other-music', 'linux', 'windows', 'other');
+$always_show_tags = array('music', 'other-music', 'linux', 'windows', 'other', 'books');
 
 /* If the get_watchdir_from_tags() function exists, it will be used to set the watch
  * directory for a newly added torrent.  It takes a single argument which is an array
