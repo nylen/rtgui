@@ -23,6 +23,8 @@ if(!function_exists('xml_parser_create') || !function_exists('xmlrpc_encode_requ
   require_once 'xmlrpc_extension_api.inc';
 }
 
+error_reporting(E_ALL & ~E_NOTICE);
+
 if(function_exists('on_page_requested')) {
   on_page_requested();
 }
