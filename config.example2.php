@@ -126,7 +126,10 @@ function get_watchdir_from_tags($tags) {
     // This error will be carried through and shown in the browser.
     throw new ErrorException("Must choose ONE tag in '" . implode("', '", $valid_watchdir_tags) . "' for this torrent.");
   }
-  return rtrim($watch_dir, '/') . "/$found_tags[0]";
+  // There's no guarantee that the single key in $found_tags is 0.
+  foreach($found_tags as $tag) {
+    return rtrim($watch_dir, '/') . "/$tag";
+  }
 }
 
 /* If rTorrent is running on another PC, you can define the get_local_torrent_path($path)
