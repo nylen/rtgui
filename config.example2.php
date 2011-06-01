@@ -163,7 +163,7 @@ function on_page_requested() {
  */
 function dirbrowser_translate($dir) {
   // Just a helper function - not called by dirbrowser code
-  return str_replace('/media/rtorrent/', '/media/htpc/rtorrent/', $dir);
+  return str_replace('/media/rtorrent/', '/media/htpc/rtorrent/', rtrim($dir, '/') . '/');
 }
 function dirbrowser_scandir($dir) {
   return @scandir(dirbrowser_translate($dir));
