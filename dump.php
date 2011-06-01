@@ -4,7 +4,7 @@ require_once 'functions.php';
 
 $format_str = $_REQUEST['format'];
 if(!$format_str) $format_str = $argv[1];
-if(!$format_str) $format_str = '%hash:%directory:%name';
+if(!$format_str) $format_str = '%hash:%base_path';
 if(isset($_REQUEST['header']) || $argv[3]) print "$format_str\n";
 
 function is_format($fmt) {

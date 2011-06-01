@@ -92,13 +92,6 @@ if(isset($r_set_tpriority)) {
 // Move torrent dir
 if(isset($r_newdir)) {
   $old_path = rtorrent_xmlrpc('d.get_base_path', array($r_hash));
-  if(!$old_path) {
-    // work around rTorrent bug? sometimes get_base_path returns ''
-    $old_path = rtorrent_xmlrpc('d.get_directory', array($r_hash));
-    if(!rtorrent_xmlrpc('d.is_multi_file', array($r_hash))) {
-      $old_path .= '/' . rtorrent_xmlrpc('d.get_name', array($r_hash));
-    }
-  }
   if(rtrim(dirname($old_path), '/') !== rtrim($r_newdir, '/')) {
     if(rtorrent_xmlrpc('execute', array('mv', '-u', $old_path, "$r_newdir/")) === false) {
       die("Failed to move '$old_path' to '$r_newdir'.  Check rTorrent's execute_log.");

@@ -152,7 +152,7 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
 
   $torrents = rtorrent_multicall('d', $view, array(
     #'get_base_filename',
-    #'get_base_path',
+    'get_base_path',
     #'get_bytes_done',
     'get_chunk_size', # only needed to set other items
     'get_chunks_hashed', # only needed to set other items
@@ -314,6 +314,7 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
 
     if($for_script) {
       // unset items that aren't needed by the client
+      unset($t['base_path']);
       unset($t['directory']);
       unset($t['is_active']);
       unset($t['is_hash_checked']);
