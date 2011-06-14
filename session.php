@@ -3,7 +3,7 @@ require_once 'config.php';
 require_once 'PersistentObject.php';
 
 function rtgui_session_start() {
-  global $tmp_add_dir, $private_storage_dir;
+  global $tmp_add_dir, $private_storage_dir, $always_show_tags;
   if(!$_SESSION) {
     if(@file_put_contents("$private_storage_dir/test.txt", 'testing')) {
       @unlink("$private_storage_dir/test.txt");
