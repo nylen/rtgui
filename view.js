@@ -1,4 +1,8 @@
 $(function() {
+  $(window).bind('mousewheel', function(e, d) {
+    window.top.onMouseWheelFromChildFrame();
+  });
+
   $('a.tab-multi').click(function() {
     var tabName = $(this).attr('rel');
     $('div.tab').addClass('hidden');

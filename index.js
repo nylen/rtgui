@@ -52,6 +52,19 @@ $(function() {
 
   // Set up event handlers
 
+  $(window).bind('mousewheel', function(e, d) {
+    if(window.dialogShowing) {
+      e.preventDefault();
+    }
+  }).scroll(function() {
+    if(window.scrollingFromFrame) {
+      $(window).scrollTop(window.originalScrollTop);
+      window.scrollingFromFrame = false;
+    } else {
+      window.originalScrollTop = $(window).scrollTop();
+    }
+  });
+
   $('#debug-tab').click(function() {
     var dbg = $('#debug:visible').length;
     $(this)[dbg ? 'removeClass' : 'addClass']('current');

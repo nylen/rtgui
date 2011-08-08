@@ -18,6 +18,8 @@ function showDialog(url, title, width, height) {
   var px = function(n) {
     return Math.round(n) + 'px';
   };
+  window.dialogShowing = true;
+  window.originalScrollTop = $(window).scrollTop();
   $('#dialog')
   .html('<iframe id="dialog-iframe" src="' + htmlspecialchars(url) + '" />')
   .dialog('option', 'title', title)
@@ -27,11 +29,16 @@ function showDialog(url, title, width, height) {
   .dialog('open');
 }
 
+function onMouseWheelFromChildFrame() {
+  window.scrollingFromFrame = true;
+}
+
 function beforeCloseDialog() {
   if(typeof window.hideDialogCallback == 'function') {
     var result = window.hideDialogCallback();
     window.hideDialogCallback = null;
   }
+  window.dialogShowing = false;
   return true;
 }
 

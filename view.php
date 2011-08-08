@@ -47,6 +47,7 @@ include_stylesheet('dialogs.css', true);
 include_stylesheet('tipTip.css', true);
 include_script('jquery.js');
 include_script('jquery.tipTip.js');
+include_script('jquery.mousewheel.js');
 include_script('confirmMessages.js');
 include_script('view.js');
 

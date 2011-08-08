@@ -18,6 +18,7 @@ include_script('jquery.js');
 include_script('jquery.hsjn.js');
 include_script('jquery.form.js');
 include_script('jquery.MultiFile.js');
+include_script('jquery.mousewheel.js');
 include_script('json2.min.js');
 include_script('php.min.js');
 include_script('add-torrents.js');

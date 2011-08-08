@@ -47,7 +47,16 @@ if(!isset($r_hilitedir)) $r_hilitedir = '';
 <?php
 include_stylesheet('common.css', true);
 include_stylesheet('dialogs.css', true);
+include_script('jquery.js');
+include_script('jquery.mousewheel.js', true);
 ?>
+<script type="text/javascript">
+$(function() {
+  $(window).bind('mousewheel', function(e, d) {
+    window.top.onMouseWheelFromChildFrame();
+  });
+});
+</script>
 </head>
 <?php
 $dir_encode = htmlentities($r_dir, ENT_QUOTES, 'UTF-8');

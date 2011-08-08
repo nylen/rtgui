@@ -1,4 +1,8 @@
 $(function() {
+  $(window).bind('mousewheel', function(e, d) {
+    window.top.onMouseWheelFromChildFrame();
+  });
+
   top.hideDialogCallback = function() {
     top.$.post('add-torrents.php?action=delete_files');
     return true;
