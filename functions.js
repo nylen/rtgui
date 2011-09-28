@@ -446,7 +446,8 @@ function updateVisibleTorrents(torrentDivsAll, ids) {
     });
     $('#t-none').css('display', (torrentDivsVisible.length ? 'none' : ''));
     $('#t-count-visible').html(torrentDivsVisible.length);
-    $('#t-count-all').html(torrentDivsAll.length);
+    $('#t-count-all').html(data.torrents_count_all);
+    $('#t-count-hidden').html(data.torrents_count_hidden);
   }
   return anyChanged;
 }

@@ -38,6 +38,9 @@ $default_user_settings = array(
   // Theme to use for site, unless it is changed by the user or the user-agent
   'theme' => 'default',
 
+  // Whether to show hidden torrents (if allowed by $can_hide_unhide below)
+  'show_hidden' => true,
+
   // Time between ajax calls - default 5000 (5 secs).  Disable with 0
   'refresh_interval' => 5000,
 
@@ -99,6 +102,13 @@ $private_storage_dir = 'private';
 // add torrents dialog, even if no torrents are using them.
 $always_show_tags = array('tv', 'movies');
 
+// Determine whether to allow hiding or unhiding torrents.
+$can_hide_unhide = ($_SERVER['REMOTE_USER'] == 'james' || !$_SERVER['REMOTE_USER']);
+
+if($can_hide_unhide) {
+  $always_show_tags[] = '_hidden';
+}
+
 
 /* If the get_watchdir_from_tags() function exists, it will be used to set the watch
  * directory for a newly added torrent.  It takes a single argument which is an array
@@ -120,7 +130,7 @@ $always_show_tags = array('tv', 'movies');
 function get_watchdir_from_tags($tags) {
   global $watch_dir; // don't forget this!
   global $always_show_tags;
-  $valid_watchdir_tags = $always_show_tags;
+  $valid_watchdir_tags = array_diff($always_show_tags, array('_hidden'));
   $found_tags = array_intersect($tags, $valid_watchdir_tags);
   if(count($found_tags) != 1) {
     // This error will be carried through and shown in the browser.

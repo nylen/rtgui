@@ -21,17 +21,15 @@ require_once 'functions.php';
 rtgui_session_start();
 import_request_variables('gp', 'r_');
 
-if(isset($r_set_refresh)) {
+if($r_operation == 'save_settings') {
   set_user_setting('refresh_interval', $r_set_refresh);
-}
 
-if(isset($r_set_max_up) || isset($r_set_max_down)) {
   rtorrent_xmlrpc('set_upload_rate', array($r_set_max_up));
   rtorrent_xmlrpc('set_download_rate', array($r_set_max_down));
-}
 
-if(isset($r_set_theme)) {
   set_user_setting('theme', $r_set_theme);
+
+  set_user_setting('show_hidden', ($r_set_show_hidden ? 'yes' : 'no'));
 }
 
 $download_cap = rtorrent_xmlrpc('get_download_rate');
@@ -64,6 +62,8 @@ include_stylesheet('dialogs.css', true);
   <h3>Settings</h3>
 <?php } ?>
   <form method="post" action="settings.php">
+    <input type="hidden" name="operation" value="save_settings" />
+
     <table id="options">
 
       <tr>
@@ -176,6 +176,21 @@ HTML;
           </select>
         </td>
       </tr>
+
+<?php
+if($can_hide_unhide) {
+  $checked = (get_user_setting('show_hidden') == 'yes' ? ' checked="checked"' : '');
+  echo <<<HTML
+      <tr>
+        <td class="label" colspan="2">
+          <input type="checkbox" name="set_show_hidden" id="set-show-hidden"$checked />
+          <label for="set-show-hidden">Show hidden torrents</label>
+        </td>
+      </tr>
+
+HTML;
+}
+?>
 
     </table>
 

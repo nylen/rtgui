@@ -117,7 +117,19 @@ $(function() {
   var $tagName = $('#context-menu input.new-tag-name');
 
   var addTags = function() {
-    var tags = $tagName.val().toLowerCase().replace(/[^a-z0-9 ,-]/g, '').replace(/[ ,]+/, ' ').split(' ');
+    var tags = $tagName.val().toLowerCase();
+    var addHidden = false;
+    if(/_hidden/.test(tags)) {
+      if(config.canHideUnhide) {
+        addHidden = true;
+      }
+      tags = tags.replace(/_hidden/g, '');
+    }
+    tags = tags.replace(/[^a-z0-9 ,-]/g, '').replace(/[ ,]+/, ' ').split(' ');
+    if(addHidden) {
+      tags.push('_hidden');
+    }
+
     for(var i in tags) {
       var tag = tags[i];
       if(!tag) continue;

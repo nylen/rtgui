@@ -149,6 +149,9 @@ function do_xmlrpc($request) {
 function get_all_torrents($torrents_only=false, $for_script=false, $view='main') {
   global $download_dir;
   global $tracker_highlight, $tracker_highlight_default;
+  global $can_hide_unhide;
+
+  $show_hidden = ($can_hide_unhide && get_user_setting('show_hidden') == 'yes');
 
   $torrents = rtorrent_multicall('d', $view, array(
     #'get_base_filename',
@@ -216,7 +219,26 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
   }
   $total_down_rate = 0;
   $total_up_rate = 0;
+  $torrents_count_all = count($torrents);
+  $torrents_count_hidden = 0;
+
   foreach($torrents as $hash => $t) {
+    $total_down_rate += $t['down_rate'];
+    $total_up_rate += $t['up_rate'];
+
+    if(is_array($_SESSION['tags'][$hash])) {
+      $t['tags'] = implode(',', $_SESSION['tags'][$hash]);
+      if(in_array('_hidden', $_SESSION['tags'][$hash])) {
+        $torrents_count_hidden++;
+        if(!$show_hidden) {
+          unset($torrents[$hash]);
+          continue;
+        }
+      }
+    } else {
+      $t['tags'] = '';
+    }
+
     $t['completed_bytes'] = $t['completed_chunks'] * $t['chunk_size'];
     $t['size_bytes'] = $t['size_chunks'] * $t['chunk_size'];
     $t['up_total'] = $t['size_bytes'] * $t['ratio'] / 1000;
@@ -292,18 +314,9 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
       $_SESSION['persistent'][$hash] = $s;
     }
 
-    if(is_array($_SESSION['tags'][$hash])) {
-      $t['tags'] = implode(',', $_SESSION['tags'][$hash]);
-    } else {
-      $t['tags'] = '';
-    }
-
     $t['tracker_hostname'] = $s['tracker_hostname'];
     $t['tracker_color'] = $s['tracker_color'];
     $t['date_added'] = $s['date_added'];
-
-    $total_down_rate += $t['down_rate'];
-    $total_up_rate += $t['up_rate'];
 
     // unset items that are only needed for setting other items
     unset($t['chunk_size']);
@@ -338,13 +351,15 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
   }
 
   $data = array(
-    'torrents'         => $torrents,
-    'total_down_rate'  => $total_down_rate,
-    'total_up_rate'    => $total_up_rate,
-    'total_down_limit' => rtorrent_xmlrpc('get_download_rate'),
-    'total_up_limit'   => rtorrent_xmlrpc('get_upload_rate'),
-    'disk_free'        => @disk_free_space($download_dir),
-    'disk_total'       => @disk_total_space($download_dir),
+    'torrents'              => $torrents,
+    'torrents_count_all'    => $torrents_count_all,
+    'torrents_count_hidden' => $torrents_count_hidden,
+    'total_down_rate'       => $total_down_rate,
+    'total_up_rate'         => $total_up_rate,
+    'total_down_limit'      => rtorrent_xmlrpc('get_download_rate'),
+    'total_up_limit'        => rtorrent_xmlrpc('get_upload_rate'),
+    'disk_free'             => @disk_free_space($download_dir),
+    'disk_total'            => @disk_total_space($download_dir),
   );
   if($data['disk_total'] > 0) {
     $data['disk_percent'] = $data['disk_free'] / $data['disk_total'] * 100;

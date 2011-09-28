@@ -68,6 +68,7 @@ var config = {
   debugTab: <?php echo $debug_mode ? 1 : 0; ?>,
   dateAddedFormat: '<?php echo addslashes($date_added_format); ?>',
   rtGuiPath: '<?php echo addslashes(get_rtgui_path()); ?>',
+  canHideUnhide: <?php echo $can_hide_unhide ? 1 : 0; ?>,
   defaultFilterText: 'Filter'
 };
 
@@ -134,10 +135,12 @@ include_script('ie.js');
           <a href="#" class="add-new-tag">add</a>
         </li>
 <?php foreach($_SESSION['used_tags'] as $tag) {
-  echo <<<HTML
+  if($tag != '_hidden' || $can_hide_unhide) {
+    echo <<<HTML
         <li class="tag no-hide toggle" data-tag="$tag"><input type="checkbox" />$tag</li>
 
 HTML;
+  }
 } ?>
         <li class="tag-controls no-hide">
           <input type="button" class="save" value="Save" />
@@ -202,6 +205,7 @@ HTML;
           <p>
             Showing <span id="t-count-visible">??</span>
             of <span id="t-count-all">??</span> torrents
+            (<span id="t-count-hidden">??</span> hidden)
             | <a class="dialog" rel="400:300" href="settings.php">Settings</a>
             | <a class="dialog" rel="700:500" href="add-torrents-form.php">Add torrent(s)</a>
           </p>
