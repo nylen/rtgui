@@ -78,7 +78,7 @@ class Torrent {
 	/**
 	* @var array List of error occured
 	*/
-	static protected $errors = array();
+	protected $errors = array();
 
 	/** Read and decode torrent file/data OR build a torrent from source folder/file(s)
 	 * Supported signatures:
