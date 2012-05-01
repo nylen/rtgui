@@ -16,6 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once 'session.php';
+
 // Optionally use alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/
 // See http://code.google.com/p/rtgui/issues/detail?id=19
 if(!function_exists('xml_parser_create') || !function_exists('xmlrpc_encode_request')) {
@@ -113,26 +115,6 @@ function include_stylesheet($stylesheet_filename, $use_theme=false) {
   echo '<link rel="stylesheet" type="text/css" href="'
     . file_path_mtime($stylesheet_filename) . "\" />\n";
 }
-
-function get_rtgui_path() {
-  return substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'));
-}
-
-function get_rtgui_url() {
-  // adapted from http://stackoverflow.com/questions/189113/1229827#1229827
-  $protocol = 'http';
-  if($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')) {
-      $protocol .= 's';
-      $protocol_port = $_SERVER['SERVER_PORT'];
-  } else {
-      $protocol_port = 80;
-  }
-  $host = $_SERVER['HTTP_HOST'];
-  $port = $_SERVER['SERVER_PORT'];
-  return "$protocol://$host" . ($port == $protocol_port ? '' : ':' . $port) . get_rtgui_path();
-}
-
-require_once 'session.php';
 
 function do_xmlrpc($request) {
   global $scgi_host, $scgi_port, $scgi_timeout;

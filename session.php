@@ -2,6 +2,24 @@
 require_once 'config.php';
 require_once 'PersistentObject.php';
 
+function get_rtgui_path() {
+  return substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'));
+}
+
+function get_rtgui_url() {
+  // adapted from http://stackoverflow.com/questions/189113/1229827#1229827
+  $protocol = 'http';
+  if($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')) {
+      $protocol .= 's';
+      $protocol_port = $_SERVER['SERVER_PORT'];
+  } else {
+      $protocol_port = 80;
+  }
+  $host = $_SERVER['HTTP_HOST'];
+  $port = $_SERVER['SERVER_PORT'];
+  return "$protocol://$host" . ($port == $protocol_port ? '' : ':' . $port) . get_rtgui_path();
+}
+
 function rtgui_session_start() {
   global $tmp_add_dir, $private_storage_dir, $always_show_tags;
   if(!$_SESSION) {
@@ -15,6 +33,7 @@ function rtgui_session_start() {
     } else {
       die('<h1>ERROR: could not write to temporary directory (defined by the $tmp_add_dir setting).</h1>');
     }
+    session_name(get_rtgui_path());
     session_start();
   }
   $tags_filename = "$private_storage_dir/tags.txt";
