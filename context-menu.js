@@ -64,8 +64,8 @@ $(function() {
         var tagUnset = false;
         for(var i in selectedTorrentHashes) {
           var hash = selectedTorrentHashes[i];
-          var tags = ',' + window.data.torrents[hash].tags + ',';
-          if(tags.indexOf(',' + tag + ',') != -1) {
+          var tags = '|' + window.data.torrents[hash].tags + '|';
+          if(tags.indexOf('|' + tag + '|') != -1) {
             tagSet = true;
           } else {
             tagUnset = true;
@@ -117,23 +117,21 @@ $(function() {
   var $tagName = $('#context-menu input.new-tag-name');
 
   var addTags = function() {
-    var tags = $tagName.val().toLowerCase();
-    var addHidden = false;
-    if(/_hidden/.test(tags)) {
-      if(config.canHideUnhide) {
-        addHidden = true;
-      }
-      tags = tags.replace(/_hidden/g, '');
-    }
-    tags = tags.replace(/[^a-z0-9 ,-]/g, '').replace(/[ ,]+/, ' ').split(' ');
-    if(addHidden) {
-      tags.push('_hidden');
-    }
+    var tags = $tagName.val();
+    tags = tags.replace(/[^a-z0-9 (),_=|'-]/gi, '').replace(/\|+/, '|').split('|');
 
     for(var i in tags) {
       var tag = tags[i];
       if(!tag) continue;
-      if(!$('#context-menu li.tag[data-tag=' + tag + ']').length) {
+      if(tag == '_hidden' && !config.canHideUnhide) continue;
+      var foundTagListItem = false;
+      $('#context-menu li.tag').each(function() {
+        if($(this).data('tag') == tag) {
+          foundTagListItem = true;
+          return false;
+        }
+      });
+      if(!foundTagListItem) {
         var $addAfter = $('#context-menu li.new-tag');
         while($addAfter.next('li').is('.tag') && $addAfter.next('li').data('tag') < tag) {
           $addAfter = $addAfter.next('li');

@@ -18,7 +18,7 @@ $(function() {
       tagsStr = '';
       for(var i = 0; i < formData.length; i++) {
         if(formData[i].name == 'tags[]') {
-          tagsStr += (tagsStr ? ',' : '') + formData[i].value;
+          tagsStr += (tagsStr ? '|' : '') + formData[i].value;
         }
       }
       $('#form2 input[name=tags]').val(tagsStr);

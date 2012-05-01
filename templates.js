@@ -227,7 +227,7 @@ var formatHandlers = {
     if(!t) {
       return false;
     }
-    var tags = t.split(',');
+    var tags = t.split('|');
     var html = '(';
     var first = true;
     for(var i in tags) {

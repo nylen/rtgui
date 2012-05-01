@@ -101,7 +101,7 @@ function process_torrent_data($content, $filename, $create_file=true) {
 
 import_request_variables('gp', 'r_');
 if(!is_array($r_tags)) {
-  $r_tags = explode(',', $r_tags);
+  $r_tags = explode('|', $r_tags);
 }
 
 $this_watch_dir = $watch_dir;
@@ -281,7 +281,7 @@ switch($r_action) {
         set_error_handler('handleError');
         try {
           set_torrent_tags($r_add_torrent, $r_tags, array());
-          set_user_setting('new_torrent_tags', implode(',', $r_tags));
+          set_user_setting('new_torrent_tags', implode('|', $r_tags));
         } catch(Exception $e) {
           restore_error_handler();
           die('Error setting tags: ' . $e->getMessage());

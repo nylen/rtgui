@@ -209,7 +209,7 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
     $total_up_rate += $t['up_rate'];
 
     if(is_array($_SESSION['tags'][$hash])) {
-      $t['tags'] = implode(',', $_SESSION['tags'][$hash]);
+      $t['tags'] = implode('|', $_SESSION['tags'][$hash]);
       if(in_array('_hidden', $_SESSION['tags'][$hash])) {
         $torrents_count_hidden++;
         if(!$show_hidden) {
