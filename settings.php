@@ -28,6 +28,7 @@ if($r_operation == 'save_settings') {
   rtorrent_xmlrpc('set_download_rate', array($r_set_max_down));
 
   set_user_setting('theme', $r_set_theme);
+  set_user_setting('use_dialogs', ($r_set_use_dialogs ? 'yes' : 'no'));
 
   set_user_setting('show_hidden', ($r_set_show_hidden ? 'yes' : 'no'));
 }
@@ -36,12 +37,16 @@ $download_cap = rtorrent_xmlrpc('get_download_rate');
 $upload_cap = rtorrent_xmlrpc('get_upload_rate');
 
 if(isset($r_submit)) {
-  echo <<<JS
-<script>
+  if($r_dialog) {
+    echo <<<JS
+<script type="text/javascript">
 window.top.reloadUserSettings();
 window.top.hideDialog(true);
 </script>
 JS;
+  } else {
+    header('Location: .');
+  }
   die();
 }
 ?>
@@ -63,6 +68,12 @@ include_stylesheet('dialogs.css', true);
 <?php } ?>
   <form method="post" action="settings.php">
     <input type="hidden" name="operation" value="save_settings" />
+<?php
+echo <<<HTML
+    <input type="hidden" name="dialog" value="$_GET[dialog]" />
+
+HTML;
+?>
 
     <table id="options">
 
@@ -177,6 +188,20 @@ HTML;
         </td>
       </tr>
 
+      <tr>
+        <td class="label" colspan="2">
+<?php
+$checked = (get_user_setting('use_dialogs') == 'yes' ? ' checked="checked"' : '');
+echo <<<HTML
+          <input type="checkbox" name="set_use_dialogs" id="set-use-dialogs"$checked />
+
+HTML;
+?>
+          <label for="set-use-dialogs">Use dialog boxes</label>
+        </td>
+      </tr>
+
+
 <?php
 if($can_hide_unhide) {
   $checked = (get_user_setting('show_hidden') == 'yes' ? ' checked="checked"' : '');
@@ -195,7 +220,11 @@ HTML;
     </table>
 
     <div id="modalButtons">
+<?php if($r_dialog) { ?>
       <input type="submit" class="themed" onclick="window.top.hideDialog(false);" value="Cancel" />
+<?php } else { ?>
+      <input type="submit" class="themed" onclick="location.href = '.';" value="Cancel" />
+<?php } ?>
       <input type="submit" name="submit" class="themed" value="Save" />
     </div>
   </form>

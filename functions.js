@@ -54,6 +54,7 @@ function hideDialog(doUpdate) {
 
 function reloadUserSettings() {
   userSettings.refreshInterval = parseInt($.cookie('refresh_interval'));
+  userSettings.useDialogs = ($.cookie('use_dialogs') == 'yes');
   if(userSettings.theme != $.cookie('theme')) {
     document.location.reload();
   }

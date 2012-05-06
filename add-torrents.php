@@ -253,7 +253,24 @@ switch($r_action) {
 
 
   case 'add':
-    print '<style>body { background: white; color: black; }</style>';
+    echo <<<HTML
+<style type="text/css">
+  body {
+    background: white;
+    color: black;
+  }
+</style>
+<script type="text/javascript">
+  function closeWindow() {
+    if(window.top.hideDialog) {
+      window.top.hideDialog(true);
+    } else {
+      location.href = 'add-torrents.php?action=delete_files&redirect=true';
+    }
+  }
+</script>
+
+HTML;
     $errors = array();
 
     foreach($r_add_torrent as $hash) {
@@ -288,10 +305,10 @@ switch($r_action) {
         }
         restore_error_handler();
       }
-      $script = 'top.hideDialog(true);';
+      $script = 'closeWindow();';
     }
 
-    print "<script>$script</script>\n";
+    print "<script type=\"text/javascript\">$script</script>\n";
 
     break;
 
@@ -305,5 +322,9 @@ switch($r_action) {
     }
 
     break;
+}
+
+if($r_redirect) {
+  header('Location: .');
 }
 ?>

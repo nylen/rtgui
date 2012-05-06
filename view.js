@@ -35,6 +35,14 @@ $(function() {
     document.location.reload();
   });
 
+  $('#btn-close').click(function() {
+    if(window.top.hideDialog) {
+      window.top.hideDialog();
+    } else {
+      document.location.href = '.';
+    }
+  });
+
   $('#directory-form').submit(function() {
     $(this).attr('action', 'control.php?tab=' + getHash());
   });

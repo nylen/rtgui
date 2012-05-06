@@ -21,6 +21,24 @@ require_once 'functions.php';
 
 import_request_variables('gp', 'r_');
 
+// Get torrent info...  (get all downloads, then filter out just this one by the hash)
+$all_torrents = get_all_torrents(true);
+
+$this_torrent = false;
+foreach($all_torrents as $torrent) {
+  if($r_hash == $torrent['hash']) $this_torrent = $torrent;
+}
+
+if(!$this_torrent) {
+  // probably the current torrent was just deleted
+  if($r_dialog) {
+    die('<script type="text/javascript">window.top.hideDialog(true);</script>');
+  } else {
+    header('Location: .');
+    die();
+  }
+}
+
 if(isset($r_select)) {
   $tabs = array($r_select);
   $only_one_tab = !isset($r_alltabs);
@@ -51,20 +69,6 @@ include_script('jquery.mousewheel.js');
 include_script('confirmMessages.js');
 include_script('view.js');
 
-
-
-// Get torrent info...  (get all downloads, then filter out just this one by the hash)
-$all_torrents = get_all_torrents(true);
-
-$this_torrent = false;
-foreach($all_torrents as $torrent) {
-  if($r_hash == $torrent['hash']) $this_torrent = $torrent;
-}
-
-if(!$this_torrent) {
-  // probably the current torrent was just deleted
-  die('<script>top.hideDialog(true);</script></body></html>');
-}
 
 $status_style = ($this_torrent['complete']  ? 'complete' : 'incomplete')
               . ($this_torrent['is_active'] ? 'active'   : 'inactive');
@@ -107,6 +111,9 @@ HTML;
     <input type="button" value="Refresh"
       id="btn-refresh"
       class="buttonrefresh themed" />
+    <input type="button" value="Close"
+      id="btn-close"
+      class="buttonclose themed" />
 
   </div>
 

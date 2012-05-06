@@ -2,6 +2,7 @@
 require_once 'config.php';
 require_once 'functions.php';
 rtgui_session_start();
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -22,6 +23,19 @@ include_script('jquery.mousewheel.js');
 include_script('json2.min.js');
 include_script('php.min.js');
 include_script('add-torrents.js');
+if(!$_GET['dialog']) {
+  // Need to get the hashes of all torrents that have already been downloaded
+  $torrents = rtorrent_multicall('d', 'main', array('get_hash'), 'hash', true);
+  $torrents = array_map('is_numeric', array_flip(array_keys($torrents)));
+  $data = array('torrents' => $torrents);
+  $data_str = json_encode($data);
+  echo <<<HTML
+<script type="text/javascript">
+var data = $data_str;
+</script>
+
+HTML;
+}
 ?>
 </head>
 

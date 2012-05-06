@@ -1,11 +1,27 @@
-$(function() {
-  $(window).bind('mousewheel', function(e, d) {
-    window.top.onMouseWheelFromChildFrame();
-  });
+window.needToDeleteFiles = true;
 
-  top.hideDialogCallback = function() {
-    top.$.post('add-torrents.php?action=delete_files');
-    return true;
+$(function() {
+  if(window.top.onMouseWheelFromChildFrame) {
+    $(window).bind('mousewheel', function(e, d) {
+      window.top.onMouseWheelFromChildFrame();
+    });
+  }
+
+  if(window.top.hideDialog) {
+    window.top.hideDialogCallback = function() {
+      window.top.$.post('add-torrents.php?action=delete_files');
+      return true;
+    }
+  } else {
+    $(window).bind('beforeunload', function() {
+      if(window.needToDeleteFiles) {
+        $.ajax('add-torrents.php?action=delete_files', {
+          type: 'POST',
+          async: false
+        });
+      }
+      return null;
+    });
   }
 
   var tagsStr = '';
@@ -40,7 +56,6 @@ $(function() {
       .attr('disabled', true).filter('textarea').css('height', '20px');
       $('input[type=file], a.MultiFile-remove').addClass('hidden');
 
-      var odd = false;
       for(var i = 0; i < files.length; i++) {
         var error = files[i].error;
         $('#to-add').hsjn(
@@ -155,6 +170,11 @@ $(function() {
       }
       processTorrent(0);
     }
+  });
+
+  $('#form2').submit(function() {
+    window.needToDeleteFiles = false;
+    return true;
   });
 
   $('#back').click(function() {

@@ -17,6 +17,7 @@
 //  along with rtGui.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once 'session.php';
+require_once 'Mobile_Detect.php';
 
 // Optionally use alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/
 // See http://code.google.com/p/rtgui/issues/detail?id=19
@@ -53,15 +54,31 @@ function get_current_theme() {
   return $_COOKIE['theme'];
 }
 
+function is_mobile_browser() {
+  global $mobile_detect;
+  if(!$mobile_detect) {
+    $mobile_detect = new Mobile_Detect();
+  }
+  return $mobile_detect->isMobile();
+}
+
 function get_user_setting($key, $should_set=true) {
-  global $default_user_settings;
+  global $default_user_settings, $mobile_detect;
   if(array_key_exists($key, $_COOKIE)) {
     return $_COOKIE[$key];
   } else {
-    if($should_set) {
-      set_user_setting($key, $default_user_settings[$key]);
+    switch($key) {
+      case 'use_dialogs':
+        $default_value = (is_mobile_browser() ? 'no' : 'yes');
+        break;
+      default:
+        $default_value = $default_user_settings[$key];
+        break;
     }
-    return $default_user_settings[$key];
+    if($should_set) {
+      set_user_setting($key, $default_value);
+    }
+    return $default_value;
   }
 }
 

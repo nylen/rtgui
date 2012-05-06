@@ -76,7 +76,8 @@ var userSettings = {
   refreshInterval: <?php echo get_user_setting('refresh_interval'); ?>,
   sortVar: '<?php echo get_user_setting('sort_var'); ?>',
   sortDesc: <?php echo (get_user_setting('sort_desc') == 'yes' ? 'true' : 'false'); ?>,
-  theme: '<?php echo get_current_theme(); ?>'
+  theme: '<?php echo get_current_theme(); ?>',
+  useDialogs: <?php echo (get_user_setting('use_dialogs') == 'yes' ? 'true' : 'false'); ?>
 };
 
 var current = {

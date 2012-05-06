@@ -163,6 +163,9 @@ $(function() {
   });
 
   $('a.dialog').live('click', function() {
+    if(!userSettings.useDialogs) {
+      return true;
+    }
     var $this = $(this);
     var href = $this.attr('href');
     if(!/dialog=1/.test(href)) {
