@@ -122,7 +122,7 @@ if(function_exists('get_watchdir_from_tags')) {
 switch($r_action) {
 
   case 'get_list':
-    $max_urls = 100;
+    $max_urls = 500;
     $to_add = array();
 
     if($r_add_urls) {
