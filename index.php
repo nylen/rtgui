@@ -117,6 +117,7 @@ include_script('ie.js');
     <li data-command="stop">Stop</li>
     <li data-command="start">Start</li>
     <li data-command="delete">Delete</li>
+    <li data-command="purge">Purge</li>
     <li data-command="hashcheck">Re-check</li>
     <li class="separator" />
     <li class="no-hide">
@@ -298,6 +299,7 @@ if($debug_mode) { ?>
             <option value="stop">Stop</option>
             <option value="start">Start</option>
             <option value="delete">Delete</option>
+            <option value="purge">Purge</option>
             <option value="hashcheck">Re-check</option>
           </optgroup>
           <optgroup label="Set Priority...">

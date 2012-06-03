@@ -102,18 +102,22 @@ if(isset($r_newdir)) {
 }
 
 switch($r_cmd) {
-   case 'stop':
-      $response = do_xmlrpc(xmlrpc_encode_request('d.stop', array($r_hash)));
-      break;
-   case 'start':
-      $response = do_xmlrpc(xmlrpc_encode_request('d.start', array($r_hash)));
-      break;
-   case 'delete':
-      $response = do_xmlrpc(xmlrpc_encode_request('d.erase', array($r_hash)));
-      break;
-   case 'hashcheck':
-      $response = do_xmlrpc(xmlrpc_encode_request('d.check_hash', array($r_hash)));
-      break;
+  case 'stop':
+    $response = do_xmlrpc(xmlrpc_encode_request('d.stop', array($r_hash)));
+    break;
+  case 'start':
+    $response = do_xmlrpc(xmlrpc_encode_request('d.start', array($r_hash)));
+    break;
+  case 'delete':
+  case 'purge':
+    if ($r_cmd == 'purge') {
+      // TODO: Delete files
+    }
+    $response = do_xmlrpc(xmlrpc_encode_request('d.erase', array($r_hash)));
+    break;
+  case 'hashcheck':
+    $response = do_xmlrpc(xmlrpc_encode_request('d.check_hash', array($r_hash)));
+    break;
 }
 
 if(!$r_ajax) {

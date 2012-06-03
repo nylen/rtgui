@@ -105,6 +105,9 @@ HTML;
     <input type="button" value="Delete"
       rel="delete" id="btn-delete"
       class="buttondel command-button confirm themed" />
+    <input type="button" value="Purge"
+      rel="purge" id="btn-purge"
+      class="buttonpurge command-button confirm themed" />
     <input type="button" value="Hash check"
       rel="hashcheck" id="btn-hash-check"
       class="buttonhashcheck command-button themed" />
