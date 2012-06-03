@@ -32,11 +32,48 @@ if(!isset($r_debug)) {
   $r_debug = 0;
 }
 
+$config = array(
+  'diskAlertThreshold' => $disk_alert_threshold,
+  'debugTab' => $debug_mode,
+  'dateAddedFormat' => $date_added_format,
+  'rtGuiPath' => get_rtgui_path(),
+  'canHideUnhide' => $can_hide_unhide,
+  'defaultFilterText' => 'Filter'
+);
+
+$user_settings = array(
+  'refreshInterval' => get_user_setting('refresh_interval'),
+  'sortVar' => get_user_setting('sort_var'),
+  'sortDesc' => (get_user_setting('sort_desc') == 'yes' ? true : false),
+  'theme' => get_current_theme(),
+  'useDialogs' => (get_user_setting('use_dialogs') == 'yes' ? true : false)
+);
+
 // Reset saved torrents data (if any)
 $_SESSION['persistent'] = array();
 
 // Get the list of torrents downloading
 $data = get_all_torrents(false, true);
+
+// Sort the list of torrents
+
+function compare_torrents($a, $b) {
+  global $user_settings;
+  $cmp = ($user_settings['sortDesc'] ? -1 : 1);
+  $value_a = $a[$user_settings['sortVar']];
+  $value_b = $b[$user_settings['sortVar']];
+  if (is_string($value_a)) $value_a = strtolower($value_a);
+  if (is_string($value_b)) $value_b = strtolower($value_b);
+  if ($value_a < $value_b) {
+    return -$cmp;
+  } else if ($value_a > $value_b) {
+    return $cmp;
+  } else {
+    return $a['server_index'] - $b['server_index'];
+  }
+}
+
+uasort($data['torrents'], 'compare_torrents');
 
 // Turn it into JSON and format it somewhat nicely
 $data_str = json_encode($data);
@@ -63,22 +100,9 @@ include_stylesheet('torrents.css', true);
 include_stylesheet('context-menu.css', true);
 ?>
 <script type="text/javascript">
-var config = {
-  diskAlertThreshold: <?php echo $disk_alert_threshold; ?>,
-  debugTab: <?php echo $debug_mode ? 1 : 0; ?>,
-  dateAddedFormat: '<?php echo addslashes($date_added_format); ?>',
-  rtGuiPath: '<?php echo addslashes(get_rtgui_path()); ?>',
-  canHideUnhide: <?php echo $can_hide_unhide ? 1 : 0; ?>,
-  defaultFilterText: 'Filter'
-};
+var config = <?php echo json_encode($config); ?>;
 
-var userSettings = {
-  refreshInterval: <?php echo get_user_setting('refresh_interval'); ?>,
-  sortVar: '<?php echo get_user_setting('sort_var'); ?>',
-  sortDesc: <?php echo (get_user_setting('sort_desc') == 'yes' ? 'true' : 'false'); ?>,
-  theme: '<?php echo get_current_theme(); ?>',
-  useDialogs: <?php echo (get_user_setting('use_dialogs') == 'yes' ? 'true' : 'false'); ?>
-};
+var userSettings = <?php echo json_encode($user_settings); ?>;
 
 var current = {
   view: 'main',
@@ -103,6 +127,9 @@ include_script('templates.js');
 include_script('confirmMessages.js');
 include_script('index.js');
 include_script('context-menu.js');
+
+include_template('torrent');
+include_template('global-data');
 ?>
 <!--[if lt IE 8]>
 <?php
@@ -188,29 +215,7 @@ HTML;
         <![endif]-->
 
         <div id="boxright">
-          <p>
-            Down:
-            <span class="inline download" id="total_down_rate">??</span>
-            <span class="smalltext" id="total_down_limit">??</span>
-            &nbsp;&nbsp;&nbsp;
-            Up:
-            <span class="inline upload" id="total_up_rate">??</span>
-            <span class="smalltext" id="total_up_limit">??</span>
-          </p>
-<?php if(isset($download_dir)) { ?>
-          <div>
-            Disk Free: <span id="disk_free">??</span>
-            / <span id="disk_total">??</span>
-            (<span id="disk_percent">??</span>)
-          </div>
-<?php } ?>
-          <p>
-            Showing <span id="t-count-visible">??</span>
-            of <span id="t-count-all">??</span> torrents
-            (<span id="t-count-hidden">??</span> hidden)
-            | <a class="dialog" rel="400:300" href="settings.php">Settings</a>
-            | <a class="dialog" rel="700:500" href="add-torrents-form.php">Add torrent(s)</a>
-          </p>
+<?php echo render_template('global-data', $data['global']); ?>
         </div><!-- id="boxright" -->
 
       </div><!-- id="header" -->
@@ -227,7 +232,7 @@ foreach($views as $name) {
   $view = ($name == 'All' ? 'main' : strtolower($name));
   $class = ($name == 'All' ? 'view current' : 'view');
   echo <<<HTML
-          <li><a class="$class" href="#" rel="$view">$name</a></li>
+          <li><a class="$class" href="?view=$view" rel="$view">$name</a></li>
 
 HTML;
 }
@@ -241,7 +246,7 @@ if($debug_mode) { ?>
 
       <div id="torrents-header">
         <div class="headcol column-name-grp">
-          <a class="sort" href="#" rel="name:asc:true">Name</a>|<a class="sort" href="#" rel="tags:asc">Tags</a>
+          <a class="sort" href="#" rel="name:asc:true">Name</a>|<a class="sort" href="#" rel="tags_str:asc">Tags</a>
         </div>
         <div class="headcol column-status">
           <a class="sort" href="#" rel="status:asc">Status</a>
@@ -285,9 +290,22 @@ if($debug_mode) { ?>
         <pre id="debug" style="display: none;">&nbsp;</pre>
 <?php } ?>
         <div id="torrents">
+<?php
+if (count($data['torrents'])) {
+  foreach ($data['torrents'] as $hash => $torrent) {
+    $html = render_template('torrent', $torrent);
+    echo <<<HTML
+          <div id="$hash" class="torrent-container row">
+            $html
+          </div>
+
+HTML;
+  }
+} else { ?>
           <div class="row" id="t-none">
             <div class="namecol" align="center"><p>&nbsp;</p>No torrents to display.<p>&nbsp;</p></div>
           </div>
+<?php } ?>
         </div>
       </div><!-- class="container" -->
 

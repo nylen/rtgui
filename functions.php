@@ -120,19 +120,63 @@ function include_script($script_name) {
     . file_path_mtime($script_filename) . "\"></script>\n";
 }
 
+function get_theme_filename($filename) {
+  foreach(array(get_current_theme(), 'default') as $test) {
+    $theme_filename = "themes/$test/$filename";
+    if(file_exists($theme_filename)) {
+      return $theme_filename;
+    }
+  }
+  trigger_error("Cannot find theme filename '$filename'.");
+}
+
+
 function include_stylesheet($stylesheet_filename, $use_theme=false) {
   if($use_theme) {
-    foreach(array(get_current_theme(), 'default') as $test) {
-      $new_filename = "themes/$test/$stylesheet_filename";
-      if(file_exists($new_filename)) {
-        $stylesheet_filename = $new_filename;
-        break;
-      }
-    }
+    $stylesheet_filename = get_theme_filename($stylesheet_filename);
   }
   echo '<link rel="stylesheet" type="text/css" href="'
     . file_path_mtime($stylesheet_filename) . "\" />\n";
 }
+
+function get_template_filename($template_name) {
+  return get_theme_filename("templates/$template_name.html");
+}
+
+function include_template($template_name) {
+  $template_contents = file_get_contents(get_template_filename($template_name));
+  echo <<<HTML
+    <script type="text/html" id="template-$template_name">
+      $template_contents
+    </script>
+HTML;
+}
+
+$twig_env = null;
+$twig_templates = array();
+
+function twig_init_if_needed() {
+  global $twig_env;
+  if ($twig_env === null) {
+    require_once 'Twig/lib/Twig/Autoloader.php';
+    Twig_Autoloader::register();
+    $loader = new Twig_Loader_Filesystem('.');
+    $twig_env = new Twig_Environment($loader, array(
+      cache => 'tmp/twig-cache',
+      auto_reload => true
+    ));
+  }
+}
+
+function render_template($template_name, $data) {
+  global $twig_env, $twig_templates;
+  twig_init_if_needed();
+  if (!$twig_templates[$template_name]) {
+    $twig_templates[$template_name] = $twig_env->loadTemplate(get_template_filename($template_name));
+  }
+  return $twig_templates[$template_name]->render($data);
+}
+
 
 function do_xmlrpc($request) {
   global $scgi_host, $scgi_port, $scgi_timeout;
@@ -146,14 +190,15 @@ function do_xmlrpc($request) {
 }
 
 // Get full list - retrieve full list of torrents
-function get_all_torrents($torrents_only=false, $for_script=false, $view='main') {
+// TODO: Make this function take a named-params array
+function get_all_torrents($torrents_only=false, $for_html=false, $view='main') {
   global $download_dir;
   global $tracker_highlight, $tracker_highlight_default;
-  global $can_hide_unhide;
+  global $can_hide_unhide, $date_added_format;
 
   $show_hidden = ($can_hide_unhide && get_user_setting('show_hidden') == 'yes');
 
-  $torrents = rtorrent_multicall('d', $view, array(
+  $torrents = rtorrent_multicall('d', 'main', array(
     #'get_base_filename',
     'get_base_path',
     #'get_bytes_done',
@@ -220,23 +265,26 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
   $total_down_rate = 0;
   $total_up_rate = 0;
   $torrents_count_all = count($torrents);
-  $torrents_count_hidden = 0;
+  $torrents_count_superhidden = 0;
+  $torrents_count_visible = 0;
+
+  $index = 0;
 
   foreach($torrents as $hash => $t) {
     $total_down_rate += $t['down_rate'];
     $total_up_rate += $t['up_rate'];
 
     if(is_array($_SESSION['tags'][$hash])) {
-      $t['tags'] = implode('|', $_SESSION['tags'][$hash]);
+      $t['tags'] = $_SESSION['tags'][$hash];
       if(in_array('_hidden', $_SESSION['tags'][$hash])) {
-        $torrents_count_hidden++;
+        $torrents_count_superhidden++;
         if(!$show_hidden) {
           unset($torrents[$hash]);
           continue;
         }
       }
     } else {
-      $t['tags'] = '';
+      $t['tags'] = array();
     }
 
     $t['completed_bytes'] = $t['completed_chunks'] * $t['chunk_size'];
@@ -277,6 +325,7 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
     } else {
       $t['status_class'] .= 'inactive';
     }
+
     if($t['down_rate'] > 0) {
       $t['eta'] = ($t['size_bytes'] - $t['completed_bytes']) / $t['down_rate'];
     } else {
@@ -284,7 +333,7 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
     }
 
     $t['start_stop_cmd'] = ($t['is_active'] == 1 ? 'stop' : 'start');
-    # Format peers_summary to keep the client side sorting routine as simple as possible
+    # Format peers_summary to keep the sorting routine as simple as possible
     $t['peers_summary'] = sprintf('%03d,%03d,%03d',
       $t['peers_connected'], $t['peers_not_connected'], $t['peers_complete']
     );
@@ -298,10 +347,10 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
       $s['tracker_hostname'] = tracker_hostname($hash);
       $s['tracker_color'] = $tracker_highlight_default;
       if(is_array($tracker_highlight)) {
-        foreach($tracker_highlight as $hilite) {
-          foreach($hilite as $thisurl) {
-            if(stristr($s['tracker_hostname'], $thisurl) !== false) {
-              $s['tracker_color'] = $hilite[0];
+        foreach($tracker_highlight as $highlight) {
+          foreach($highlight as $this_url) {
+            if(stristr($s['tracker_hostname'], $this_url) !== false) {
+              $s['tracker_color'] = $highlight[0];
             }
           }
         }
@@ -315,8 +364,8 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
     }
 
     $t['tracker_hostname'] = $s['tracker_hostname'];
-    $t['tracker_color'] = $s['tracker_color'];
-    $t['date_added'] = $s['date_added'];
+    $t['tracker_color']    = $s['tracker_color'];
+    $t['date_added']       = $s['date_added'];
 
     // unset items that are only needed for setting other items
     unset($t['chunk_size']);
@@ -325,8 +374,41 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
     unset($t['hashing']);
     unset($t['size_chunks']);
 
-    if($for_script) {
-      // unset items that aren't needed by the client
+    if($for_html) {
+      $t['server_index'] = $index++;
+      $t['visible'] = true;
+      switch ($view) {
+        case 'main':
+          // (Always visible)
+          break;
+        case 'started':
+          $t['visible'] = !!$t['state'];
+          break;
+        case 'stopped':
+          $t['visible'] = !$t['state'];
+          break;
+        case 'active':
+          $t['visible'] = !!$t['is_transferring'];
+          break;
+        case 'inactive':
+          $t['visible'] = !$t['is_transferring'];
+          break;
+        case 'complete':
+          $t['visible'] = !!$t['complete'];
+          break;
+        case 'incomplete':
+          $t['visible'] = !$t['complete'];
+          break;
+        case 'seeding':
+          $t['visible'] = (!!$t['complete'] && !!$t['state']);
+          break;
+      }
+      if ($t['visible']) {
+        $torrents_count_visible++;
+      }
+
+      // unset items that aren't needed by the HTML templates
+
       unset($t['base_path']);
       unset($t['directory']);
       unset($t['is_active']);
@@ -335,12 +417,24 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
       unset($t['is_multi_file']);
       unset($t['is_open']);
       unset($t['is_private']);
-      unset($t['peers_complete']);
-      unset($t['peers_connected']);
-      unset($t['peers_not_connected']);
       unset($t['priority']);
       unset($t['state_changed']);
       unset($t['tied_to_file']);
+
+      // set some string values
+
+      $t['date_added_str']         = date($date_added_format, $t['date_added']);
+      $t['eta_str']                = format_duration($t['eta']);
+      $t['percent_complete_str']   = round($t['percent_complete'], 1) . '%';
+      $t['percent_complete_width'] = round($t['percent_complete'] / 2);
+      $t['tags_str']               = implode('|', $t['tags']);
+
+      $t['bytes_remaining_str']    = format_bytes($t['bytes_remaining'], '&nbsp;', '');
+      $t['size_bytes_str']         = format_bytes($t['size_bytes']     , '&nbsp;', '');
+      $t['down_rate_str']          = format_bytes($t['down_rate']      , '&nbsp;', '/s');
+      $t['up_rate_str']            = format_bytes($t['up_rate']        , '&nbsp;', '/s');
+      $t['up_total_str']           = format_bytes($t['up_total']       , '&nbsp;', '');
+      $t['ratio_str']              = number_format($t['ratio'] / 1000, 2);
     }
 
     $torrents[$hash] = $t;
@@ -351,22 +445,27 @@ function get_all_torrents($torrents_only=false, $for_script=false, $view='main')
   }
 
   $data = array(
-    'torrents'              => $torrents,
-    'torrents_count_all'    => $torrents_count_all,
-    'torrents_count_hidden' => $torrents_count_hidden,
-    'total_down_rate'       => $total_down_rate,
-    'total_up_rate'         => $total_up_rate,
-    'total_down_limit'      => rtorrent_xmlrpc('get_download_rate'),
-    'total_up_limit'        => rtorrent_xmlrpc('get_upload_rate'),
-    'disk_free'             => @disk_free_space($download_dir),
-    'disk_total'            => @disk_total_space($download_dir),
+    'torrents' => $torrents,
+    'global'   => array(
+      'torrents_count_visible'     => $torrents_count_visible,
+      'torrents_count_all'         => $torrents_count_all,
+      'torrents_count_superhidden' => $torrents_count_superhidden,
+      'total_down_rate'            => format_bytes($total_down_rate, '0 B/s', '/s'),
+      'total_up_rate'              => format_bytes($total_up_rate  , '0 B/s', '/s'),
+      'total_down_limit'           => format_bytes(rtorrent_xmlrpc('get_download_rate'), 'unlim', '/s'),
+      'total_up_limit'             => format_bytes(rtorrent_xmlrpc('get_upload_rate'),   'unlim', '/s'),
+      'show_disk_free'             => isset($download_dir),
+      'disk_free'                  => format_bytes(@disk_free_space($download_dir)),
+      'disk_total'                 => format_bytes(@disk_total_space($download_dir)),
+    ),
   );
-  if($data['disk_total'] > 0) {
-    $data['disk_percent'] = $data['disk_free'] / $data['disk_total'] * 100;
+  if($data['global']['disk_total'] > 0) {
+    $data['global']['disk_percent'] = $data['global']['disk_free'] / $data['global']['disk_total'] * 100;
   } else {
     // avoid divide by zero error if disk_total_space() fails
-    $data['disk_percent'] = 0;
+    $data['global']['disk_percent'] = 0;
   }
+  $data['global']['disk_percent'] = round($data['global']['disk_percent'], 2);
 
   return $data;
 }
@@ -590,8 +689,60 @@ function scgi_send($host, $port, $data, $timeout=5) {
   return $result;
 }
 
+// This function formats a number of bytes nicely.
+function format_bytes($bytes, $zero='', $after='') {
+  if (!$bytes) {
+    return $zero;
+  }
+  $units = array('B','KB','MB','GB','TB','PB');
+  $i = 0;
+  while ($bytes >= 1000) {
+    $i++;
+    $bytes /= 1024;
+  }
+  return number_format($bytes, ($i ? 1 : 0), '.', ',') . ' ' . $units[$i] . $after;
+}
+
+// This function takes a number of seconds and changes it into a readable
+// string that has two units' worth of precision.
+function format_duration($seconds) {
+  if (!($seconds = round($seconds))) {
+    return '';
+  }
+  $dur = '';
+  $units = array(
+    array('d', 86400),
+    array('h', 3600),
+    array('m', 60),
+    array('s', 1)
+  );
+  // Loop over all units
+  for ($i = 0; $i < count($units); $i++) {
+    $u = $units[$i];
+    // If the number of seconds is at least one of the current unit
+    if ($seconds >= $u[1]) {
+      // Round to the nearest unit that is one smaller
+      // e.g. for hours, round to the nearest minute
+      $round_to = $units[min($i + 1, count($units) - 1)][1];
+      $seconds = round($seconds / $round_to) * $round_to;
+      // Append the larger unit
+      $dur .= floor($seconds / $u[1]) . $u[0];
+      // Remove the number of seconds represented by the larger unit
+      $seconds %= $u[1];
+      // Append the smaller unit, if there is one
+      if (++$i < count($units)) {
+        $u = $units[$i];
+        $dur .= ' ' . round($seconds / $u[1]) . $u[0];
+      }
+      return $dur;
+    }
+  }
+  return '';
+}
+
 
 // ---------- Old functions
+
 
 // multibyte-safe replacement for wordwrap.
 // (See http://code.google.com/p/rtgui/issues/detail?id=71 - Thanks llamaX)
@@ -613,18 +764,6 @@ function mb_wordwrap($string, $width=75, $break="\n", $cut=false) {
     $i++;
   }
   return $return . $string;
-}
-
-// Format no.bytes nicely...
-function format_bytes($bytes) {
-    if ($bytes==0) return "";
-    $unim = array("B","KB","MB","GB","TB","PB");
-    $c = 0;
-    while ($bytes>=1024) {
-        $c++;
-        $bytes = $bytes/1024;
-    }
-    return number_format($bytes,($c ? 1 : 0),".",",")." ".$unim[$c];
 }
 
 // Draw the percent bar using a table...

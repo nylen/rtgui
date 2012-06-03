@@ -1,0 +1,25 @@
+<div id="global-data-contents">
+  <p>
+    Down:
+    <span class="inline download" id="total_down_rate">{{ total_down_rate }}</span>
+    <span class="smalltext" id="total_down_limit">[{{ total_down_limit }}]</span>
+    &nbsp;&nbsp;&nbsp;
+    Up:
+    <span class="inline upload" id="total_up_rate">{{ total_up_rate }}</span>
+    <span class="smalltext" id="total_up_limit">[{{ total_up_limit }}]</span>
+  </p>
+  {% if show_disk_free %}
+    <div>
+      Disk Free: <span id="disk_free">{{ disk_free }}</span>
+      / <span id="disk_total">{{ disk_total }}</span>
+      (<span id="disk_percent">{{ disk_percent }}%</span>)
+    </div>
+  {% endif %}
+  <p>
+    Showing <span id="t-count-visible">{{ torrents_count_visible }}</span>
+    of <span id="t-count-all">{{ torrents_count_all }}</span> torrents
+    (<span id="t-count-hidden">{{ torrents_count_superhidden }}</span> hidden)
+    | <a class="dialog" rel="400:300" href="settings.php">Settings</a>
+    | <a class="dialog" rel="700:500" href="add-torrents-form.php">Add torrent(s)</a>
+  </p>
+</div>
