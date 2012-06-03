@@ -223,11 +223,10 @@ var formatHandlers = {
   message: function(m) {
     return (m ? m : false);
   },
-  tags: function(t) {
-    if(!t) {
+  tags: function(tags) {
+    if(!tags || !tags.length) {
       return false;
     }
-    var tags = t.split('|');
     var html = '(';
     var first = true;
     for(var i in tags) {

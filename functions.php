@@ -114,7 +114,8 @@ function set_torrent_tags($hashes, $add_tags, $remove_tags) {
   }
 }
 
-function include_script($script_filename) {
+function include_script($script_name) {
+  $script_filename = (strpos($script_name, '/') === false ? 'js/' : '') . $script_name;
   echo '<script type="text/javascript" src="'
     . file_path_mtime($script_filename) . "\"></script>\n";
 }

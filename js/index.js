@@ -35,7 +35,7 @@ $(function() {
     resizable: false
   });
 
-  updateTorrentsHTML(data, true);
+  //updateTorrentsHTML(data, true);
   window.clearTimeout(current.refreshTimeoutID);
   if(userSettings.refreshInterval) {
     current.refreshTimeoutID = window.setTimeout(updateTorrentsData, userSettings.refreshInterval);
