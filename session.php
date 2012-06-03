@@ -47,9 +47,6 @@ function rtgui_session_start() {
         }
       }
       $used_tags = array_keys($used_tags);
-      if(is_array($always_show_tags)) {
-        $used_tags = array_unique(array_merge($used_tags, $always_show_tags));
-      }
       if(count($used_tags)) {
         sort($used_tags);
       }
@@ -59,6 +56,9 @@ function rtgui_session_start() {
     }
     $_SESSION['used_tags'] = $used_tags;
     $_SESSION['tags_modified'] = @filemtime($tags_filename);
+  }
+  if(is_array($always_show_tags)) {
+    $_SESSION['used_tags'] = array_unique(array_merge($_SESSION['used_tags'], $always_show_tags));
   }
 }
 ?>
