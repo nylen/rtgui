@@ -14,7 +14,7 @@ function is_format($fmt) {
 $format_items = preg_split('@(%[a-z_]+)@', $format_str, -1, PREG_SPLIT_DELIM_CAPTURE);
 $format_items = array_filter($format_items, 'is_format');
 
-$torrents = get_all_torrents(true);
+$torrents = get_all_torrents(array('torrents_only' => true));
 
 $sort_key = 'date_added';
 if(isset($_REQUEST['key'])) $sort_key = $_REQUEST['key'];

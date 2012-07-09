@@ -22,7 +22,7 @@ require_once 'functions.php';
 import_request_variables('gp', 'r_');
 
 // Get torrent info...  (get all downloads, then filter out just this one by the hash)
-$all_torrents = get_all_torrents(true);
+$all_torrents = get_all_torrents(array('torrents_only' => true));
 
 $this_torrent = false;
 foreach($all_torrents as $torrent) {

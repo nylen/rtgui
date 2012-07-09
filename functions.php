@@ -189,9 +189,17 @@ function do_xmlrpc($request) {
   }
 }
 
+function get_param($params, $name, $default=null) {
+  return (isset($params[$name]) ? $params[$name] : $default);
+}
+
 // Get full list - retrieve full list of torrents
 // TODO: Make this function take a named-params array
-function get_all_torrents($torrents_only=false, $for_html=false, $view='main') {
+function get_all_torrents($params) {
+  $torrents_only = get_param($params, 'torrents_only', false);
+  $for_html      = get_param($params, 'for_html', false);
+  $view          = get_param($params, 'view', 'main');
+
   global $download_dir;
   global $tracker_highlight, $tracker_highlight_default;
   global $can_hide_unhide, $date_added_format;

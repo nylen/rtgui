@@ -53,7 +53,11 @@ $user_settings = array(
 $_SESSION['persistent'] = array();
 
 // Get the list of torrents downloading
-$data = get_all_torrents(false, true);
+if (!$r_view) $r_view = 'main';
+$data = get_all_torrents(array(
+  'for_html' => true,
+  'view' => $r_view
+));
 
 // Sort the list of torrents
 
