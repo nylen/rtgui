@@ -119,8 +119,10 @@ include_script('jquery-ui-1.8.9-files/js/jquery-ui-1.8.9.custom.min.js');
 include_script('jquery.cookie.js');
 include_script('jquery.jeegoocontext.js');
 include_script('jquery.mousewheel.js');
+include_script('swig.js');
 include_script('json2.min.js');
 include_script('php.min.js');
+
 include_script('patience_sort.js');
 include_script('functions.js');
 include_script('templates.js');
