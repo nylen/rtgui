@@ -382,9 +382,10 @@ function get_all_torrents($params) {
     unset($t['hashing']);
     unset($t['size_chunks']);
 
-    if($for_html) {
+    if ($for_html) {
       $t['server_index'] = $index++;
-      $t['visible'] = true;
+      $t['server_visible'] = true;
+
       switch ($view) {
         case 'main':
           // (Always visible)
@@ -429,7 +430,7 @@ function get_all_torrents($params) {
       unset($t['state_changed']);
       unset($t['tied_to_file']);
 
-      // set some string values
+      // set some string values for the HTML templates
 
       $t['date_added_str']         = date($date_added_format, $t['date_added']);
       $t['eta_str']                = format_duration($t['eta']);
