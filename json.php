@@ -22,13 +22,21 @@ rtgui_session_start();
 
 $data = get_all_torrents(array('for_html' => true));
 
-if(@is_array($_SESSION['last_data'])) {
+if (@is_array($_SESSION['last_data'])) {
   $last_data = $_SESSION['last_data'];
+  $diff_torrents = array_compare_special($last_data['torrents'], $data['torrents'], 2);
+  $diff_global   = array_compare_special($last_data['global'],   $data['global']);
+  $return = array();
+  if ($diff_torrents !== false) {
+    $return['torrents'] = $diff_torrents;
+  }
+  if ($diff_global !== false) {
+    $return['global'] = $diff_global;
+  }
+  echo json_encode($return);
 } else {
-  $last_data = array();
+  echo json_encode($data);
 }
-
-echo json_encode(array_compare($last_data, $data));
 
 $_SESSION['last_data'] = $data;
 ?>

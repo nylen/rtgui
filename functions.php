@@ -610,50 +610,88 @@ function rtorrent_multicall($group, $params, $data_names, $key=null, $remove_get
   }
 }
 
-/** array_compare
+/** array_compare_special
  *
- * Modified from:
- * http://www.php.net/manual/en/function.array-diff-assoc.php#89635
- *
- * Finds only the differences between two arbitrarily nested data
- * arrays.  For the output of this function to be suitable for use
- * with json_encode and jQuery.extend, $before and $after should
- * not have sequential keys or contain elements that have sequential
- * keys.  Or, you can pass json_encode the JSON_FORCE_OBJECT flag.
+ * If any elements of $before and $after are different, return the
+ * element from $after, or null if the element is only in $before.
+ * Compares arbitrarily nested arrays, but if the $levels parameter
+ * is given, only returns whole elements (or null) from $after after
+ * comparing that many levels of keys.
  */
-function array_compare($before, $after) {
+function array_compare_special($before, $after, $levels=null) {
+  $new_levels = $levels;
+  if ($new_levels !== null) {
+    $new_levels--;
+  }
   $diff = false;
   // check all keys in $before (to find changed and deleted items)
-  foreach($before as $key => $value) {
-    if(!array_key_exists($key, $after)) {
+  foreach ($before as $key => $value) {
+    if (!array_key_exists($key, $after)) {
       // $key is no longer a key
       $diff[$key] = null;
-    } else if(is_array($value)) {
+    } else if (is_array($value)) {
       // found an array
-      if(is_array($after[$key])) {
+      if (is_array($after[$key])) {
         // still an array; compare recursively
-        $new = array_compare($value, $after[$key]);
-        if($new !== false) {
-          $diff[$key] = $new;
+        if ($new_levels === null || $new_levels > 0) {
+          // still need to compare more keys
+          $new = array_compare_special($value, $after[$key], $new_levels);
+          if ($new !== false) {
+            $diff[$key] = $new;
+          }
+        } else if (!compare_recursive($value, $after[$key])) {
+          // return the whole array from $after
+          $diff[$key] = $after[$key];
         }
       } else {
-        // the value for $key is no longer an array
+        // the value for $key in $after is no longer an array
         $diff[$key] = $after[$key];
       }
-    } else if($after[$key] !== $value) {
+    } else if ($after[$key] !== $value) {
       // the value for $key changed
       $diff[$key] = $after[$key];
     }
   }
   // check all keys in $after (to find new items)
-  foreach($after as $key => $value) {
-    if(!array_key_exists($key, $before)) {
+  foreach ($after as $key => $value) {
+    if (!array_key_exists($key, $before)) {
       // $key is a new key
       $diff[$key] = $value;
     }
   }
   return $diff;
 }
+
+function compare_recursive($before, $after) {
+  // check all keys in $before (to find changed and deleted items)
+  foreach ($before as $key => $value) {
+    if (!array_key_exists($key, $after)) {
+      // $key is no longer a key
+      return false;
+    } else if (is_array($value)) {
+      // found an array
+      if (is_array($after[$key])) {
+        // still an array; compare recursively
+        return compare_recursive($value, $after[$key]);
+      } else {
+        // the value for $key is no longer an array
+        return false;
+      }
+    } else if ($after[$key] !== $value) {
+      // the value for $key changed
+      return false;
+    }
+  }
+  // check all keys in $after (to find new items)
+  foreach ($after as $key => $value) {
+    if (!array_key_exists($key, $before)) {
+      // $key is a new key
+      return false;
+    }
+  }
+  return true;
+}
+
 
 function parse_http_response($string) {
   $headers = array();
