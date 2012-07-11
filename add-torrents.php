@@ -67,10 +67,6 @@ function get_filename_no_clobber($filename) {
 function process_torrent_data($content, $filename, $create_file=true) {
   global $tmp_add_dir;
 
-  if(!is_array($_SESSION['to_add_data'])) {
-    $_SESSION['to_add_data'] = array();
-  }
-
   set_error_handler('handleError');
   try {
     $torrent = new Torrent($content);
@@ -90,13 +86,21 @@ function process_torrent_data($content, $filename, $create_file=true) {
   }
   restore_error_handler();
 
-  return $_SESSION['to_add_data'][$hash] = array(
-    'hash' => $hash,
+  return save_add_data($hash, array(
     'name' => $torrent->name(),
     'files' => $torrent->content(),
     //'scrape' => $torrent->scrape(null, null, 3),
     'filename' => str_replace("$tmp_add_dir/", '', $filename)
-  );
+  ));
+}
+
+function save_add_data($hash, $data) {
+  $data['hash'] = $hash;
+  if(!is_array($_SESSION['to_add_data'])) {
+    $_SESSION['to_add_data'] = array();
+  }
+  $_SESSION['to_add_data'][$hash] = $data;
+  return $data;
 }
 
 import_request_variables('gp', 'r_');
@@ -137,21 +141,74 @@ switch($r_action) {
 
         $url = $maybe_urls[$i];
 
-        if(!preg_match('@^(ht|f)tps?:@', $url)) {
-          if(preg_match('@^[^/]+\.[a-z]{1,6}/@', $url)) {
-            $url = "http://$url";
-          } else {
+        if (preg_match('@^magnet:\?@i', $url)) {
+
+          // Magnet URL logic adapted from http://wiki.rtorrent.org/MagnetUri
+
+          $version = rtorrent_xmlrpc_cached('system.client_version');
+          // According to the above page, 0.8.9+ is OK except for 0.9.0
+          // TODO: What's the bug in 0.9.0?
+          if ($version != '0.8.9' && $version < '0.9.1') {
+            $to_add[] = array(
+              'error' => 'Magnet URLs are only supported in rTorrent 0.8.9 or 0.9.1+.'
+            );
             continue;
           }
-        }
-        $url = preg_replace('@[/?]+$@', '', $url);
 
-        if(filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
+          $dht_stats = rtorrent_xmlrpc_cached('dht_statistics');
+          if ($dht_stats['dht'] != 'auto' && $dht_stats['dht'] != 'on') {
+            $to_add[] = array('error' => <<<HTML
+              Magnet URLs require DHT to be enabled.  See
+              http://libtorrent.rakshasa.no/wiki/RTorrentUsingDHT for more info.
+HTML
+            );
+            continue;
+          }
+
+          // Parse query string
+          parse_str(substr($url, strlen('magnet:?')), &$params);
+          if (!preg_match('@^urn:btih:[a-z0-9]{40}$@i', $params['xt'])) {
+            $to_add[] = array(
+              'error' => 'Invalid magnet link (info hash not found).'
+            );
+            continue;
+          }
+          $hash = substr($params['xt'], strlen('urn:btih:'));
+          if ($params['dn']) {
+            $name = preg_replace('@[^a-z0-9_\' -]@i', '_', $params['dn']);
+            $name = preg_replace('@\.torrent$@i', '', $name);
+          } else {
+            $name = $hash;
+          }
+          $filename = "magnet-$name.torrent";
+          file_put_contents("$tmp_add_dir/$filename", 'd10:magnet-uri' . strlen($url) . ':' . $url);
           $to_add[] = array(
-            'type' => 'url',
-            'value' => $url
+            'type' => 'file',
+            'value' => $filename,
+            'magnet_name' => $name,
+            'magnet_hash' => $hash
           );
+
+        } else {
+
+          if(!preg_match('@^(ht|f)tps?:@', $url)) {
+            if(preg_match('@^[^/]+\.[a-z]{1,6}/@', $url)) {
+              $url = "http://$url";
+            } else {
+              continue;
+            }
+          }
+          $url = preg_replace('@[/?]+$@', '', $url);
+
+          if(filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
+            $to_add[] = array(
+              'type' => 'url',
+              'value' => $url
+            );
+          }
+
         }
+
       }
     }
 
@@ -244,7 +301,15 @@ switch($r_action) {
   case 'process_file':
     $r_file = "$tmp_add_dir/$r_file";
     if(file_exists($r_file) && dirname(realpath($r_file)) === realpath($tmp_add_dir)) {
-      print json_encode(process_torrent_data(file_get_contents($r_file), basename($r_file), false));
+      if ($r_magnet_hash) {
+        print json_encode(save_add_data($r_magnet_hash, array(
+          'name' => $r_magnet_name,
+          'files' => array('(Filenames not known for magnet links)' => 0),
+          'filename' => basename($r_file)
+        )));
+      } else {
+        print json_encode(process_torrent_data(file_get_contents($r_file), basename($r_file), false));
+      }
     } else {
       json_error('Bad path or filename');
     }

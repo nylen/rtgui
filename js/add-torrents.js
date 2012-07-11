@@ -95,7 +95,9 @@ $(function() {
         }
         var data = {
           action: 'process_' + f.type,
-          tags: tagsStr
+          tags: tagsStr,
+          magnet_name: f.magnet_name,
+          magnet_hash: f.magnet_hash
         };
         data[f.type] = f.value;
 
