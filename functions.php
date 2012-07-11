@@ -481,7 +481,7 @@ function get_all_torrents($params) {
 
 // Get list of files associated with a torrent...
 function get_file_list($hash) {
-  $use_old_api = (rtorrent_xmlrpc('system.client_version') == '0.7.9');
+  $use_old_api = (rtorrent_xmlrpc_cached('system.client_version') == '0.7.9');
   $results = rtorrent_multicall('f', array($hash, ''), array(
     'get_completed_chunks',
     'get_frozen_path',
@@ -530,7 +530,7 @@ function get_tracker_list($hash) {
 
 // Get list of peers associated with torrent...
 function get_peer_list($hash) {
-  if(rtorrent_xmlrpc('system.client_version') == '0.7.9') {
+  if(rtorrent_xmlrpc_cached('system.client_version') == '0.7.9') {
     return array();
   }
   return rtorrent_multicall('p', array($hash, ''), array(
@@ -567,6 +567,21 @@ function tracker_hostname($hash) {
 function rtorrent_xmlrpc($command, $params=array('')) {
   $response = do_xmlrpc(xmlrpc_encode_request($command, $params));
   return (@xmlrpc_is_fault($response) ? false : $response);
+}
+
+/** rtorrent_xmlrpc_cached
+ *
+ * rtorrent_xmlrpc() with caching.
+ * TODO: rename?
+ */
+function rtorrent_xmlrpc_cached($command) {
+  if (!is_array($_SESSION['rpc_cache'])) {
+    $_SESSION['rpc_cache'] = array();
+  }
+  if (!$_SESSION['rpc_cache'][$command]) {
+    $_SESSION['rpc_cache'][$command] = rtorrent_xmlrpc($command);
+  }
+  return $_SESSION['rpc_cache'][$command];
 }
 
 /** rtorrent_multicall

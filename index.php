@@ -49,7 +49,8 @@ $user_settings = array(
   'useDialogs' => (get_user_setting('use_dialogs') == 'yes' ? true : false)
 );
 
-// Reset saved torrents data (if any)
+// Reset saved data (if any)
+$_SESSION['rpc_cache'] = array();
 $_SESSION['persistent'] = array();
 
 // Get the list of torrents downloading
@@ -345,8 +346,8 @@ HTML;
     <div id="footer">
       <div align="center" class="smalltext">
         <a href="http://libtorrent.rakshasa.no/" target="_blank">
-          rTorrent client <?php echo rtorrent_xmlrpc('system.client_version'); ?>
-           / lib <?php echo rtorrent_xmlrpc('system.library_version'); ?>
+          rTorrent client <?php echo rtorrent_xmlrpc_cached('system.client_version'); ?>
+           / lib <?php echo rtorrent_xmlrpc_cached('system.library_version'); ?>
         </a> |
         <a href="rssfeed.php">RSS Feed</a> |
         Page created in <?php echo round(microtime(true) - $execstart, 3) ?> secs.<br />
