@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE);
+
 require_once 'config.php';
 require_once 'functions.php';
 
@@ -9,5 +11,7 @@ for($i = 2; $i < count($argv); $i++) {
 }
 if(!count($args)) $args[] = '';
 
-print(rtorrent_xmlrpc($call, $args));
+$response = do_xmlrpc(xmlrpc_encode_request($call, $args));
+$readable = print_r($response, true);
+print trim($readable) . "\n";
 ?>
