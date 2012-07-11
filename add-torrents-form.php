@@ -9,7 +9,7 @@ rtgui_session_start();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="favicon.ico" />
-<title>rtGui</title>
+<title>rtGui - Add torrents</title>
 <?php
 include_stylesheet('common.css', true);
 include_stylesheet('form-controls.css', true);
@@ -44,7 +44,7 @@ HTML;
 <h3>Add torrent(s)</h3>
 <?php } ?>
 
-<div id='options'>
+<div id="options">
 <form id="form1" method="post" enctype="multipart/form-data" action="add-torrents.php">
 <input type="hidden" name="action" value="get_list" />
 <table id="upload-form">
