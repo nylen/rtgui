@@ -20,25 +20,25 @@ require_once 'config.php';
 require_once 'functions.php';
 rtgui_session_start();
 
-if(!function_exists('dirbrowser_scandir')) {
+if (!function_exists('dirbrowser_scandir')) {
   function dirbrowser_scandir($dir) {
     return @scandir($dir);
   }
 }
-if(!function_exists('dirbrowser_isdir')) {
+if (!function_exists('dirbrowser_isdir')) {
   function dirbrowser_isdir($dir) {
     return is_dir($dir);
   }
 }
-if(!function_exists('dirbrowser_isrootdir')) {
+if (!function_exists('dirbrowser_isrootdir')) {
   function dirbrowser_isrootdir($dir) {
     return ($dir == '/');
   }
 }
 
 import_request_variables('gp','r_');
-if($r_dir == '' || !isset($r_dir)) $r_dir='/';
-if(!isset($r_hilitedir)) $r_hilitedir = '';
+if ($r_dir == '' || !isset($r_dir)) $r_dir='/';
+if (!isset($r_hilitedir)) $r_hilitedir = '';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -66,7 +66,7 @@ echo <<<HTML
 
 HTML;
 
-if(!dirbrowser_isrootdir($r_dir)) {
+if (!dirbrowser_isrootdir($r_dir)) {
   $parent_dir_encode = urlencode(substr($r_dir,0,strrpos($r_dir,"/")));
   $highlight_dir_encode = urlencode($r_hilitedir);
   echo <<<HTML
@@ -76,15 +76,15 @@ HTML;
 }
 
 $files = array();
-if($dir_array = dirbrowser_scandir($r_dir)) {
-  foreach($dir_array as $file) {
-    if($r_dir == '/') {
+if ($dir_array = dirbrowser_scandir($r_dir)) {
+  foreach ($dir_array as $file) {
+    if ($r_dir == '/') {
       $true_dir = $r_dir . $file;
     } else {
       $true_dir = "$r_dir/$file";
     }
-    if($file != '.' && $file != '..') {
-      if(dirbrowser_isdir($true_dir)) {
+    if ($file != '.' && $file != '..') {
+      if (dirbrowser_isdir($true_dir)) {
         $class = (substr($r_hilitedir, 1) == $file ? 'highlight folder' : 'folder');
         $true_dir_encode = urlencode($true_dir);
         $highlight_dir_encode = urlencode($r_hilitedir);
@@ -102,7 +102,7 @@ HTML;
       }
     }
   }
-  foreach($files as $file) {
+  foreach ($files as $file) {
     $file_encode = htmlentities($file, ENT_QUOTES, 'UTF-8');
     echo <<<HTML
     <img src="images/file.gif"><span class="file">$file_encode</span><br />

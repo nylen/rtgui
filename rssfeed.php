@@ -52,12 +52,12 @@ if (is_array($data)) {
    $sortkey="state_changed";
    usort($data,'sort_matches_desc');
    $last=0;
-   foreach($data AS $item) {
+   foreach ($data AS $item) {
       if ($item['state_changed']>$last) $last=$item['state_changed'];
    }
    echo "<lastBuildDate>".date("r",$last)."</lastBuildDate>";
 
-   foreach($data AS $item) {
+   foreach ($data AS $item) {
       echo "<item>";
       echo "<title>".($item['complete']==1 ? "[Complete] " : "[Incomplete] ").htmlspecialchars($item['name'])."</title>";
       echo "<description>";

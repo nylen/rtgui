@@ -105,7 +105,7 @@ $always_show_tags = array('tv', 'movies');
 // Determine whether to allow hiding or unhiding torrents.
 $can_hide_unhide = ($_SERVER['REMOTE_USER'] == 'james' || !$_SERVER['REMOTE_USER']);
 
-if($can_hide_unhide) {
+if ($can_hide_unhide) {
   $always_show_tags[] = '_hidden';
 }
 
@@ -127,12 +127,12 @@ function get_torrent_dir_from_tags($tags) {
   global $always_show_tags;
   $valid_torrent_dir_tags = array_diff($always_show_tags, array('_hidden'));
   $found_tags = array_intersect($tags, $valid_torrent_dir_tags);
-  if(count($found_tags) != 1) {
+  if (count($found_tags) != 1) {
     // This error will be carried through and shown in the browser.
     throw new ErrorException("Must choose ONE tag in '" . implode("', '", $valid_torrent_dir_tags) . "' for this torrent.");
   }
   // There's no guarantee that the single key in $found_tags is 0.
-  foreach($found_tags as $tag) {
+  foreach ($found_tags as $tag) {
     return rtrim($torrent_dir, '/') . "/$tag";
   }
 }
@@ -155,9 +155,9 @@ function get_local_torrent_path($path) {
 function on_page_requested() {
   require_once 'session.php';
   rtgui_session_start();
-  if(!$_SESSION['mounted']) {
+  if (!$_SESSION['mounted']) {
     exec('mount | grep //htpc/bit.torrents && mount | grep //htpc/rtorrent || sudo mount-htpc 2>&1', $out, $err);
-    if($err) {
+    if ($err) {
       die('<h1>Could not mount rTorrent directories</h1><pre>' . implode("\n", $out) . '</pre>');
     }
     $_SESSION['mounted'] = true;

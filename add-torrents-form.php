@@ -23,7 +23,7 @@ include_script('jquery.mousewheel.js');
 include_script('json2.min.js');
 include_script('php.min.js');
 include_script('add-torrents.js');
-if(!$_GET['dialog']) {
+if (!$_GET['dialog']) {
   // Need to get the hashes of all torrents that have already been downloaded
   $torrents = rtorrent_multicall('d', 'main', array('get_hash'), 'hash', true);
   $torrents = array_map('is_numeric', array_flip(array_keys($torrents)));
@@ -40,7 +40,7 @@ HTML;
 </head>
 
 <body class="modal">
-<?php if(!$_GET['dialog']) { ?>
+<?php if (!$_GET['dialog']) { ?>
 <h3>Add torrent(s)</h3>
 <?php } ?>
 
@@ -59,7 +59,7 @@ HTML;
   <tr class="controls">
     <td class="left">Torrent tags:</td>
     <td class="right">
-<?php foreach($_SESSION['used_tags'] as $tag) {
+<?php foreach ($_SESSION['used_tags'] as $tag) {
   $checked = (strpos('|' . get_user_setting('new_torrent_tags') . '|', "|$tag|") !== false ? ' checked="checked"' : '');
   echo <<<HTML
       <div class="tag-checkbox">

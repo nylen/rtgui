@@ -105,7 +105,7 @@ $always_show_tags = array('music', 'other-music', 'linux', 'windows', 'mac', 'ot
 // Determine whether to allow hiding or unhiding torrents.
 $can_hide_unhide = ($_SERVER['REMOTE_USER'] == 'james' || !$_SERVER['REMOTE_USER']);
 
-if($can_hide_unhide) {
+if ($can_hide_unhide) {
   $always_show_tags[] = '_hidden';
 }
 

@@ -18,15 +18,15 @@ $(function() {
   };
 
   var hash = getHash();
-  if(/^[a-z]+$/.test(hash)) {
+  if (/^[a-z]+$/.test(hash)) {
     $('a.tab[rel=' + hash + ']').trigger('click');
   }
 
   $('.command-button').click(function() {
     var cmd = $(this).attr('rel');
     var currentTab = getHash();
-    if(currentTab) currentTab = '&tab=' + currentTab;
-    if(!$(this).hasClass('confirm') || confirmWithMessage(cmd)) {
+    if (currentTab) currentTab = '&tab=' + currentTab;
+    if (!$(this).hasClass('confirm') || confirmWithMessage(cmd)) {
       document.location.href = 'control.php?hash=' + window.currentHash + '&cmd=' + cmd + currentTab;
     }
   });
@@ -36,7 +36,7 @@ $(function() {
   });
 
   $('#btn-close').click(function() {
-    if(window.top.hideDialog) {
+    if (window.top.hideDialog) {
       window.top.hideDialog();
     } else {
       document.location.href = '.';

@@ -24,10 +24,10 @@ require_once 'PersistentObject.php';
 import_request_variables('gp', 'r_');
 
 // Bulk stop/start/delete torrents...
-if(isset($r_bulkaction) && is_array($r_select)) {
-  foreach($r_select as $hash) {
-    if($hash) {
-      switch($r_bulkaction) {
+if (isset($r_bulkaction) && is_array($r_select)) {
+  foreach ($r_select as $hash) {
+    if ($hash) {
+      switch ($r_bulkaction) {
         case 'stop':
           $response = do_xmlrpc(xmlrpc_encode_request('d.stop', array($hash)));
           break;
@@ -66,15 +66,15 @@ if(isset($r_bulkaction) && is_array($r_select)) {
 }
 
 // Set tags...
-if($r_bulkaction == 'set_tags') {
+if ($r_bulkaction == 'set_tags') {
   set_torrent_tags($r_hashes, $r_add_tags, $r_remove_tags);
 }
 
 
 // Set file priorities...
-if(isset($r_set_fpriority)) {
+if (isset($r_set_fpriority)) {
    $index = 0;
-   foreach($r_set_fpriority as $item) {
+   foreach ($r_set_fpriority as $item) {
       $response = do_xmlrpc(xmlrpc_encode_request('f.set_priority', array($r_hash,$index,$item)));
       $index++;
    }
@@ -83,17 +83,17 @@ if(isset($r_set_fpriority)) {
 }
 
 // Set torrent priorities...
-if(isset($r_set_tpriority)) {
+if (isset($r_set_tpriority)) {
    $response = do_xmlrpc(xmlrpc_encode_request('d.set_priority', array($r_hash, $r_set_tpriority)));
    $r_cmd = '';
 }
 
 
 // Move torrent dir
-if(isset($r_newdir)) {
+if (isset($r_newdir)) {
   $old_path = rtorrent_xmlrpc('d.get_base_path', array($r_hash));
-  if(rtrim(dirname($old_path), '/') !== rtrim($r_newdir, '/')) {
-    if(rtorrent_xmlrpc('execute', array('mv', '-u', $old_path, "$r_newdir/")) === false) {
+  if (rtrim(dirname($old_path), '/') !== rtrim($r_newdir, '/')) {
+    if (rtorrent_xmlrpc('execute', array('mv', '-u', $old_path, "$r_newdir/")) === false) {
       die("Failed to move '$old_path' to '$r_newdir'.  Check rTorrent's execute_log.");
     }
     rtorrent_xmlrpc('d.set_directory', array($r_hash, $r_newdir));
@@ -101,7 +101,7 @@ if(isset($r_newdir)) {
   }
 }
 
-switch($r_cmd) {
+switch ($r_cmd) {
   case 'stop':
     $response = do_xmlrpc(xmlrpc_encode_request('d.stop', array($r_hash)));
     break;
@@ -120,7 +120,7 @@ switch($r_cmd) {
     break;
 }
 
-if(!$r_ajax) {
+if (!$r_ajax) {
   $hash = ($r_tab ? "#$r_tab" : '');
   @header('Location: ' . $_SERVER['HTTP_REFERER'] . $hash);
 }

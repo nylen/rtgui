@@ -1,11 +1,11 @@
 function onAjaxRequestDone(data) {
-  if(!$('#leave-checked:checked').length) {
+  if (!$('#leave-checked:checked').length) {
     $('div.torrent-container input[type=checkbox]')
     .attr('checked', false);
   }
   updateTorrentsNow();
   data = $.trim(data);
-  if(data) {
+  if (data) {
     alert('Server error:\n\n' + data);
   }
 }
@@ -37,13 +37,13 @@ $(function() {
 
   //updateTorrentsHTML(data, true);
   window.clearTimeout(current.refreshTimeoutID);
-  if(userSettings.refreshInterval) {
+  if (userSettings.refreshInterval) {
     current.refreshTimeoutID = window.setTimeout(updateTorrentsData, userSettings.refreshInterval);
   }
 
-  if(userSettings.sortVar) {
+  if (userSettings.sortVar) {
     $('a.sort').each(function() {
-      if($(this).attr('rel').split(':')[0] == userSettings.sortVar) {
+      if ($(this).attr('rel').split(':')[0] == userSettings.sortVar) {
         $(this).addClass(userSettings.sortDesc ? 'sort-desc' : 'sort-asc');
       }
     });
@@ -53,11 +53,11 @@ $(function() {
   // Set up event handlers
 
   $(window).bind('mousewheel', function(e, d) {
-    if(window.dialogShowing) {
+    if (window.dialogShowing) {
       e.preventDefault();
     }
   }).scroll(function() {
-    if(window.scrollingFromFrame) {
+    if (window.scrollingFromFrame) {
       $(window).scrollTop(window.originalScrollTop);
       window.scrollingFromFrame = false;
     } else {
@@ -84,21 +84,21 @@ $(function() {
   });
 
   $('#filter').blur(function() {
-    if($(this).val() == '') {
+    if ($(this).val() == '') {
       $(this).val(config.defaultFilterText);
     }
   }).focus(function() {
-    if($(this).val() == config.defaultFilterText) {
+    if ($(this).val() == config.defaultFilterText) {
       $(this).val('');
     }
   }).trigger('blur');
 
   $('#control-form').ajaxForm({
     beforeSubmit: function(formData, form, options) {
-      for(var i = 0; i < formData.length; i++) {
-        if(formData[i].name == 'bulkaction') {
+      for (var i = 0; i < formData.length; i++) {
+        if (formData[i].name == 'bulkaction') {
           // confirm delete
-          if(formData[i].value == 'delete'
+          if (formData[i].value == 'delete'
           && !confirm('Are you sure you want to delete the selected '
             + 'torrents?  Their data will not be deleted.')) {
 
@@ -107,7 +107,7 @@ $(function() {
         } else {
           // don't submit invisible checked torrents
           var t = window.data.torrents[formData[i].value];
-          if(t && !t.visible) {
+          if (t && !t.visible) {
             formData[i].value = '';
           }
         }
@@ -123,8 +123,8 @@ $(function() {
   $('div.torrent-container').live('click', function(e) {
     var thisHash = this.id;
     var $thisCheckbox = $(this).find('input[type=checkbox]');
-    if(window.contextMenuShowing) {
-      if($thisCheckbox.filter(e.target).length) {
+    if (window.contextMenuShowing) {
+      if ($thisCheckbox.filter(e.target).length) {
         $thisCheckbox.attr('checked', function() {
           return !this.checked;
         });
@@ -134,15 +134,15 @@ $(function() {
     $thisCheckbox.not(e.target).attr('checked', function() {
       return !this.checked;
     });
-    if(e.shiftKey && current.lastHash) {
+    if (e.shiftKey && current.lastHash) {
       var thisPos = window.data.torrents[thisHash].pos;
       var lastPos = window.data.torrents[current.lastHash].pos;
-      if(window.data.torrents[current.lastHash].visible) {
+      if (window.data.torrents[current.lastHash].visible) {
         var d = (thisPos > lastPos ? 1 : -1);
         var checked = $thisCheckbox.attr('checked');
-        for(var p = lastPos; p != thisPos; p += d) {
+        for (var p = lastPos; p != thisPos; p += d) {
           var hash = current.torrentHashes[p];
-          if(window.data.torrents[hash].visible) {
+          if (window.data.torrents[hash].visible) {
             $('#t-' + hash + '-checkbox').attr('checked', checked);
           }
         }
@@ -151,7 +151,7 @@ $(function() {
     $thisCheckbox[0].focus();
     current.lastHash = thisHash;
   }).live('mousedown', function(e) {
-    if(e.shiftKey) {
+    if (e.shiftKey) {
       return false;
     }
   });
@@ -163,12 +163,12 @@ $(function() {
   });
 
   $('a.dialog').live('click', function() {
-    if(!userSettings.useDialogs) {
+    if (!userSettings.useDialogs) {
       return true;
     }
     var $this = $(this);
     var href = $this.attr('href');
-    if(!/dialog=1/.test(href)) {
+    if (!/dialog=1/.test(href)) {
       // Dialog pages know not to display a title if $_GET['dialog'] is set
       href += (/\?/.test(href) ? '&' : '?') + 'dialog=1';
     }
@@ -178,7 +178,7 @@ $(function() {
   });
 
   $('a.ajax').live('click', function() {
-    if($(this).hasClass('confirm')
+    if ($(this).hasClass('confirm')
     && !confirmWithMessage($(this).attr('rel'))) {
       return false;
     }

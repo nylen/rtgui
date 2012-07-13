@@ -25,13 +25,13 @@ import_request_variables('gp', 'r_');
 $all_torrents = get_all_torrents(array('torrents_only' => true));
 
 $this_torrent = false;
-foreach($all_torrents as $torrent) {
-  if($r_hash == $torrent['hash']) $this_torrent = $torrent;
+foreach ($all_torrents as $torrent) {
+  if ($r_hash == $torrent['hash']) $this_torrent = $torrent;
 }
 
-if(!$this_torrent) {
+if (!$this_torrent) {
   // probably the current torrent was just deleted
-  if($r_dialog) {
+  if ($r_dialog) {
     die('<script type="text/javascript">window.top.hideDialog(true);</script>');
   } else {
     header('Location: .');
@@ -39,7 +39,7 @@ if(!$this_torrent) {
   }
 }
 
-if(isset($r_select)) {
+if (isset($r_select)) {
   $tabs = array($r_select);
   $only_one_tab = !isset($r_alltabs);
 } else {
@@ -73,7 +73,7 @@ include_script('view.js');
 $status_style = ($this_torrent['complete']  ? 'complete' : 'incomplete')
               . ($this_torrent['is_active'] ? 'active'   : 'inactive');
 
-if($_GET['dialog']) {
+if ($_GET['dialog']) {
   $dialog_query_str = '&amp;dialog=1';
 } else {
   echo "<h3>$this_torrent[name]</h3>\n";
@@ -129,10 +129,10 @@ $tab_div_class = ($only_one_tab ? 'tab' : 'tab hidden');
 $tab_div_class_active = 'tab';
 
 $all_tabs = array('Files', 'Tracker', 'Peers', 'Torrent', 'Storage');
-if($debug_mode) {
+if ($debug_mode) {
   $all_tabs[] = 'Debug';
 }
-foreach($all_tabs as $tab) {
+foreach ($all_tabs as $tab) {
   $select = strtolower($tab);
   $class = ($active_tab == $select ? $tab_link_class_active : $tab_link_class);
   echo <<<HTML
@@ -147,7 +147,7 @@ HTML;
 
 
 <?php
-foreach($tabs as $r_select) {
+foreach ($tabs as $r_select) {
 
   $this_class = ($r_select == $active_tab ? $tab_div_class_active : $tab_div_class);
   echo <<<HTML
@@ -161,7 +161,7 @@ HTML;
   // --- Files tab
   // ------------------------------------------------
 
-  if($r_select == 'files') {
+  if ($r_select == 'files') {
      $data = get_file_list($r_hash);
 ?>
     <div class="container">
@@ -178,13 +178,13 @@ HTML;
 <?php
      $thisrow = 'row';
      $index = 0;
-     foreach($data as $item) {
+     foreach ($data as $item) {
        $path = mb_wordwrap($item['get_path'],90,"<br />\n",TRUE);
        $bytes = format_bytes($item['get_size_bytes']);
        $percent = @round(($item['get_completed_chunks']/$item['get_size_chunks'])*100);
        $percent_bar = percentbar($item['get_completed_chunks'] / $item['get_size_chunks'] * 100);
        $selected = array();
-       foreach(range(0, 2) as $i) {
+       foreach (range(0, 2) as $i) {
          $selected[$i] = ($item['get_priority'] == $i ? ' selected="selected"' : '');
        }
        echo <<<HTML
@@ -229,7 +229,7 @@ HTML;
   // ------------------------------------------------
   // --- Tracker tab
   // ------------------------------------------------
-  if($r_select == 'tracker') {
+  if ($r_select == 'tracker') {
     $data = get_tracker_list($r_hash);
 ?>
     <div class="container">
@@ -244,7 +244,7 @@ HTML;
       </div>
 <?php
     $thisrow = 'row';
-    foreach($data as $item) {
+    foreach ($data as $item) {
       $url = mb_wordwrap($item['get_url'],90,"<br />\n",TRUE);
       $last_scrape_time = ($item['get_scrape_time_last'] > 0
         ? date('Y-m-d g:ia', @round($item['get_scrape_time_last']))
@@ -275,7 +275,7 @@ HTML;
   // ------------------------------------------------
   // --- Peers tab
   // ------------------------------------------------
-  if($r_select == 'peers') {
+  if ($r_select == 'peers') {
     $data=get_peer_list($r_hash);
 ?>
     <div class="container">
@@ -290,7 +290,7 @@ HTML;
       </div>
 <?php
     $thisrow = 'row';
-    foreach($data as $item) {
+    foreach ($data as $item) {
       $flags = ($item['is_encrypted']  ? 'enc ' : '')
              . ($item['is_incoming']   ? 'inc ' : '')
              . ($item['is_obfuscated'] ? 'obf ' : '')
@@ -298,7 +298,7 @@ HTML;
       $flags = (trim($flags) ? "Flags: $flags" : '');
       $percent_bar = percentbar($item['get_completed_percent']);
       $rates = array();
-      foreach(array('down', 'up', 'peer') as $i) {
+      foreach (array('down', 'up', 'peer') as $i) {
         $rates[$i] = ($item["get_${i}_rate"]
           ? format_bytes($item["get_${i}_rate"]) . '/sec<br />'
           : '')
@@ -336,13 +336,13 @@ HTML;
   // ------------------------------------------------
   // --- Torrent tab
   // ------------------------------------------------
-  if($r_select == 'torrent') {
+  if ($r_select == 'torrent') {
     $status_flags = ($this_torrent['complete'] ? 'Complete ' : 'Incomplete ');
-    if($this_torrent['is_hash_checked'])  $status_flags .= '&middot; Hash Checked ';
-    if($this_torrent['is_hash_checking']) $status_flags .= '&middot; Hash Checking ';
-    if($this_torrent['is_multi_file'])    $status_flags .= '&middot; Multi-file ';
-    if($this_torrent['is_open'])          $status_flags .= '&middot; Open ';
-    if($this_torrent['is_private'])       $status_flags .= '&middot; Private ';
+    if ($this_torrent['is_hash_checked'])  $status_flags .= '&middot; Hash Checked ';
+    if ($this_torrent['is_hash_checking']) $status_flags .= '&middot; Hash Checking ';
+    if ($this_torrent['is_multi_file'])    $status_flags .= '&middot; Multi-file ';
+    if ($this_torrent['is_open'])          $status_flags .= '&middot; Open ';
+    if ($this_torrent['is_private'])       $status_flags .= '&middot; Private ';
 
     $status_style = ($this_torrent['complete']  ? 'complete' : 'incomplete')
                   . ($this_torrent['is_active'] ? 'active'   : 'inactive');
@@ -350,11 +350,11 @@ HTML;
     $name = mb_wordwrap($this_torrent['name'], 60, "<br />\n", true);
 
     $selected = array();
-    foreach(range(0, 3) as $i) {
+    foreach (range(0, 3) as $i) {
       $selected[$i] = ($this_torrent['priority'] == $i ? ' selected="selected"' : '');
     }
     $formatted = array();
-    foreach(array('completed_bytes', 'size_bytes', 'down_rate', 'down_total', 'up_rate', 'up_total') as $i) {
+    foreach (array('completed_bytes', 'size_bytes', 'down_rate', 'down_total', 'up_rate', 'up_total') as $i) {
       $formatted[$i] = format_bytes($this_torrent[$i]);
     }
     $percent_bar = percentbar($this_torrent['percent_complete']);
@@ -448,16 +448,16 @@ HTML;
   // ------------------------------------------------
   // --- Storage tab
   // ------------------------------------------------
-  if($r_select == 'storage') {
+  if ($r_select == 'storage') {
     $sel_dir = $this_torrent['directory'];
     $torrent_dir = '';
-    if($this_torrent['is_multi_file']) {
+    if ($this_torrent['is_multi_file']) {
       $slash_pos   = strrpos($this_torrent['directory'],'/');
       $sel_dir     = substr( $this_torrent['directory'], 0, $slash_pos);
       $torrent_dir = substr( $this_torrent['directory'], $slash_pos);
     }
     $torrent_dir = htmlentities($torrent_dir, ENT_QUOTES, 'UTF-8');
-    if(isset($r_dir)) $sel_dir = $r_dir;
+    if (isset($r_dir)) $sel_dir = $r_dir;
 
     $sel_dir_encode = urlencode($sel_dir);
     $torrent_dir_encode = urlencode($torrent_dir);
@@ -474,7 +474,7 @@ HTML;
         <form action="control.php" method="post" name="directory" id="directory-form">
 
 HTML;
-    if($this_torrent['is_active']) {
+    if ($this_torrent['is_active']) {
       echo <<<HTML
           <p>
             <input type="submit" name="setdir" class="themed" value="Set directory" disabled="disabled" />&nbsp;
@@ -510,7 +510,7 @@ HTML;
   // ------------------------------------------------
   // --- Debug tab
   // ------------------------------------------------
-  if($debug_mode && $r_select == 'debug') {
+  if ($debug_mode && $r_select == 'debug') {
 ?>
     <pre class="medtext">
       <h2>Torrent</h2>

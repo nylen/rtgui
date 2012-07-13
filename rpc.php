@@ -6,7 +6,7 @@ require_once 'functions.php';
 
 $call = $argv[1];
 $args = array();
-for($i = 2; $i < count($argv); $i++) {
+for ($i = 2; $i < count($argv); $i++) {
   $args[] = $argv[$i];
 }
 

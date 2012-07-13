@@ -21,32 +21,32 @@ require_once 'Mobile_Detect.php';
 
 // Optionally use alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/
 // See http://code.google.com/p/rtgui/issues/detail?id=19
-if(!function_exists('xml_parser_create') || !function_exists('xmlrpc_encode_request')) {
+if (!function_exists('xml_parser_create') || !function_exists('xmlrpc_encode_request')) {
   require_once 'xmlrpc.inc';
   require_once 'xmlrpc_extension_api.inc';
 }
 
 error_reporting(E_ALL & ~E_NOTICE);
 
-if(function_exists('on_page_requested')) {
+if (function_exists('on_page_requested')) {
   on_page_requested();
 }
 
-if($scgi_local) {
+if ($scgi_local) {
   $scgi_host = "unix://$scgi_local";
   $scgi_port = null;
 }
 
 function get_current_theme() {
   global $default_user_settings;
-  if(!$_COOKIE['theme']) {
+  if (!$_COOKIE['theme']) {
     // TODO: enumerate themes and look for user-agent match
-    if(!$_COOKIE['theme']) {
+    if (!$_COOKIE['theme']) {
       set_user_setting('theme', $default_user_settings['theme']);
     }
   }
-  if(!is_dir('themes/' . $_COOKIE['theme'])) {
-    if(!is_dir('themes/default')) {
+  if (!is_dir('themes/' . $_COOKIE['theme'])) {
+    if (!is_dir('themes/default')) {
       die('Error: default theme not found');
     }
     set_user_setting('theme', 'default');
@@ -56,7 +56,7 @@ function get_current_theme() {
 
 function is_mobile_browser() {
   global $mobile_detect;
-  if(!$mobile_detect) {
+  if (!$mobile_detect) {
     $mobile_detect = new Mobile_Detect();
   }
   return $mobile_detect->isMobile();
@@ -64,10 +64,10 @@ function is_mobile_browser() {
 
 function get_user_setting($key, $should_set=true) {
   global $default_user_settings, $mobile_detect;
-  if(array_key_exists($key, $_COOKIE)) {
+  if (array_key_exists($key, $_COOKIE)) {
     return $_COOKIE[$key];
   } else {
-    switch($key) {
+    switch ($key) {
       case 'use_dialogs':
         $default_value = (is_mobile_browser() ? 'no' : 'yes');
         break;
@@ -75,7 +75,7 @@ function get_user_setting($key, $should_set=true) {
         $default_value = $default_user_settings[$key];
         break;
     }
-    if($should_set) {
+    if ($should_set) {
       set_user_setting($key, $default_value);
     }
     return $default_value;
@@ -94,16 +94,16 @@ function file_path_mtime($filename) {
 
 function set_torrent_tags($hashes, $add_tags, $remove_tags) {
   global $private_storage_dir;
-  if(is_array($hashes)) {
-    if(!is_array($add_tags)) {
+  if (is_array($hashes)) {
+    if (!is_array($add_tags)) {
       $add_tags = array();
     }
-    if(!is_array($remove_tags)) {
+    if (!is_array($remove_tags)) {
       $remove_tags = array();
     }
     $tags = new PersistentObject("$private_storage_dir/tags.txt");
-    foreach($hashes as $hash) {
-      if(!is_array($tags->data[$hash])) {
+    foreach ($hashes as $hash) {
+      if (!is_array($tags->data[$hash])) {
         $tags->data[$hash] = array();
       }
       $tags->data[$hash] = array_unique(array_merge(
@@ -121,9 +121,9 @@ function include_script($script_name) {
 }
 
 function get_theme_filename($filename) {
-  foreach(array(get_current_theme(), 'default') as $test) {
+  foreach (array(get_current_theme(), 'default') as $test) {
     $theme_filename = "themes/$test/$filename";
-    if(file_exists($theme_filename)) {
+    if (file_exists($theme_filename)) {
       return $theme_filename;
     }
   }
@@ -132,7 +132,7 @@ function get_theme_filename($filename) {
 
 
 function include_stylesheet($stylesheet_filename, $use_theme=false) {
-  if($use_theme) {
+  if ($use_theme) {
     $stylesheet_filename = get_theme_filename($stylesheet_filename);
   }
   echo '<link rel="stylesheet" type="text/css" href="'
@@ -180,7 +180,7 @@ function render_template($template_name, $data) {
 
 function do_xmlrpc($request) {
   global $scgi_host, $scgi_port, $scgi_timeout;
-  if($response = scgi_send($scgi_host, $scgi_port, $request, $scgi_timeout)) {
+  if ($response = scgi_send($scgi_host, $scgi_port, $request, $scgi_timeout)) {
     $response = parse_http_response($response);
     $content = str_replace('i8', 'double', $response[1]);
     return xmlrpc_decode(utf8_encode($content));
@@ -263,11 +263,11 @@ function get_all_torrents($params) {
     'is_open',
     'is_private'
   ), 'hash', true);
-  if($response === false) {
+  if ($response === false) {
     return false;
   }
 
-  if(!is_array($_SESSION['persistent'])) {
+  if (!is_array($_SESSION['persistent'])) {
     $_SESSION['persistent'] = array();
   }
   $total_down_rate = 0;
@@ -278,15 +278,15 @@ function get_all_torrents($params) {
 
   $index = 0;
 
-  foreach($torrents as $hash => $t) {
+  foreach ($torrents as $hash => $t) {
     $total_down_rate += $t['down_rate'];
     $total_up_rate += $t['up_rate'];
 
-    if(is_array($_SESSION['tags'][$hash])) {
+    if (is_array($_SESSION['tags'][$hash])) {
       $t['tags'] = $_SESSION['tags'][$hash];
-      if(in_array('_hidden', $_SESSION['tags'][$hash])) {
+      if (in_array('_hidden', $_SESSION['tags'][$hash])) {
         $torrents_count_superhidden++;
-        if(!$show_hidden) {
+        if (!$show_hidden) {
           unset($torrents[$hash]);
           continue;
         }
@@ -302,39 +302,39 @@ function get_all_torrents($params) {
     $t['percent_complete'] = $t['completed_bytes'] / $t['size_bytes'] * 100;
     $t['bytes_remaining'] = $t['size_bytes'] - $t['completed_bytes'];
 
-    if($t['message'] == 'Tracker: [Tried all trackers.]') {
+    if ($t['message'] == 'Tracker: [Tried all trackers.]') {
       $t['message'] = '';
     }
 
-    if($t['is_active'] == 0) {
+    if ($t['is_active'] == 0) {
       $t['status'] = 'Stopped';
     }
-    if($t['complete'] == 1) {
+    if ($t['complete'] == 1) {
       $t['status'] = 'Complete';
     }
-    if($t['is_active'] == 1 && $t['connection_current'] == 'leech') {
+    if ($t['is_active'] == 1 && $t['connection_current'] == 'leech') {
       $t['status'] = 'Leeching';
     }
-    if($t['is_active'] == 1 && $t['complete'] == 1) {
+    if ($t['is_active'] == 1 && $t['complete'] == 1) {
       $t['status'] = 'Seeding';
     }
-    if($t['hashing'] > 0) {
+    if ($t['hashing'] > 0) {
       $t['status'] = 'Hashing';
       $t['percent_complete'] = $t['chunks_hashed'] / $t['size_chunks'] * 100;
     }
 
-    if($t['complete'] == 1) {
+    if ($t['complete'] == 1) {
       $t['status_class'] = 'complete';
     } else {
       $t['status_class'] = 'incomplete';
     }
-    if($t['is_active'] == 1) {
+    if ($t['is_active'] == 1) {
       $t['status_class'] .= 'active';
     } else {
       $t['status_class'] .= 'inactive';
     }
 
-    if($t['down_rate'] > 0) {
+    if ($t['down_rate'] > 0) {
       $t['eta'] = ($t['size_bytes'] - $t['completed_bytes']) / $t['down_rate'];
     } else {
       $t['eta'] = 0;
@@ -348,23 +348,23 @@ function get_all_torrents($params) {
 
     $t['is_transferring'] = (($t['down_rate'] + $t['up_rate']) ? 1 : 0);
 
-    if(is_array($_SESSION['persistent'][$hash])) {
+    if (is_array($_SESSION['persistent'][$hash])) {
       $s = $_SESSION['persistent'][$hash];
     } else {
       $s = array();
       $s['tracker_hostname'] = tracker_hostname($hash);
       $s['tracker_color'] = $tracker_highlight_default;
-      if(is_array($tracker_highlight)) {
-        foreach($tracker_highlight as $highlight) {
-          foreach($highlight as $this_url) {
-            if(stristr($s['tracker_hostname'], $this_url) !== false) {
+      if (is_array($tracker_highlight)) {
+        foreach ($tracker_highlight as $highlight) {
+          foreach ($highlight as $this_url) {
+            if (stristr($s['tracker_hostname'], $this_url) !== false) {
               $s['tracker_color'] = $highlight[0];
             }
           }
         }
       }
       $fn = $t['tied_to_file'];
-      if(function_exists('get_local_torrent_path')) {
+      if (function_exists('get_local_torrent_path')) {
         $fn = get_local_torrent_path($fn);
       }
       // Yes, this even works for magnet links.  rTorrent creates a ".meta"
@@ -451,7 +451,7 @@ function get_all_torrents($params) {
     $torrents[$hash] = $t;
   }
 
-  if($torrents_only) {
+  if ($torrents_only) {
     return $torrents;
   }
 
@@ -470,7 +470,7 @@ function get_all_torrents($params) {
       'disk_total'                 => format_bytes(@disk_total_space($disk_usage_dir)),
     ),
   );
-  if($data['global']['disk_total'] > 0) {
+  if ($data['global']['disk_total'] > 0) {
     $data['global']['disk_percent'] = $data['global']['disk_free'] / $data['global']['disk_total'] * 100;
   } else {
     // avoid divide by zero error if disk_total_space() fails
@@ -503,8 +503,8 @@ function get_file_list($hash) {
     'get_size_chunks'
   ));
 
-  if(!$use_old_api) {
-    for($i=0; $i<count($results); $i++) {
+  if (!$use_old_api) {
+    for ($i=0; $i<count($results); $i++) {
       $results[$i]['get_is_created'] = $results[$i]['is_created'];
       $results[$i]['get_is_open'] = $results[$i]['is_open'];
     }
@@ -532,7 +532,7 @@ function get_tracker_list($hash) {
 
 // Get list of peers associated with torrent...
 function get_peer_list($hash) {
-  if(rtorrent_xmlrpc_cached('system.client_version') == '0.7.9') {
+  if (rtorrent_xmlrpc_cached('system.client_version') == '0.7.9') {
     return array();
   }
   return rtorrent_multicall('p', array($hash, ''), array(
@@ -593,34 +593,34 @@ function rtorrent_xmlrpc_cached($command) {
  * is an associative array with the requested variables as keys.
  */
 function rtorrent_multicall($group, $params, $data_names, $key=null, $remove_get=false) {
-  if(!is_array($params)) {
+  if (!is_array($params)) {
     $params = array($params);
   }
   $index = -1;
-  foreach($data_names as $name) {
+  foreach ($data_names as $name) {
     $index++;
     $params[] = "$group.$name=";
-    if($remove_get) {
+    if ($remove_get) {
       $name = preg_replace("@^get_@", "", $name);
       $data_names[$index] = $name;
     }
-    if($key !== null && $key == $name) {
+    if ($key !== null && $key == $name) {
       $key_index = $index;
     }
   }
 
   $request = xmlrpc_encode_request("$group.multicall", $params);
   $response = do_xmlrpc($request);
-  if(@xmlrpc_is_fault($response)) {
+  if (@xmlrpc_is_fault($response)) {
     trigger_error("xmlrpc: $response[faultString] ($response[faultCode])");
     return false;
   } else {
     $results = array();
     $result_index = 0;
-    foreach($response as $data_array) {
+    foreach ($response as $data_array) {
       $this_key = ($key === null ? $result_index++ : $data_array[$key_index]);
       $name_index = 0;
-      foreach($data_array as $data_item) {
+      foreach ($data_array as $data_item) {
         $results[$this_key][$data_names[$name_index++]] = $data_item;
       }
     }
@@ -714,17 +714,17 @@ function compare_recursive($before, $after) {
 function parse_http_response($string) {
   $headers = array();
   $arr = explode("\n", $string);
-  for($i = 0; $i < count($arr); $i++) {
+  for ($i = 0; $i < count($arr); $i++) {
     $str = trim($arr[$i]);
-    if($str === '') {
+    if ($str === '') {
       return array($headers, implode("\n", array_slice($arr, $i + 1)));
     } else {
       list($name, $val) = explode(':', $str, 2);
       $name = strtolower($name);
       $val = ltrim($val);
-      if(is_array($headers[$name])) {
+      if (is_array($headers[$name])) {
         $headers[$name][] = $val;
-      } else if(isset($headers[$name])) {
+      } else if (isset($headers[$name])) {
         $headers[$name] = array($headers[$name], $val);
       } else {
         $headers[$name] = $val;
@@ -738,13 +738,13 @@ function parse_http_response($string) {
 function scgi_send($host, $port, $data, $timeout=5) {
   $result = '';
   $contentlength = strlen($data);
-  if($contentlength > 0) {
+  if ($contentlength > 0) {
     $socket = @fsockopen($host, $port, $errno, $errstr, $timeout);
-    if($socket) {
+    if ($socket) {
       $reqheader = "CONTENT_LENGTH\x00$contentlength\x00SCGI\x001\x00";
       $tosend = strlen($reqheader) . ":$reqheader,$data";
       @fputs($socket, $tosend);
-      while(!feof($socket)) {
+      while (!feof($socket)) {
         $result .= @fread($socket, 4096);
       }
       fclose($socket);
@@ -811,7 +811,7 @@ function format_duration($seconds) {
 // multibyte-safe replacement for wordwrap.
 // (See http://code.google.com/p/rtgui/issues/detail?id=71 - Thanks llamaX)
 function mb_wordwrap($string, $width=75, $break="\n", $cut=false) {
-  if(!$cut) {
+  if (!$cut) {
     $regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . ',}\b#U';
   } else {
     $regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . '}#';
@@ -820,7 +820,7 @@ function mb_wordwrap($string, $width=75, $break="\n", $cut=false) {
   $cut_length = ceil($string_length / $width);
   $i = 1;
   $return = '';
-  while($i < $cut_length) {
+  while ($i < $cut_length) {
     preg_match($regexp, $string, $matches);
     $new_string = $matches[0];
     $return .= $new_string . $break;

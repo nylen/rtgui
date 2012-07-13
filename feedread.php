@@ -96,14 +96,14 @@ include_stylesheet('feed-reader.css', true);
 <script type="text/javascript">
 function toggleLayer( whichLayer ) {
   var elem, vis;
-  if( document.getElementById )
+  if ( document.getElementById )
     elem = document.getElementById( whichLayer );
-  else if( document.all )
+  else if ( document.all )
       elem = document.all[whichLayer];
-  else if( document.layers )
+  else if ( document.layers )
     elem = document.layers[whichLayer];
   vis = elem.style;
-  if(vis.display==''&&elem.offsetWidth!=undefined&&elem.offsetHeight!=undefined)
+  if (vis.display==''&&elem.offsetWidth!=undefined&&elem.offsetHeight!=undefined)
     vis.display = (elem.offsetWidth!=0&&elem.offsetHeight!=0)?'block':'none';
   vis.display = (vis.display==''||vis.display=='block')?'none':'block';
 }
@@ -119,14 +119,14 @@ function toggleLayer( whichLayer ) {
 echo "<p>This feed reader feature of rtGui is 'work-in-progress' - please don't report bugs regarding it!</p>";
 
 echo "<ul class='feedlistul'>\n";
-foreach($feeds as $feed) {
+foreach ($feeds as $feed) {
    if (trim($feed[1])!="") {
       echo "<li class='feedlist'><a href='#".$feed[1]."'>".$feed[0]."</a></li>";
    }
 }
 echo "</ul>";
 
-foreach($feeds as $feed) {
+foreach ($feeds as $feed) {
    echo "<div class='feedtitle' id='".$feed[1]."'>";
    echo "<h2>".$feed[0]."</h2>\n";
    echo "<p class='smalltext'>".$feed[1]."</p>";

@@ -5,14 +5,14 @@ rtgui_session_start();
 
 $ip = $_REQUEST['ip'];
 
-if(!ip2long($ip)) {
+if (!ip2long($ip)) {
   die(json_encode(array(
     'ip' => $ip,
     'error' => 'Invalid IP'
   )));
 }
 
-if(is_array($_SESSION["ip-$ip"])) {
+if (is_array($_SESSION["ip-$ip"])) {
   die(json_encode($_SESSION["ip-$ip"]));
 }
 
@@ -24,8 +24,8 @@ $info = $info[0];
 $info['hostname'] = gethostbyaddr($ip);
 $info['country_short'] =
   preg_replace('@^[^(]+\((.*)\)[^)]*$@', '\1', $info['country']);
-foreach(array('city', 'country', 'country_short') as $key) {
-  if(stristr($info[$key], 'unknown') !== false) {
+foreach (array('city', 'country', 'country_short') as $key) {
+  if (stristr($info[$key], 'unknown') !== false) {
     $info[$key] = 'unknown';
   }
 }

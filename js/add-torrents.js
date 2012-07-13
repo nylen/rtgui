@@ -1,20 +1,20 @@
 window.needToDeleteFiles = true;
 
 $(function() {
-  if(window.top.onMouseWheelFromChildFrame) {
+  if (window.top.onMouseWheelFromChildFrame) {
     $(window).bind('mousewheel', function(e, d) {
       window.top.onMouseWheelFromChildFrame();
     });
   }
 
-  if(window.top.hideDialog) {
+  if (window.top.hideDialog) {
     window.top.hideDialogCallback = function() {
       window.top.$.post('add-torrents.php?action=delete_files');
       return true;
     }
   } else {
     $(window).bind('beforeunload', function() {
-      if(window.needToDeleteFiles) {
+      if (window.needToDeleteFiles) {
         $.ajax('add-torrents.php?action=delete_files', {
           type: 'POST',
           async: false
@@ -32,8 +32,8 @@ $(function() {
         ['img.loading', {src: 'images/loading.gif'}]
       ));
       tagsStr = '';
-      for(var i = 0; i < formData.length; i++) {
-        if(formData[i].name == 'tags[]') {
+      for (var i = 0; i < formData.length; i++) {
+        if (formData[i].name == 'tags[]') {
           tagsStr += (tagsStr ? '|' : '') + formData[i].value;
         }
       }
@@ -66,7 +66,7 @@ $(function() {
       .attr('disabled', true).filter('textarea').css('height', '20px');
       $('input[type=file], a.MultiFile-remove').addClass('hidden');
 
-      for(var i = 0; i < files.length; i++) {
+      for (var i = 0; i < files.length; i++) {
         var error = files[i].error;
         $('#to-add').hsjn(
           ['div.add-torrent', {'id': 'add-' + i},
@@ -91,7 +91,7 @@ $(function() {
       function processTorrent(i) {
         $('#to-add .loading').remove();
 
-        if(i >= files.length) {
+        if (i >= files.length) {
           $('#add').removeAttr('disabled');
           return;
         }
@@ -101,7 +101,7 @@ $(function() {
         ));
 
         var f = files[i];
-        if(files[i].error) {
+        if (files[i].error) {
           processTorrent(i + 1);
           return;
         }
@@ -126,15 +126,15 @@ $(function() {
         }
         // data { hash, name, files }
 
-        if(data.error) {
+        if (data.error) {
           err(i, data.error);
-        } else if(torrents.toAdd[data.hash]) {
+        } else if (torrents.toAdd[data.hash]) {
           err(i, "Torrent '" + data.name + "' is a duplicate.");
         } else {
           torrents.toAdd[data.hash] = data;
           var fileRows = [];
           var j = 0;
-          for(var f in data.files) {
+          for (var f in data.files) {
             j++;
             fileRows.push(['div.file', [
               ['input', {
@@ -167,7 +167,7 @@ $(function() {
             $(this).find('.toggle').html(hidden ? '+' : '-');
           }).after($.hsjn(['div.files.hidden', fileRows]));
 
-          if($.browser.msie) {
+          if ($.browser.msie) {
             $('#add-' + i + ' input[type=checkbox]').attr('checked', true);
           }
 

@@ -21,7 +21,7 @@ require_once 'functions.php';
 rtgui_session_start();
 import_request_variables('gp', 'r_');
 
-if($r_operation == 'save_settings') {
+if ($r_operation == 'save_settings') {
   set_user_setting('refresh_interval', $r_set_refresh);
 
   rtorrent_xmlrpc('set_upload_rate', array($r_set_max_up));
@@ -36,8 +36,8 @@ if($r_operation == 'save_settings') {
 $download_cap = rtorrent_xmlrpc('get_download_rate');
 $upload_cap = rtorrent_xmlrpc('get_upload_rate');
 
-if(isset($r_submit)) {
-  if($r_dialog) {
+if (isset($r_submit)) {
+  if ($r_dialog) {
     echo <<<JS
 <script type="text/javascript">
 window.top.reloadUserSettings();
@@ -63,7 +63,7 @@ include_stylesheet('dialogs.css', true);
 ?>
 </head>
 <body class="modal">
-<?php if(!$_GET['dialog']) { ?>
+<?php if (!$_GET['dialog']) { ?>
   <h3>Settings</h3>
 <?php } ?>
   <form method="post" action="settings.php">
@@ -82,7 +82,7 @@ HTML;
         <td class="option">
           <select name="set_refresh" class="themed" id="set-refresh">
 <?php
-foreach(array(
+foreach (array(
   0 => 'Off',
   2000 => '2 secs',
   5000 => '5 secs',
@@ -108,7 +108,7 @@ HTML;
         <td class="option">
           <select name="set_max_down" class="themed download" id="set-max-down">
 <?php
-if(!in_array($download_cap/1024, $cap_speeds) && $download_cap > 0) {
+if (!in_array($download_cap/1024, $cap_speeds) && $download_cap > 0) {
   $bytes = format_bytes($download_cap);
   echo <<<HTML
             <option value="$download_cap" selected="selected">$bytes</option>
@@ -120,7 +120,7 @@ echo <<<HTML
             <option value="0"$selected>-Unlimited-</option>
 
 HTML;
-foreach($cap_speeds as $i) {
+foreach ($cap_speeds as $i) {
   $x = $i * 1024;
   $bytes = format_bytes($x);
   $selected = ($x == $download_cap ? ' selected="selected"' : '');
@@ -139,7 +139,7 @@ HTML;
         <td class="option">
           <select name="set_max_up" class="themed upload" id="set-max-up">
 <?php
-if(!in_array($upload_cap/1024, $cap_speeds) && $upload_cap > 0) {
+if (!in_array($upload_cap/1024, $cap_speeds) && $upload_cap > 0) {
   $bytes = format_bytes($upload_cap);
   echo <<<HTML
             <option value="$upload_cap" selected="selected">$bytes</option>
@@ -151,7 +151,7 @@ echo <<<HTML
             <option value="0"$selected>-Unlimited-</option>
 
 HTML;
-foreach($cap_speeds as $i) {
+foreach ($cap_speeds as $i) {
   $x = $i * 1024;
   $bytes = format_bytes($x);
   $selected = ($x == $upload_cap ? ' selected="selected"' : '');
@@ -170,9 +170,9 @@ HTML;
         <td class="option">
           <select name="set_theme" class="themed" id="set-theme">
 <?php
-foreach(array(true, false) as $pick_default_theme) {
-  foreach(glob('themes/*', GLOB_ONLYDIR) as $theme) {
-    if(($theme == 'themes/default') == $pick_default_theme) {
+foreach (array(true, false) as $pick_default_theme) {
+  foreach (glob('themes/*', GLOB_ONLYDIR) as $theme) {
+    if (($theme == 'themes/default') == $pick_default_theme) {
       $theme = basename($theme);
       $theme_friendly_name = $theme; // TODO: set this from the theme settings
       $selected = ($theme == get_current_theme() ? ' selected="selected"' : '');
@@ -203,7 +203,7 @@ HTML;
 
 
 <?php
-if($can_hide_unhide) {
+if ($can_hide_unhide) {
   $checked = (get_user_setting('show_hidden') == 'yes' ? ' checked="checked"' : '');
   echo <<<HTML
       <tr>
@@ -220,7 +220,7 @@ HTML;
     </table>
 
     <div id="modalButtons">
-<?php if($r_dialog) { ?>
+<?php if ($r_dialog) { ?>
       <input type="submit" class="themed" onclick="window.top.hideDialog(false);" value="Cancel" />
 <?php } else { ?>
       <input type="submit" class="themed" onclick="location.href = '.';" value="Cancel" />

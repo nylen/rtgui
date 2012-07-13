@@ -23,12 +23,12 @@ import_request_variables('gp', 'r_');
 
 // Try using alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/
 // (see http://code.google.com/p/rtgui/issues/detail?id=19)
-if(!function_exists('xml_parser_create')) {
+if (!function_exists('xml_parser_create')) {
   require_once 'xmlrpc.inc';
   require_once 'xmlrpc_extension_api.inc';
 }
 
-if(!isset($r_debug)) {
+if (!isset($r_debug)) {
   $r_debug = 0;
 }
 
@@ -172,8 +172,8 @@ include_script('ie.js');
           <input type="text" class="new-tag-name" value="" />
           <a href="#" class="add-new-tag">add</a>
         </li>
-<?php foreach($_SESSION['used_tags'] as $tag) {
-  if($tag != '_hidden' || $can_hide_unhide) {
+<?php foreach ($_SESSION['used_tags'] as $tag) {
+  if ($tag != '_hidden' || $can_hide_unhide) {
     echo <<<HTML
         <li class="tag no-hide toggle" data-tag="$tag"><input type="checkbox" />$tag</li>
 
@@ -195,13 +195,13 @@ HTML;
         <div id="error"></div>
         <h1><a href="./">rt<span class=green>gui</span></a></h1><br/>
 <?php
-if(is_array($header_links) && count($header_links)) {
+if (is_array($header_links) && count($header_links)) {
   echo <<<HTML
         <div id="header-links">
 
 HTML;
   $i = 0;
-  foreach($header_links as $title => $href) {
+  foreach ($header_links as $title => $href) {
     $prefix = ($i == 0 ? '(Links: ' : ' | ');
     $suffix = (++$i == count($header_links) ? ')' : '');
     echo <<<HTML
@@ -237,7 +237,7 @@ HTML;
         <ul id="navlist">
 <?php
 $views = array('All', 'Started', 'Stopped', 'Active', 'Inactive', 'Complete', 'Incomplete', 'Seeding');
-foreach($views as $name) {
+foreach ($views as $name) {
   $view = ($name == 'All' ? 'main' : strtolower($name));
   $class = ($name == 'All' ? 'view current' : 'view');
   echo <<<HTML
@@ -245,7 +245,7 @@ foreach($views as $name) {
 
 HTML;
 }
-if($debug_mode) { ?>
+if ($debug_mode) { ?>
           <li><a href="#" id="debug-tab">Debug</a></li>
 <?php } ?>
         </ul>
@@ -295,7 +295,7 @@ if($debug_mode) { ?>
       <div class="spacer"></div>
 
       <div class="container">
-<?php if($debug_mode) { ?>
+<?php if ($debug_mode) { ?>
         <pre id="debug" style="display: none;">&nbsp;</pre>
 <?php } ?>
         <div id="torrents">

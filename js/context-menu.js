@@ -3,9 +3,9 @@ $(function() {
     el = $(el);
     el.removeClass('state-true').removeClass('state-false').removeClass('state-undefined');
     setTimeout(function() {
-      if(state === undefined) {
+      if (state === undefined) {
         el.addClass('state-undefined').find(':checkbox').attr('checked', false);
-      } else if(state) {
+      } else if (state) {
         el.addClass('state-true').find(':checkbox').attr('checked', true);
       } else {
         el.addClass('state-false').find(':checkbox').attr('checked', false);
@@ -23,7 +23,7 @@ $(function() {
     setTimeout(function() {
       window.contextMenuShowing = false;
     }, 10);
-    if(clearCheckbox && selectedByMenuClick !== null) {
+    if (clearCheckbox && selectedByMenuClick !== null) {
       $(selectedByMenuClick).find(':checkbox').attr('checked', false);
       selectedByMenuClick = null;
     }
@@ -40,7 +40,7 @@ $(function() {
       var $torrents = $('.torrent-container:has(:checked)').filter(function() {
         return window.data.torrents[this.id].visible;
       });
-      if($.inArray(context, $torrents) == -1) {
+      if ($.inArray(context, $torrents) == -1) {
         $torrents.find(':checkbox').attr('checked', false);
         $torrents = $(context);
         $torrents.find(':checkbox').attr('checked', true);
@@ -62,16 +62,16 @@ $(function() {
         var tag = $(this).data('tag');
         var tagSet = false;
         var tagUnset = false;
-        for(var i in selectedTorrentHashes) {
+        for (var i in selectedTorrentHashes) {
           var hash = selectedTorrentHashes[i];
           var tags = '|' + window.data.torrents[hash].tags + '|';
-          if(tags.indexOf('|' + tag + '|') != -1) {
+          if (tags.indexOf('|' + tag + '|') != -1) {
             tagSet = true;
           } else {
             tagUnset = true;
           }
         }
-        if(tagSet && tagUnset) {
+        if (tagSet && tagUnset) {
           setTagState(this, undefined);
         } else {
           setTagState(this, tagSet);
@@ -80,20 +80,20 @@ $(function() {
     },
 
     onSelect: function(e, context) {
-      if(!$(this).hasClass('no-hide')) {
+      if (!$(this).hasClass('no-hide')) {
         onMenuHide(false);
       }
-      if($(this).data('command')) {
+      if ($(this).data('command')) {
         // Just piggyback off of the control-form logic
         // HACK: this should probably be changed
         $('#bulk-action').val($(this).data('command'));
         $('#control-form').submit();
       }
-      if($(this).hasClass('tag')) {
+      if ($(this).hasClass('tag')) {
         setTagState(this, !getTagState(this));
-      } else if($(this).hasClass('toggle')) {
+      } else if ($(this).hasClass('toggle')) {
         var $ch = $(this).find(':checkbox');
-        if($ch.filter(e.target).length) {
+        if ($ch.filter(e.target).length) {
           // Need to do this because otherwise something "resets" the checked state
           // of the checkbox to what it was before this event handler was called.
           var checked = $ch.attr('checked');
@@ -104,7 +104,7 @@ $(function() {
           $ch.attr('checked', !$ch.attr('checked'));
         }
       }
-      if($(this).hasClass('leave-checked')) {
+      if ($(this).hasClass('leave-checked')) {
         $('#leave-checked').attr('checked', $(this).find(':checkbox').attr('checked'));
       }
     },
@@ -120,20 +120,20 @@ $(function() {
     var tags = $tagName.val();
     tags = tags.replace(/[^a-z0-9 (),_=|'-]/gi, '').replace(/\|+/, '|').split('|');
 
-    for(var i in tags) {
+    for (var i in tags) {
       var tag = tags[i];
-      if(!tag) continue;
-      if(tag == '_hidden' && !config.canHideUnhide) continue;
+      if (!tag) continue;
+      if (tag == '_hidden' && !config.canHideUnhide) continue;
       var foundTagListItem = false;
       $('#context-menu li.tag').each(function() {
-        if($(this).data('tag') == tag) {
+        if ($(this).data('tag') == tag) {
           foundTagListItem = true;
           return false;
         }
       });
-      if(!foundTagListItem) {
+      if (!foundTagListItem) {
         var $addAfter = $('#context-menu li.new-tag');
-        while($addAfter.next('li').is('.tag') && $addAfter.next('li').data('tag') < tag) {
+        while ($addAfter.next('li').is('.tag') && $addAfter.next('li').data('tag') < tag) {
           $addAfter = $addAfter.next('li');
         }
         $addAfter.after(
@@ -146,8 +146,8 @@ $(function() {
   };
 
   $tagName.keyup(function(e) {
-    if(e.keyCode == 13) {
-      if($(this).val()) {
+    if (e.keyCode == 13) {
+      if ($(this).val()) {
         addTags();
       } else {
         $('#context-menu li.tag-controls .save').trigger('click');

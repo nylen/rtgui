@@ -6,30 +6,30 @@ function makeTemplate() {
   };
 
   var arr = [];
-  if($.browser.msie) {
+  if ($.browser.msie) {
     // I hate you
     var state = 0, token = '';
-    for(var i = 0; i < str.length; i++) {
+    for (var i = 0; i < str.length; i++) {
       var c = str.charAt(i);
-      for(var k in markers) {
-        if(markers[k] == c) {
+      for (var k in markers) {
+        if (markers[k] == c) {
           state = 2;
-          if(token) {
+          if (token) {
             arr.push(token);
             token = '';
           }
           arr.push(c);
         }
       }
-      if(state == 1) {
-        if(/[a-z0-9_-]/i.test(c)) {
+      if (state == 1) {
+        if (/[a-z0-9_-]/i.test(c)) {
           token += c;
         } else {
           state = 0;
           arr.push(token);
           token = c;
         }
-      } else if(state == 2) {
+      } else if (state == 2) {
         state = 1;
       } else {
         token += c;
@@ -49,37 +49,37 @@ function makeTemplate() {
   };
 
   var i = 1;
-  for(var k in markers) {
-    if(str.charAt(0) == markers[k]) {
+  for (var k in markers) {
+    if (str.charAt(0) == markers[k]) {
       i = 0;
       template.before = '';
     }
   }
 
   var lastVarName = '';
-  while(i < arr.length) {
+  while (i < arr.length) {
     var thisSubstitution = {};
-    for(var k in markers) {
-      if(arr[i] == markers[k]) {
+    for (var k in markers) {
+      if (arr[i] == markers[k]) {
         thisSubstitution.type = k;
         i++;
         break;
       }
     }
-    if(!thisSubstitution.type) {
+    if (!thisSubstitution.type) {
       error('Invalid template (Type marker not found)');
     }
     thisSubstitution.varName = arr[i++];
-    if(thisSubstitution.varName) {
-      if(thisSubstitution.type == 'value') {
+    if (thisSubstitution.varName) {
+      if (thisSubstitution.type == 'value') {
         template.mustRewriteHTML[thisSubstitution.varName] = true;
       }
     } else {
       thisSubstitution.varName = lastVarName;
-      if(!template.mustRewriteHTML[thisSubstitution.varName]) {
+      if (!template.mustRewriteHTML[thisSubstitution.varName]) {
         template.mustRewriteHTML[thisSubstitution.varName] = false;
       }
-      if(!lastVarName) {
+      if (!lastVarName) {
         error('Invalid template (Variable name not found)');
       }
     }
@@ -92,18 +92,18 @@ function makeTemplate() {
 }
 
 function applyTemplate(data, template, key, group) {
-  if(group === undefined) {
+  if (group === undefined) {
     group = 't';
   }
 
   var html = template.before;
 
-  for(var i = 0; i < template.substitutions.length; i++) {
+  for (var i = 0; i < template.substitutions.length; i++) {
     var s = template.substitutions[i];
-    switch(s.type) {
+    switch (s.type) {
       case 'id':
         html += group + '-';
-        if(key) {
+        if (key) {
           html += key + '-';
         }
         html += s.varName;
@@ -178,8 +178,8 @@ var formatHandlers = {
   disk_free: formatBytes,
   disk_total: formatBytes,
   disk_percent: function(n) {
-    if(n <= config.diskAlertThreshold) {
-      if(!$(this).parent().hasClass('diskalert')) {
+    if (n <= config.diskAlertThreshold) {
+      if (!$(this).parent().hasClass('diskalert')) {
         var msg = 'Disk free space in your torrents directory is running low!';
         window.setTimeout(function() { alert(msg); }, 200);
         $(this).parent().addClass('diskalert');
@@ -194,7 +194,7 @@ var formatHandlers = {
     return date(config.dateAddedFormat, ts);
   },
   eta: function(n) {
-    if(!(n = Math.round(n))) {
+    if (!(n = Math.round(n))) {
       return false;
     }
     var eta = '';
@@ -204,14 +204,14 @@ var formatHandlers = {
       ['m', 60],
       ['s', 1]
     ];
-    for(var i = 0; i < units.length; i++) {
+    for (var i = 0; i < units.length; i++) {
       var u = units[i];
-      if(n >= u[1]) {
+      if (n >= u[1]) {
         var roundTo = units[Math.min(i + 1, units.length - 1)][1];
         n = Math.round(n / roundTo) * roundTo;
         eta += Math.floor(n / u[1]) + u[0];
         n %= u[1];
-        if(++i < units.length) {
+        if (++i < units.length) {
           u = units[i];
           eta += ' ' + Math.round(n / u[1]) + u[0];
         }
@@ -224,14 +224,14 @@ var formatHandlers = {
     return (m ? m : false);
   },
   tags: function(tags) {
-    if(!tags || !tags.length) {
+    if (!tags || !tags.length) {
       return false;
     }
     var html = '(';
     var first = true;
-    for(var i in tags) {
+    for (var i in tags) {
       var tag = tags[i];
-      if(!first) html += ', ';
+      if (!first) html += ', ';
       first = false;
       html += '<a class="tag" href="#">' + tag + '</a>';
     }
@@ -268,12 +268,12 @@ var formatHandlers = {
 
 function getFormattedValue(varName, varValue, el) {
   var val = varValue;
-  if(formatHandlers[varName]) {
+  if (formatHandlers[varName]) {
     val = formatHandlers[varName].call(el, varValue);
   }
-  if(val === false) {
+  if (val === false) {
     val = '';
-  } else if(!$.trim(String(val))) {
+  } else if (!$.trim(String(val))) {
     val = '&nbsp;';
   }
   return String(val);

@@ -7,15 +7,15 @@
   }
 
   function assert(cond) {
-    if(!cond) {
+    if (!cond) {
       throw new Error('Assert failed (debug me!)');
     }
   }
 
   function randomArray(n, p) {
-    if(!p) p = 1000;
+    if (!p) p = 1000;
     var arr = new Array(n);
-    for(var i=0; i<n; i++) {
+    for (var i=0; i<n; i++) {
       arr[i] = Math.round(Math.random()*p);
     }
     return arr;
@@ -23,10 +23,10 @@
 
   function mostlySortedArray(n, r) {
     var arr = new Array(n);
-    for(var i=0; i<n; i++) {
+    for (var i=0; i<n; i++) {
       arr[i] = i;
     }
-    for(var i=0; i<r; i++) {
+    for (var i=0; i<r; i++) {
       var x = Math.floor(Math.random()*n);
       var y = Math.floor(Math.random()*n);
       var tmp = arr[x];
@@ -57,11 +57,11 @@
   // Test patience sorting
   (function() {
     var trials = 30, len = 100;
-    for(var n=0; n<trials; n++) {
+    for (var n=0; n<trials; n++) {
       a = mostlySortedArray(len, Math.floor(Math.random()*len));
       var p = patienceSort(a);
-      for(var i=1; i<a.length; i++) {
-        if(i < p.subseq.length) {
+      for (var i=1; i<a.length; i++) {
+        if (i < p.subseq.length) {
           assert(p.subseq[i] >= p.subseq[i-1]);
         }
         assert(p.sorted[i] >= p.sorted[i-1]);
@@ -87,27 +87,27 @@
     var trials = mob?50:500, len = 50, swaps = 10;
     log('trials=',trials, 'len=',len, 'swaps=',swaps);
 
-    for(var c in cs) {
+    for (var c in cs) {
       var data = new Array(trials);
-      for(var i=0; i<trials; i++) {
+      for (var i=0; i<trials; i++) {
         data[i] = mostlySortedArray(len, swaps);
       }
 
       var d1 = new Date();
-      for(var i=0; i<trials; i++) {
+      for (var i=0; i<trials; i++) {
         patienceSort(data[i], cs[c]);
       }
       var d2 = new Date();
-      for(var i=0; i<trials; i++) {
+      for (var i=0; i<trials; i++) {
         patienceSort(data[i], cs[c], true);
       }
       var d3 = new Date();
-      if(c == 'default') {
-        for(var i=0; i<trials; i++) {
+      if (c == 'default') {
+        for (var i=0; i<trials; i++) {
           data[i].sort();
         }
       } else {
-        for(var i=0; i<trials; i++) {
+        for (var i=0; i<trials; i++) {
           data[i].sort(cs[c]);
         }
       }
