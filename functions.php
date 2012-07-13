@@ -200,7 +200,7 @@ function get_all_torrents($params) {
   $for_html      = get_param($params, 'for_html', false);
   $view          = get_param($params, 'view', 'main');
 
-  global $download_dir;
+  global $disk_usage_dir;
   global $tracker_highlight, $tracker_highlight_default;
   global $can_hide_unhide, $date_added_format;
 
@@ -367,6 +367,8 @@ function get_all_torrents($params) {
       if(function_exists('get_local_torrent_path')) {
         $fn = get_local_torrent_path($fn);
       }
+      // Yes, this even works for magnet links.  rTorrent creates a ".meta"
+      // file and sets it as "tied_to_file".
       $s['date_added'] = filemtime($fn);
       $_SESSION['persistent'][$hash] = $s;
     }
@@ -463,9 +465,9 @@ function get_all_torrents($params) {
       'total_up_rate'              => format_bytes($total_up_rate  , '0 B/s', '/s'),
       'total_down_limit'           => format_bytes(rtorrent_xmlrpc('get_download_rate'), 'unlim', '/s'),
       'total_up_limit'             => format_bytes(rtorrent_xmlrpc('get_upload_rate'),   'unlim', '/s'),
-      'show_disk_free'             => isset($download_dir),
-      'disk_free'                  => format_bytes(@disk_free_space($download_dir)),
-      'disk_total'                 => format_bytes(@disk_total_space($download_dir)),
+      'show_disk_free'             => isset($disk_usage_dir),
+      'disk_free'                  => format_bytes(@disk_free_space($disk_usage_dir)),
+      'disk_total'                 => format_bytes(@disk_total_space($disk_usage_dir)),
     ),
   );
   if($data['global']['disk_total'] > 0) {

@@ -42,10 +42,20 @@ $(function() {
     success: function(d) {
       $('img.loading').remove();
 
-      // work around bug in jquery.form.js (TODO: fix this)
-      var files = JSON.parse(base64_decode(d));
-      if(!files.length) {
-        alert('Please specify one or more torrents to add.');
+      var files;
+      var error = false;
+      try {
+        // work around bug in jquery.form.js (TODO: fix this)
+        files = JSON.parse(base64_decode(d));
+        if (!files.length) {
+          alert('Please specify one or more torrents to add.');
+          error = true;
+        }
+      } catch (e) {
+        error = true;
+        alert('Error parsing server response: ' + e + '\n\nServer response:\n\n' + d);
+      }
+      if (error) {
         $('#next').removeAttr('disabled');
         return false;
       }
@@ -61,7 +71,9 @@ $(function() {
         $('#to-add').hsjn(
           ['div.add-torrent', {'id': 'add-' + i},
             ['div.name' + (error ? '.error' : ''),
-              error ? htmlspecialchars(error) : files[i].value
+              error
+                ? htmlspecialchars(error).replace(/LINK{([^}]+)}/, '<a href="$1">$1</a>')
+                : files[i].display_name
             ]
           ]
         );
@@ -96,10 +108,8 @@ $(function() {
         var data = {
           action: 'process_' + f.type,
           tags: tagsStr,
-          magnet_name: f.magnet_name,
-          magnet_hash: f.magnet_hash
+          data: f.data
         };
-        data[f.type] = f.value;
 
         $.post('add-torrents.php', data, function(d) {
           processTorrentResponse(d, i);
@@ -109,18 +119,17 @@ $(function() {
         var data = {};
         try {
           data = JSON.parse(d);
-        } catch(x) {
+        } catch (e) {
+          alert('Error: ' + e + '\n\nServer response:\n\n' + d);
           processTorrent(i + 1);
           return;
         }
-        // data { hash, name, files, filename }
+        // data { hash, name, files }
 
         if(data.error) {
           err(i, data.error);
-        } else if(torrents.current[data.hash]) {
-          err(i, 'Torrent "' + data.name + '" has already been downloaded');
         } else if(torrents.toAdd[data.hash]) {
-          err(i, 'Torrent "' + data.name + '" is a duplicate');
+          err(i, "Torrent '" + data.name + "' is a duplicate.");
         } else {
           torrents.toAdd[data.hash] = data;
           var fileRows = [];

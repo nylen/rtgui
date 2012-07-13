@@ -24,13 +24,16 @@ $scgi_timeout = 5; // seconds
 // Site title (change from 'rtGui' if you have multiple)
 $site_title = 'rtGui';
 
-// rtorrent 'watch' directory (used for uploading torrents)
-$watch_dir = '/media/bit.torrents/';
+// rtorrent .torrent file directory (where new torrents' .torrent files will go)
+$torrent_dir = '/media/bit.torrents/';
 
-// Start download immediately after loading torrent
+// rtorrent download directory (where new torrents' data will go)
+$download_dir = '/media/rtorrent/';
+
+// Start downloading new torrents immediately
 $load_start = true;
 
-// Default values for settings that the user can change
+// Default values for settings that the user can change in the web interface
 $default_user_settings = array(
   // Theme to use for site, unless it is changed by the user or the user-agent
   'theme' => 'default',
@@ -49,7 +52,7 @@ $default_user_settings = array(
 );
 
 // Path to report disk usage
-$download_dir = '/media/1000/';
+$disk_usage_dir = '/media/1000/';
 
 // Threshold for disk usage alert (%)
 $disk_alert_threshold = 15;
@@ -106,22 +109,32 @@ if($can_hide_unhide) {
   $always_show_tags[] = '_hidden';
 }
 
-/* If the get_watchdir_from_tags() function exists, it will be used to set the watch
- * directory for a newly added torrent.  It takes a single argument which is an array
- * of the tags that the user has added to this torrent.  Its default behavior should
- * be to return $watch_dir.
- *
- * NOTE: If this function exists and does NOT return $watch_dir for a given torrent,
- * then the program will behave as if $load_start above is set to false.  This means
- * that rTorrent must be set up to watch the destination directory for new files, and
- * there may be a delay of a few seconds in between when a torrent is added and when
- * it shows up in the list.
+/* If the get_torrent_dir_from_tags() function exists, it will be used to set 
+ * the .torrent file directory for a newly added torrent.  It takes a single 
+ * argument which is an array of the tags that the user has added to this 
+ * torrent.  Its default behavior should be to return $torrent_dir.
  */
-//function get_watchdir_from_tags($tags) { ... }
+//function get_torrent_dir_from_tags($tags) { ... }
 
-/* Define a function that will be run every time a page is requested.  It can be used to
- * check if rTorrent is running, or to mount the rTorrent directories if rTorrent is
- * running on another machine.
+/* If the get_download_dir_from_tags() function exists, it will be used to set
+ * the download directory for a newly added torrent.  It takes a single
+ * argument which is an array of the tags that the user has added to this
+ * torrent.  It should return false to indicate that the default directory
+ * should be used for a new torrent.
+ */
+//function get_download_dir_from_tags($tags) { ... }
+
+/* If the get_custom1_from_tags() function exists, it will be used to set the
+ * custom1 value for a newly added torrent.  It takes a single argument which
+ * is an array of the tags that the user has added to this torrent.  It should
+ * return false to indicate that the custom1 value should not be set for a new
+ * torrent.
+ */
+//function get_custom1_from_tags($tags) { ... }
+
+/* Define a function that will be run every time a page is requested.  It can
+ * be used to check if rTorrent is running, or to mount the rTorrent
+ * directories if rTorrent is running on another machine.
  */
 //function on_page_requested() { ... }
 

@@ -2,9 +2,9 @@
 
 require_once 'config.php';
 require_once 'functions.php';
-rtgui_session_start();
-
 require_once 'Torrent.php';
+
+rtgui_session_start();
 
 // convert warnings into catchable exceptions
 function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
@@ -96,7 +96,10 @@ function process_torrent_data($content, $filename, $create_file=true) {
 
 function save_add_data($hash, $data) {
   $data['hash'] = $hash;
-  if(!is_array($_SESSION['to_add_data'])) {
+  if (rtorrent_xmlrpc('d.get_hash', $hash)) {
+    json_error("Torrent '$data[name]' has already been downloaded.");
+  }
+  if (!is_array($_SESSION['to_add_data'])) {
     $_SESSION['to_add_data'] = array();
   }
   $_SESSION['to_add_data'][$hash] = $data;
@@ -108,19 +111,28 @@ if(!is_array($r_tags)) {
   $r_tags = explode('|', $r_tags);
 }
 
-$this_watch_dir = $watch_dir;
-if(function_exists('get_watchdir_from_tags')) {
-  switch($r_action) {
-    case 'process_url':
-    case 'process_file':
-    case 'add':
-      try {
-        $this_watch_dir = get_watchdir_from_tags($r_tags);
-      } catch(Exception $e) {
-        json_error($e->getMessage());
+$this_torrent_dir = $torrent_dir;
+$this_custom1 = false;
+$this_download_dir = false;
+switch ($r_action) {
+  case 'process_url':
+  case 'process_file':
+  case 'process_magnet':
+  case 'add':
+    try {
+      if (function_exists('get_torrent_dir_from_tags')) {
+        $this_torrent_dir = get_torrent_dir_from_tags($r_tags);
       }
-      break;
-  }
+      if (function_exists('get_download_dir_from_tags')) {
+        $this_download_dir = get_download_dir_from_tags($r_tags);
+      }
+      if (function_exists('get_custom1_from_tags')) {
+        $this_custom1 = get_custom1_from_tags($r_tags);
+      }
+    } catch(Exception $e) {
+      json_error($e->getMessage());
+    }
+    break;
 }
 
 switch($r_action) {
@@ -144,6 +156,7 @@ switch($r_action) {
         if (preg_match('@^magnet:\?@i', $url)) {
 
           // Magnet URL logic adapted from http://wiki.rtorrent.org/MagnetUri
+          // and rutorrent source code
 
           $version = rtorrent_xmlrpc_cached('system.client_version');
           // According to the above page, 0.8.9+ is OK except for 0.9.0
@@ -156,11 +169,10 @@ switch($r_action) {
           }
 
           $dht_stats = rtorrent_xmlrpc_cached('dht_statistics');
-          if ($dht_stats['dht'] != 'auto' && $dht_stats['dht'] != 'on') {
-            $to_add[] = array('error' => <<<HTML
-              Magnet URLs require DHT to be enabled.  See
-              http://libtorrent.rakshasa.no/wiki/RTorrentUsingDHT for more info.
-HTML
+          if (true){#$dht_stats['dht'] != 'auto' && $dht_stats['dht'] != 'on') {
+            $to_add[] = array(
+              'error' => 'Magnet URLs require DHT to be enabled.  See '
+                + 'LINK{http://libtorrent.rakshasa.no/wiki/RTorrentUsingDHT} for more info.'
             );
             continue;
           }
@@ -173,20 +185,22 @@ HTML
             );
             continue;
           }
-          $hash = substr($params['xt'], strlen('urn:btih:'));
+          $hash = strtoupper(substr($params['xt'], strlen('urn:btih:')));
           if ($params['dn']) {
             $name = preg_replace('@[^a-z0-9_\' -]@i', '_', $params['dn']);
             $name = preg_replace('@\.torrent$@i', '', $name);
           } else {
             $name = $hash;
           }
-          $filename = "magnet-$name.torrent";
-          file_put_contents("$tmp_add_dir/$filename", 'd10:magnet-uri' . strlen($url) . ':' . $url);
           $to_add[] = array(
-            'type' => 'file',
-            'value' => $filename,
-            'magnet_name' => $name,
-            'magnet_hash' => $hash
+            'type' => 'magnet',
+            'display_name' => $name,
+            'data' => json_encode(array(
+              'type' => 'magnet', // Yes, this is necessary.  Yes, it sucks.
+              'url' => $url,
+              'name' => $name,
+              'hash' => $hash
+            ))
           );
 
         } else {
@@ -203,7 +217,8 @@ HTML
           if(filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
             $to_add[] = array(
               'type' => 'url',
-              'value' => $url
+              'display_name' => $url,
+              'data' => $url
             );
           }
 
@@ -222,7 +237,8 @@ HTML
         $filename = get_filename_no_clobber("$tmp_add_dir/$filename");
         $to_add_this = array(
           'type' => 'file',
-          'value' => str_replace("$tmp_add_dir/", '', $filename)
+          'display_name' => str_replace("$tmp_add_dir/", '', $filename),
+          'data' => $filename,
         );
 
         if(!move_uploaded_file($_FILES['add_files']['tmp_name'][$i], $filename)) {
@@ -247,7 +263,7 @@ HTML
     if(!function_exists('curl_init')) {
       json_error('The required PHP CURL extension is not present.');
     }
-    $c = curl_init($r_url);
+    $c = curl_init($r_data);
     curl_setopt_array($c, array(
       CURLOPT_HEADER => true,
       CURLOPT_SSL_VERIFYPEER => false,
@@ -263,7 +279,7 @@ HTML
       curl_close($c);
       $response = parse_http_response($r);
       $content = $response[1];
-      $filename = basename(parse_url($r_url, PHP_URL_PATH));
+      $filename = basename(parse_url($r_data, PHP_URL_PATH));
       if(!preg_match('@\.torrent$@i', $filename)) {
         $filename .= '.torrent';
       }
@@ -299,20 +315,21 @@ HTML
 
 
   case 'process_file':
-    $r_file = "$tmp_add_dir/$r_file";
-    if(file_exists($r_file) && dirname(realpath($r_file)) === realpath($tmp_add_dir)) {
-      if ($r_magnet_hash) {
-        print json_encode(save_add_data($r_magnet_hash, array(
-          'name' => $r_magnet_name,
-          'files' => array('(Filenames not known for magnet links)' => 0),
-          'filename' => basename($r_file)
-        )));
-      } else {
-        print json_encode(process_torrent_data(file_get_contents($r_file), basename($r_file), false));
-      }
+    if(file_exists($r_data) && dirname(realpath($r_data)) === realpath($tmp_add_dir)) {
+      print json_encode(process_torrent_data(file_get_contents($r_data), basename($r_data), false));
     } else {
       json_error('Bad path or filename');
     }
+
+    break;
+
+  case 'process_magnet':
+    $data = @json_decode($r_data, true);
+    if (!$data || !$data['url'] || !$data['name'] || !$data['hash']) {
+      json_err('Invalid request');
+    }
+    $data['files'] = array('(Filenames not known for magnet links)' => 0);
+    print json_encode(save_add_data($data['hash'], $data));
 
     break;
 
@@ -340,17 +357,37 @@ HTML;
 
     foreach($r_add_torrent as $hash) {
       if($data = $_SESSION['to_add_data'][$hash]) {
-        $filename = $data['filename'];
-        $name = $data['name'];
-        if(copy("$tmp_add_dir/$filename", "$this_watch_dir/$filename")) {
-          if($load_start && $this_watch_dir == $watch_dir) {
-            rtorrent_xmlrpc('load_start', "$this_watch_dir/$filename");
+
+        $can_add = true;
+        // Create variables with 'd_' prefix
+        extract($data, EXTR_PREFIX_ALL, 'd');
+
+        if ($d_type != 'magnet') {
+          if (!copy("$tmp_add_dir/$d_filename", "$this_torrent_dir/$d_filename")) {
+            $errors[] = "Failed to copy torrent \"$d_name\" to directory \"$this_torrent_dir\"";
+            $can_add = false;
           }
-          if(function_exists('on_add_torrent')) {
-            on_add_torrent($name, $hash, $r_tags, "$this_watch_dir/$filename");
+        }
+
+        if ($can_add) {
+          $cmd = ($load_start ? 'load_start' : 'load');
+          $params = array();
+          if ($d_type == 'magnet') {
+            $params[] = $d_url;
+          } else {
+            $params[] = "$this_torrent_dir/$d_filename";
           }
-        } else {
-          $errors[] = "Failed to copy torrent \"$name\"";
+          if ($this_download_dir !== false) {
+            $params[] = "d.set_directory=$this_download_dir";
+          }
+          if ($this_custom1 !== false) {
+            $params[] = "d.set_custom1=$this_custom1";
+         }
+          $response = do_xmlrpc(xmlrpc_encode_request($cmd, $params));
+          if (!response || @xmlrpc_is_fault($response)) {
+            $errors[] = "Failed to add torrent \"$d_name\" to rTorrent:\n\n"
+              . print_r($response, true);
+          }
         }
       }
     }

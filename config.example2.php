@@ -27,8 +27,8 @@ $scgi_timeout = 5; // seconds
 // Site title (change from rtGui if you have multiple)
 $site_title = 'rtGui (htpc)';
 
-// rtorrent 'watch' directory (used for upload torrent)
-$watch_dir = '/media/htpc/bit.torrents/';
+// rtorrent .torrent file directory (where new torrents' .torrent files will go)
+$torrent_dir = '/media/htpc/bit.torrents/';
 
 // Start download immediately after loading torrent
 $load_start = true;
@@ -110,43 +110,39 @@ if($can_hide_unhide) {
 }
 
 
-/* If the get_watchdir_from_tags() function exists, it will be used to set the watch
- * directory for a newly added torrent.  It takes a single argument which is an array
- * of the tags that the user has added to this torrent.  Its default behavior should
- * be to return $watch_dir.
- *
- * NOTE: If this function exists and does NOT return $watch_dir for a given torrent,
- * then the program will behave as if $load_start above is set to false.  This means
- * that rTorrent must be set up to watch the destination directory for new files, and
- * there may be a delay of a few seconds in between when a torrent is added and when
- * it shows up in the list.
+/* If the get_torrent_dir_from_tags() function exists, it will be used to set 
+ * the .torrent file directory for a newly added torrent.  It takes a single 
+ * argument which is an array of the tags that the user has added to this 
+ * torrent.  Its default behavior should be to return $torrent_dir.
  *
  * Any number of structures are possible here - I use a setup similar to
- * http://tinyurl.com/rTorrentMultipleWatchDirs where $watch_dir is the base watch
- * directory (which is not actually watched for .torrent files) and there are watched
- * subdirectories which will download to different folders.  So at least one of the
- * tags that represent a watch directory needs to be present.
+ * http://tinyurl.com/rTorrentMultipleWatchDirs where $torrent_dir is the base 
+ * .torrent file directory (which does not actually contain any .torrent files) 
+ * and there are subdirectories which will download to different folders.  So 
+ * at least one of the tags that represent a potential .torrent file directory 
+ * needs to be present.
  */
-function get_watchdir_from_tags($tags) {
-  global $watch_dir; // don't forget this!
+function get_torrent_dir_from_tags($tags) {
+  global $torrent_dir; // don't forget this!
   global $always_show_tags;
-  $valid_watchdir_tags = array_diff($always_show_tags, array('_hidden'));
-  $found_tags = array_intersect($tags, $valid_watchdir_tags);
+  $valid_torrent_dir_tags = array_diff($always_show_tags, array('_hidden'));
+  $found_tags = array_intersect($tags, $valid_torrent_dir_tags);
   if(count($found_tags) != 1) {
     // This error will be carried through and shown in the browser.
-    throw new ErrorException("Must choose ONE tag in '" . implode("', '", $valid_watchdir_tags) . "' for this torrent.");
+    throw new ErrorException("Must choose ONE tag in '" . implode("', '", $valid_torrent_dir_tags) . "' for this torrent.");
   }
   // There's no guarantee that the single key in $found_tags is 0.
   foreach($found_tags as $tag) {
-    return rtrim($watch_dir, '/') . "/$tag";
+    return rtrim($torrent_dir, '/') . "/$tag";
   }
 }
 
-/* If rTorrent is running on another PC, you can define the get_local_torrent_path($path)
- * function to change a remote path for a .torrent file into a local path (this means the
- * remote directory containing your .torrent files has to be mounted on the web server).
- * This will make "date added" work properly since it is based on the modification date
- * of the .torrent file tied to each download.
+/* If rTorrent is running on another computer, you can define the
+ * get_local_torrent_path($path) function to change a remote path for a 
+ * .torrent file into a local path (this means the remote directory containing 
+ * your .torrent files has to be mounted on the web server).  
+ * This will make "date added" work properly since it is based on the 
+ * modification date of the .torrent file tied to each download.
  */
 function get_local_torrent_path($path) {
   return str_replace('/media/bit.torrents/', '/media/htpc/bit.torrents/', $path);
