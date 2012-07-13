@@ -30,9 +30,9 @@ $(function() {
     dragStop: showIframe,
     resizeStart: hideIframe,
     resizeStop: showIframe,
-    // For some reason dragging and resizing are VERY slow...
-    draggable: false,
-    resizable: false
+    // For some reason dragging and resizing are VERY slow in Firefox...
+    draggable: !$.browser.mozilla,
+    resizable: !$.browser.mozilla
   });
 
   //updateTorrentsHTML(data, true);
