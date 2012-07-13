@@ -9,7 +9,6 @@ $args = array();
 for($i = 2; $i < count($argv); $i++) {
   $args[] = $argv[$i];
 }
-if(!count($args)) $args[] = '';
 
 $response = do_xmlrpc(xmlrpc_encode_request($call, $args));
 $readable = print_r($response, true);
