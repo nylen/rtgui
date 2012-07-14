@@ -46,7 +46,8 @@ $user_settings = array(
   'sortVar' => get_user_setting('sort_var'),
   'sortDesc' => (get_user_setting('sort_desc') == 'yes' ? true : false),
   'theme' => get_current_theme(),
-  'useDialogs' => (get_user_setting('use_dialogs') == 'yes' ? true : false)
+  'useDialogs' => (get_user_setting('use_dialogs') == 'yes' ? true : false),
+  'showHidden' => (get_user_setting('show_hidden') == 'yes' ? true : false)
 );
 
 // Reset saved data (if any)
