@@ -13,6 +13,13 @@ function onAjaxRequestDone(data) {
 $(function() {
   // Perform initialization functions
 
+  window.templates = {};
+
+  $('script[id^=template-]').each(function() {
+    var id = $(this).attr('id');
+    window.templates[id.replace(/^template-/, '')] = swig.compile($(this).html());
+  });
+
   var hideIframe = function() {
     $('#dialog-iframe').css('display', 'none');
   };
@@ -168,7 +175,7 @@ $(function() {
     }
     var $this = $(this);
     var href = $this.attr('href');
-    if (!/dialog=1/.test(href)) {
+    if (!/[&?]dialog=1/.test(href)) {
       // Dialog pages know not to display a title if $_GET['dialog'] is set
       href += (/\?/.test(href) ? '&' : '?') + 'dialog=1';
     }

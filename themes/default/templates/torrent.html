@@ -1,35 +1,35 @@
-<div class="torrent" id="t-{{ hash }}">
-  <div class="namecol" id="t-{{ hash }}-name">
-    <div class="tracker" id="t-{{ hash }}-tracker_hostname">
+<div class="torrent">
+  <div class="namecol">
+    <div class="tracker">
       <a class="filter" href="#" rel="tracker:{{ tracker_hostname }}" style="color: {{ tracker_color }}">{{ tracker_hostname }}</a>
     </div>
-    <input type="checkbox" name="select[]" class="checkbox" id="t-{{ hash }}-checkbox" value="{{ hash }}" />
+    <input type="checkbox" name="select[]" class="checkbox" value="{{ hash }}" />
     <a class="dialog {{ status_class }}" rel="600:550" href="view.php?hash={{ hash }}">{{ name }}</a>
-    <span class="tags" id="t-{{ hash }}-tags">
+    <span class="tags">
       {% for tag in tags %}
         {% if loop.first %}({% endif %}<a class="tag" data-tag="{{ tag }}" href="#{{ tag }}">{{ tag }}</a>{% if loop.last %}){% else %}, {% endif %}
       {% endfor %}
     </span>
   </div>
   <div class="errorcol">
-      <span id="t-{{ hash }}-eta">{% if eta_str %}{{ eta_str }} remaining...{% endif %}</span>
-      <span id="t-{{ hash }}-message">{{ message }}</span>
+      <span>{% if eta_str %}{{ eta_str }} remaining...{% endif %}</span>
+      <span>{{ message }}</span>
   </div>
   <div class="datacol column-name-grp">
-    <a class="ajax" href="control.php?hash={{ hash }}&amp;cmd={{ start_stop_cmd }}">
+    <a class="ajax image-link" href="control.php?hash={{ hash }}&amp;cmd={{ start_stop_cmd }}">
       <img alt="{{ start_stop_cmd }} torrent" border="0" src="images/{{ start_stop_cmd }}.gif" width="16" height="16" />
     </a>
-    <a class="ajax confirm" rel="delete" href="control.php?hash={{ hash }}&amp;cmd=delete">
+    <a class="ajax image-link confirm" rel="delete" href="control.php?hash={{ hash }}&amp;cmd=delete">
       <img alt="delete torrent" border="0" src="images/delete.gif" width="16" height="16" align="bottom" />
     </a>
-    <a class="dialog" rel="600:550" href="view.php?hash={{ hash }}">
+    <a class="dialog image-link" rel="600:550" href="view.php?hash={{ hash }}">
       <img alt="view torrent info" border="0" src="images/view.gif" width="16" height="16" />
     </a><br />
   </div>
   <div class="datacol column-status">
     <img alt="torrent status" src="images/{{ status_class }}.gif" width="10" height="9" />{{ status }}
   </div>
-  <div class="datacol column-done" id="t-{{ hash }}-percent_complete">
+  <div class="datacol column-done">
     {{ percent_complete_str }}<br />
     <table align="center" border="0" cellspacing="0" cellpadding="1" bgcolor="#666666" width="50">
       <tr>
@@ -40,18 +40,17 @@
     </table>
   </div>
   {% autoescape false %}
-    <div class="datacol column-remain" id="t-{{ hash }}-bytes_remaining">{{ bytes_remaining_str }}</div>
-    <div class="datacol column-size" id="t-{{ hash }}-size_bytes">{{ size_bytes_str }}</div>
-    <div class="datacol column-down" id="t-{{ hash }}-down_rate">{{ down_rate_str }}</div>
-    <div class="datacol column-up" id="t-{{ hash }}-up_rate">{{ up_rate_str }}</div>
-    <div class="datacol column-seeded" id="t-{{ hash }}-up_total">{{ up_total_str }}</div>
+    <div class="datacol column-remain">{{ bytes_remaining_str }}</div>
+    <div class="datacol column-size">{{ size_bytes_str }}</div>
+    <div class="datacol column-down">{{ down_rate_str }}</div>
+    <div class="datacol column-up">{{ up_rate_str }}</div>
+    <div class="datacol column-seeded">{{ up_total_str }}</div>
   {% endautoescape %}
-  <div class="datacol column-ratio" id="t-{{ hash }}-ratio">{{ ratio_str }}</div>
-  <div class="datacol column-peers" id="t-{{ hash }}-peers">
+  <div class="datacol column-ratio">{{ ratio_str }}</div>
+  <div class="datacol column-peers">
     {{ peers_connected }}/{{ peers_not_connected }} ({{ peers_complete }})
   </div>
-  <div class="datacol column-priority" id="t-{{ hash }}-priority_str">{{ priority_str }}</div>
-  <div class="datacollast column-tracker-date" id="t-{{ hash }}-date_added">{{ date_added_str }}</div>
+  <div class="datacol column-priority">{{ priority_str }}</div>
+  <div class="datacollast column-tracker-date">{{ date_added_str }}</div>
   <div class="spacer"> </div>
 </div>
-

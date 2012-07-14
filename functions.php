@@ -147,7 +147,7 @@ function include_template($template_name) {
   $template_contents = file_get_contents(get_template_filename($template_name));
   echo <<<HTML
     <script type="text/html" id="template-$template_name">
-      $template_contents
+$template_contents
     </script>
 HTML;
 }

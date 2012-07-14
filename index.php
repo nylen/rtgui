@@ -310,11 +310,10 @@ if (count($data['torrents'])) {
 
 HTML;
   }
-} else { ?>
+} ?>
           <div class="row" id="t-none">
             <div class="namecol" align="center"><p>&nbsp;</p>No torrents to display.<p>&nbsp;</p></div>
           </div>
-<?php } ?>
         </div>
       </div><!-- class="container" -->
 

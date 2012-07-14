@@ -41,8 +41,16 @@
   width: 1100px;
 }
 
+#t-none {
+  display: none;
+}
+
 .tags {
   font-size: x-small;
+}
+
+a.image-link {
+  text-decoration: none !important;
 }
 
 .trackerurl {
@@ -97,4 +105,3 @@ div.tracker {
   margin-right: 8px;
   padding: 0px;
 }
-
