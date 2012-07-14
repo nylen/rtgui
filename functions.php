@@ -393,28 +393,28 @@ function get_all_torrents($params) {
           // (Always visible)
           break;
         case 'started':
-          $t['visible'] = !!$t['state'];
+          $t['server_visible'] = !!$t['state'];
           break;
         case 'stopped':
-          $t['visible'] = !$t['state'];
+          $t['server_visible'] = !$t['state'];
           break;
         case 'active':
-          $t['visible'] = !!$t['is_transferring'];
+          $t['server_visible'] = !!$t['is_transferring'];
           break;
         case 'inactive':
-          $t['visible'] = !$t['is_transferring'];
+          $t['server_visible'] = !$t['is_transferring'];
           break;
         case 'complete':
-          $t['visible'] = !!$t['complete'];
+          $t['server_visible'] = !!$t['complete'];
           break;
         case 'incomplete':
-          $t['visible'] = !$t['complete'];
+          $t['server_visible'] = !$t['complete'];
           break;
         case 'seeding':
-          $t['visible'] = (!!$t['complete'] && !!$t['state']);
+          $t['server_visible'] = (!!$t['complete'] && !!$t['state']);
           break;
       }
-      if ($t['visible']) {
+      if ($t['server_visible']) {
         $torrents_count_visible++;
       }
 
