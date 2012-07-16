@@ -33,6 +33,9 @@ if (@is_array($_SESSION['last_data'])) {
   if ($diff_global !== false) {
     $return['global'] = $diff_global;
   }
+  if (!count($return)) {
+    $return = false;
+  }
   echo json_encode($return);
 } else {
   echo json_encode($data);
