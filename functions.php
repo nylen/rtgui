@@ -367,9 +367,13 @@ function get_all_torrents($params) {
       if (function_exists('get_local_torrent_path')) {
         $fn = get_local_torrent_path($fn);
       }
-      // Yes, this even works for magnet links.  rTorrent creates a ".meta"
-      // file and sets it as "tied_to_file".
-      $s['date_added'] = filemtime($fn);
+      if (file_exists($fn)) {
+        // Yes, this even works for magnet links.  rTorrent creates a ".meta"
+        // file and sets it as "tied_to_file".
+        $s['date_added'] = filemtime($fn);
+      } else {
+        $s['date_added'] = 0;
+      }
       $_SESSION['persistent'][$hash] = $s;
     }
 
@@ -434,7 +438,7 @@ function get_all_torrents($params) {
 
       // set some string values for the HTML templates
 
-      $t['date_added_str']         = date($date_added_format, $t['date_added']);
+      $t['date_added_str']         = ($t['date_added'] ? date($date_added_format, $t['date_added']) : '');
       $t['eta_str']                = format_duration($t['eta']);
       $t['percent_complete_str']   = round($t['percent_complete'], 1) . '%';
       $t['percent_complete_width'] = round($t['percent_complete'] / 2);
