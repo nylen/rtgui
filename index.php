@@ -301,6 +301,13 @@ if ($debug_mode) { ?>
 <?php } ?>
         <div id="torrents">
 <?php
+$no_torrents_display = (count($data['torrents']) ? 'none' : 'block');
+echo <<<HTML
+          <div class="row" id="t-none" display="$no_torrents_display">
+            <div class="namecol" align="center"><p>&nbsp;</p>No torrents to display.<p>&nbsp;</p></div>
+          </div>
+
+HTML;
 if (count($data['torrents'])) {
   foreach ($data['torrents'] as $hash => $torrent) {
     $html = render_template('torrent', $torrent);
@@ -312,9 +319,6 @@ if (count($data['torrents'])) {
 HTML;
   }
 } ?>
-          <div class="row" id="t-none">
-            <div class="namecol" align="center"><p>&nbsp;</p>No torrents to display.<p>&nbsp;</p></div>
-          </div>
         </div>
       </div><!-- class="container" -->
 

@@ -217,9 +217,10 @@ function updateTorrentsHTML(changes) {
         removedTorrents: dirty.removedTorrents
       };
       updateVisibleTorrents($torrentDivsAll, opts);
-      if (dirty.mustSort && sortTorrents($torrentDivsAll)) {
-        dirty.positions = true;
-      }
+    }
+
+    if (dirty.mustSort && sortTorrents($torrentDivsAll)) {
+      dirty.positions = true;
     }
 
     // update current positions
