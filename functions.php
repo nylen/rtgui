@@ -462,12 +462,14 @@ function get_all_torrents($params) {
   if (isset($disk_usage_dir)) {
     $df_output = rtorrent_xmlrpc('execute_capture',
       array('sh', '-c', "BLOCKSIZE=1 df \"$disk_usage_dir\""));
-    $df_output = explode("\n", $df_output);
-    $df_output = $df_output[1];
-    // Filesystem [1B-blocks Used Available] Use% Mounted on
-    if (preg_match('@\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+@', $df_output, $matches)) {
-      $disk_total = $matches[1];
-      $disk_free  = $matches[3];
+    if ($df_output) {
+      $df_output = explode("\n", $df_output);
+      $df_output = $df_output[1];
+      // Filesystem [1B-blocks Used Available] Use% Mounted on
+      if (preg_match('@\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+@', $df_output, $matches)) {
+        $disk_total = $matches[1];
+        $disk_free  = $matches[3];
+      }
     }
   }
   if ($disk_total > 0) {
