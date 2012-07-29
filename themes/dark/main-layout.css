@@ -72,6 +72,9 @@
   text-shadow: 0 -1px 1px #1d1d1d;
   font-weight: bold;
 }
+#header-links a, #boxright a {
+  color: #579ae0;
+}
 
 #header input {
   font-size: 80%;
