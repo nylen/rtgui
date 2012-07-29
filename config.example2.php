@@ -197,10 +197,10 @@ function get_custom1_from_tags($tags) {
  */
 // The mode to set for newly created directories, or false for no change
 // NOTE: This must be a string containing a mode ('755', not 0755 or 755)!
-$create_dir_mode = '775';
+$create_dir_mode = false;
 // The group that should own newly created directories, or false for no change
 // NOTE: The user that runs rTorrent MUST be a member of this group!
-$create_dir_group = 'rtorrent';
+$create_dir_group = false;
 
 /* If rTorrent is running on another computer, you can define the
  * get_local_torrent_path($path) function to change a remote path for a
