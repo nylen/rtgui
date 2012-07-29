@@ -363,8 +363,13 @@ HTML;
         extract($data, EXTR_PREFIX_ALL, 'd');
 
         if ($d_type != 'magnet') {
-          if (!copy("$tmp_add_dir/$d_filename", "$this_torrent_dir/$d_filename")) {
-            $errors[] = "Failed to copy torrent \"$d_name\" to directory \"$this_torrent_dir\"";
+          if (function_exists('get_local_torrent_path')) {
+            $this_torrent_dir_local = get_local_torrent_path($this_torrent_dir);
+          } else {
+            $this_torrent_dir_local = $this_torrent_dir;
+          }
+          if (!copy("$tmp_add_dir/$d_filename", "$this_torrent_dir_local/$d_filename")) {
+            $errors[] = "Failed to copy torrent '$d_name' to directory '$this_torrent_dir_local'";
             $can_add = false;
           }
         }

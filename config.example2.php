@@ -186,14 +186,13 @@ function get_custom1_from_tags($tags) {
 }
 
 /* If rTorrent is running on another computer, you can define the
- * get_local_torrent_path($path) function to change a remote path for a 
- * .torrent file into a local path (this means the remote directory containing 
- * your .torrent files has to be mounted on the web server).  
- * This will make "date added" work properly since it is based on the 
- * modification date of the .torrent file tied to each download.
+ * get_local_torrent_path($path) function to change a remote path for a
+ * .torrent file into a local path (this means the remote directory containing
+ * your .torrent files has to be mounted on the web server).  This is necessary
+ * to make adding torrents and the "date added" feature work.
  */
 function get_local_torrent_path($path) {
-  return str_replace('/media/bit.torrents/', '/media/htpc/bit.torrents/', $path);
+  return preg_replace('@^/media/@', '/media/htpc/', $path);
 }
 
 /* Define a function that will be run every time a page is requested.  It can be used to
