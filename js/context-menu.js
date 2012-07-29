@@ -63,9 +63,8 @@ $(function() {
         var tagSet = false;
         var tagUnset = false;
         for (var i in selectedTorrentHashes) {
-          var hash = selectedTorrentHashes[i];
-          var tags = '|' + window.data.torrents[hash].tags + '|';
-          if (tags.indexOf('|' + tag + '|') != -1) {
+          var tags = window.data.torrents[selectedTorrentHashes[i]].tags;
+          if ($.inArray(tag, tags) != -1) {
             tagSet = true;
           } else {
             tagUnset = true;
