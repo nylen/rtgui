@@ -232,12 +232,28 @@ function updateTorrentsHTML(changes) {
   // update global items (total speeds, caps, disk space, etc.)
   if (changes.global) {
     for (var k in changes.global) {
-      $('#' + k).html(changes.global[k]);
+      $('#global-' + k).html(changes.global[k]);
+    }
+
+    if (changes.global.disk_percent) {
+      checkDiskPercent();
     }
   }
 }
 
 
+function checkDiskPercent() {
+  var $diskData = $('#disk-data');
+  if (window.data.global.disk_percent < config.diskAlertThreshold) {
+    if (!$diskData.hasClass('disk-alert')) {
+      $diskData.addClass('disk-alert');
+      var msg = 'Disk free space in your torrents directory is running low!';
+      window.setTimeout(function() { alert(msg); }, 200);
+    }
+  } else if ($diskData.hasClass('disk-alert')) {
+    $diskData.removeClass('disk-alert');
+  }
+}
 
 var viewHandlers = {
   varsToCheck: {

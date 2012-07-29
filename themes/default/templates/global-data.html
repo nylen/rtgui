@@ -1,18 +1,18 @@
 <div id="global-data-contents">
   <p>
     Down:
-    <span class="inline download" id="total_down_rate">{{ total_down_rate }}</span>
-    <span class="smalltext" id="total_down_limit">[{{ total_down_limit }}]</span>
+    <span class="inline download" id="global-total_down_rate">{{ total_down_rate }}</span>
+    <span class="smalltext" id="global-total_down_limit">[{{ total_down_limit }}]</span>
     &nbsp;&nbsp;&nbsp;
     Up:
-    <span class="inline upload" id="total_up_rate">{{ total_up_rate }}</span>
-    <span class="smalltext" id="total_up_limit">[{{ total_up_limit }}]</span>
+    <span class="inline upload" id="global-total_up_rate">{{ total_up_rate }}</span>
+    <span class="smalltext" id="global-total_up_limit">[{{ total_up_limit }}]</span>
   </p>
   {% if show_disk_free %}
-    <div>
-      Disk Free: <span id="disk_free">{{ disk_free }}</span>
-      / <span id="disk_total">{{ disk_total }}</span>
-      (<span id="disk_percent">{{ disk_percent }}%</span>)
+    <div id="disk-data">
+      Disk Free: <span id="global-disk_free">{{ disk_free }}</span>
+      / <span id="global-disk_total">{{ disk_total }}</span>
+      (<span id="global-disk_percent">{{ disk_percent }}%</span>)
     </div>
   {% endif %}
   <p>

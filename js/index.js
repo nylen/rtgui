@@ -21,6 +21,8 @@ $(function() {
       jinjs.getTemplateFromString($(this).html());
   });
 
+  checkDiskPercent();
+
   var hideIframe = function() {
     $('#dialog-iframe').css('display', 'none');
   };
