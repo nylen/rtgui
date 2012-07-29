@@ -212,15 +212,15 @@ function get_local_torrent_path($path) {
   return preg_replace('@^/media/@', '/media/htpc/', $path);
 }
 
-/* Define a function that will be run every time a page is requested.  It can be used to
- * check if rTorrent is running, or to mount the rTorrent directories if rTorrent is
+/* Define a function that will be run every time a page is requested.  For
+ * example, it can be used to mount the rTorrent directories if rTorrent is
  * running on another machine.
  */
 function on_page_requested() {
   require_once 'session.php';
   rtgui_session_start();
   if (!$_SESSION['mounted']) {
-    exec('mount | grep //htpc/bit.torrents && mount | grep //htpc/rtorrent || sudo mount-htpc 2>&1', $out, $err);
+    exec('mount | grep //htpc/bit.torrents || sudo mount-htpc 2>&1', $out, $err);
     if ($err) {
       die('<h1>Could not mount rTorrent directories</h1><pre>' . implode("\n", $out) . '</pre>');
     }
