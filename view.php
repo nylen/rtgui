@@ -472,7 +472,7 @@ HTML;
     echo <<<HTML
     <div class="container">
       <fieldset>
-        <legend>Current Directory</legend>
+        <legend>Current Location</legend>
 
         <div id="current-dir">
           <span id="sel-dir">$sel_dir_html</span><span id="torrent-filename">$torrent_filename_html</span>

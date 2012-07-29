@@ -63,8 +63,8 @@ function is_root_dir($dir) {
 function get_url($dir) {
   global $r_highlight_dir, $r_highlight_filename;
   return 'dirbrowser.php?dir=' . urlencode($dir)
-    . '&amp;highlight_dir=' . urlencode($highlight_dir)
-    . '&amp;highlight_filename=' . urlencode($highlight_filename);
+    . '&amp;highlight_dir=' . urlencode($r_highlight_dir)
+    . '&amp;highlight_filename=' . urlencode($r_highlight_filename);
 }
 
 import_request_variables('gp','r_');
