@@ -109,9 +109,9 @@ if ($can_hide_unhide) {
   $always_show_tags[] = '_hidden';
 }
 
-/* If the get_torrent_dir_from_tags() function exists, it will be used to set 
- * the .torrent file directory for a newly added torrent.  It takes a single 
- * argument which is an array of the tags that the user has added to this 
+/* If the get_torrent_dir_from_tags() function exists, it will be used to set
+ * the .torrent file directory for a newly added torrent.  It takes a single
+ * argument which is an array of the tags that the user has added to this
  * torrent.  Its default behavior should be to return $torrent_dir.
  */
 //function get_torrent_dir_from_tags($tags) { ... }

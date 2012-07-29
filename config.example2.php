@@ -27,8 +27,19 @@ $scgi_timeout = 5; // seconds
 // Site title (change from rtGui if you have multiple)
 $site_title = 'rtGui (htpc)';
 
+// NOTE: If rTorrent is running on another machine, the paths below must be
+// REMOTE paths.  However, the program needs write access to the folder where
+// .torrent files should be kept - see the translate_local_to_remote_path
+// setting below.
+
 // rtorrent .torrent file directory (where new torrents' .torrent files will go)
-$torrent_dir = '/media/htpc/bit.torrents/';
+$torrent_dir = '/media/bit.torrents/';
+
+// rtorrent download directory (where new torrents' data will go)
+$download_dir = '/media/rtorrent/';
+
+// rtorrent completed directory (only used in the get_custom1_from_tags function below)
+$completed_dir = '/media/rtorrent/_done/';
 
 // Start download immediately after loading torrent
 $load_start = true;
@@ -110,30 +121,67 @@ if ($can_hide_unhide) {
 }
 
 
-/* If the get_torrent_dir_from_tags() function exists, it will be used to set 
- * the .torrent file directory for a newly added torrent.  It takes a single 
- * argument which is an array of the tags that the user has added to this 
+// Helper code for the get_*_from_tags() functions below.
+$valid_torrent_dir_tags = array_diff($always_show_tags, array('_hidden'));
+function get_matching_tags($tags) {
+  global $valid_torrent_dir_tags;
+  return array_values(array_intersect($tags, $valid_torrent_dir_tags));
+}
+
+/* If the get_torrent_dir_from_tags() function exists, it will be used to set
+ * the .torrent file directory for a newly added torrent.  It takes a single
+ * argument which is an array of the tags that the user has added to this
  * torrent.  Its default behavior should be to return $torrent_dir.
  *
  * Any number of structures are possible here - I use a setup similar to
- * http://tinyurl.com/rTorrentMultipleWatchDirs where $torrent_dir is the base 
- * .torrent file directory (which does not actually contain any .torrent files) 
- * and there are subdirectories which will download to different folders.  So 
- * at least one of the tags that represent a potential .torrent file directory 
+ * http://tinyurl.com/rTorrentMultipleWatchDirs where $torrent_dir is the base
+ * .torrent file directory (which does not actually contain any .torrent files)
+ * and there are subdirectories which will download to different folders.  So
+ * at least one of the tags that represent a potential .torrent file directory
  * needs to be present.
  */
 function get_torrent_dir_from_tags($tags) {
-  global $torrent_dir; // don't forget this!
-  global $always_show_tags;
-  $valid_torrent_dir_tags = array_diff($always_show_tags, array('_hidden'));
-  $found_tags = array_intersect($tags, $valid_torrent_dir_tags);
-  if (count($found_tags) != 1) {
+  global $torrent_dir, $valid_torrent_dir_tags;
+  $found_tags = get_matching_tags($tags);
+  if (count($found_tags) == 1) {
+    return rtrim($torrent_dir, '/') . '/' . $found_tags[0];
+  } else {
     // This error will be carried through and shown in the browser.
-    throw new ErrorException("Must choose ONE tag in '" . implode("', '", $valid_torrent_dir_tags) . "' for this torrent.");
+    throw new ErrorException("Must choose ONE tag in '"
+      . implode("', '", $valid_torrent_dir_tags) . "' for this torrent.");
   }
-  // There's no guarantee that the single key in $found_tags is 0.
-  foreach ($found_tags as $tag) {
-    return rtrim($torrent_dir, '/') . "/$tag";
+}
+
+
+/* If the get_download_dir_from_tags() function exists, it will be used to set
+ * the download directory for a newly added torrent.  It takes a single
+ * argument which is an array of the tags that the user has added to this
+ * torrent.  It should return false to indicate that the default directory
+ * should be used for a new torrent.
+ */
+function get_download_dir_from_tags($tags) {
+  global $download_dir;
+  $found_tags = get_matching_tags($tags);
+  if (count($found_tags) == 1) {
+    return rtrim($download_dir, '/') . '/' . $found_tags[0];
+  } else {
+    return false;
+  }
+}
+
+/* If the get_custom1_from_tags() function exists, it will be used to set the
+ * custom1 value for a newly added torrent.  It takes a single argument which
+ * is an array of the tags that the user has added to this torrent.  It should
+ * return false to indicate that the custom1 value should not be set for a new
+ * torrent.
+ */
+function get_custom1_from_tags($tags) {
+  global $completed_dir;
+  $found_tags = get_matching_tags($tags);
+  if (count($found_tags) == 1) {
+    return rtrim($completed_dir, '/') . '/' . $found_tags[0];
+  } else {
+    return false;
   }
 }
 
