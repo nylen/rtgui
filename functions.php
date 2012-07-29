@@ -582,9 +582,17 @@ function tracker_hostname($hash) {
  * Short function to execute and return an XML-RPC request.
  * TODO: rename?
  */
-function rtorrent_xmlrpc($command, $params=array('')) {
+function rtorrent_xmlrpc($command, $params=array(''), $return_fault=false) {
   $response = do_xmlrpc(xmlrpc_encode_request($command, $params));
-  return (@xmlrpc_is_fault($response) ? false : $response);
+  if (@xmlrpc_is_fault($response)) {
+    if ($return_fault) {
+      return $response;
+    } else {
+      return false;
+    }
+  } else {
+    return $response;
+  }
 }
 
 /** rtorrent_xmlrpc_cached

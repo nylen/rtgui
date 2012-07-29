@@ -107,16 +107,21 @@ function save_add_data($hash, $data) {
 }
 
 // http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/
+
+function smooth_pliers($params) {
+  return !@xmlrpc_is_fault(rtorrent_xmlrpc('execute', $params, true));
+}
+
 function dbl_clawhammer($dir) {
   global $create_dir_mode, $create_dir_group;
-  if ($dir && !is_dir($dir)) {
-    if (!rtorrent_xmlrpc('execute', array('mkdir', '-p', $dir))) {
+  if ($dir && !smooth_pliers(array('test', '-d', $dir))) {
+    if (!smooth_pliers(array('mkdir', '-p', $dir))) {
       throw new ErrorException("Failed to create directory '$dir'.");
     }
-    if ($create_dir_mode && !rtorrent_xmlrpc('chmod', array($create_dir_mode, $dir))) {
+    if ($create_dir_mode && !smooth_pliers(array('chmod', $create_dir_mode, $dir))) {
       throw new ErrorException("Failed to change directory mode for '$dir' to '$create_dir_mode'.");
     }
-    if ($create_dir_group && !rtorrent_xmlrpc('chgrp', array($create_dir_group, $dir))) {
+    if ($create_dir_group && !smooth_pliers(array('chgrp', $create_dir_group, $dir))) {
       throw new ErrorException("Failed to change directory group for '$dir' to '$create_dir_group'.");
     }
   }
