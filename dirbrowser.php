@@ -20,25 +20,63 @@ require_once 'config.php';
 require_once 'functions.php';
 rtgui_session_start();
 
-if (!function_exists('dirbrowser_scandir')) {
-  function dirbrowser_scandir($dir) {
-    return @scandir($dir);
+function do_list($dir, $type) {
+  $output = rtorrent_xmlrpc('execute_capture',
+    array('find', $dir, '-mindepth', '1', '-maxdepth', '1', '-type', $type));
+  if ($output === false) {
+    return false;
   }
+  $output = trim($output, "\n");
+  if ($output === '') {
+    return array();
+  }
+  $to_return = explode("\n", $output);
+
+  // The find command prefixes its output as follows:
+  // find /dir   -> /dir/
+  // find /dir/  -> /dir/
+  // find /dir// -> /dir//
+  $to_remove = (substr($dir, strlen($dir) - 1, 1) == '/' ? $dir : $dir . '/');
+  for ($i = 0; $i < count($to_return); $i++) {
+    $to_return[$i] = rtrim(substr($to_return[$i], strlen($to_remove)), '/');
+  }
+
+  natcasesort($to_return);
+  return $to_return;
 }
-if (!function_exists('dirbrowser_isdir')) {
-  function dirbrowser_isdir($dir) {
-    return is_dir($dir);
+function check_dir($dir) {
+  global $dir_browser_root;
+  if (!$dir_browser_root) {
+    $dir_browser_root = '/';
   }
+  $root2 = rtrim($dir_browser_root, '/') . '/';
+  $dir2 = rtrim($dir, '/') . '/';
+  return (substr($dir2, 0, strlen($root2)) == $root2);
 }
-if (!function_exists('dirbrowser_isrootdir')) {
-  function dirbrowser_isrootdir($dir) {
-    return ($dir == '/');
+function is_root_dir($dir) {
+  global $dir_browser_root;
+  if (!$dir_browser_root) {
+    $dir_browser_root = '/';
   }
+  return (rtrim($dir, '/') == rtrim($dir_browser_root, '/'));
+}
+function get_url($dir) {
+  global $r_highlight_dir, $r_highlight_filename;
+  return 'dirbrowser.php?dir=' . urlencode($dir)
+    . '&amp;highlight_dir=' . urlencode($highlight_dir)
+    . '&amp;highlight_filename=' . urlencode($highlight_filename);
 }
 
 import_request_variables('gp','r_');
-if ($r_dir == '' || !isset($r_dir)) $r_dir='/';
-if (!isset($r_hilitedir)) $r_hilitedir = '';
+if (!$r_dir) {
+  $r_dir = '';
+}
+$r_dir = rtrim($r_dir, '/') . '/';
+
+if (!$r_highlight_dir) {
+  $r_highlight_dir = '';
+}
+$r_highlight_dir = rtrim($r_highlight_dir, '/') . '/';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -48,7 +86,7 @@ if (!isset($r_hilitedir)) $r_hilitedir = '';
 include_stylesheet('common.css', true);
 include_stylesheet('dialogs.css', true);
 include_script('jquery.js');
-include_script('jquery.mousewheel.js', true);
+include_script('jquery.mousewheel.js');
 ?>
 <script type="text/javascript">
 $(function() {
@@ -61,51 +99,54 @@ $(function() {
 <?php
 $dir_encode = htmlentities($r_dir, ENT_QUOTES, 'UTF-8');
 echo <<<HTML
-<body class="dirbrowse" onLoad="window.parent.onDirBrowserLoaded('$dir_encode');">
-  <div align="left">
+<body class="dir-browser modal" onLoad="window.parent.onDirBrowserLoaded('$dir_encode');">
 
 HTML;
 
-if (!dirbrowser_isrootdir($r_dir)) {
-  $parent_dir_encode = urlencode(substr($r_dir,0,strrpos($r_dir,"/")));
-  $highlight_dir_encode = urlencode($r_hilitedir);
-  echo <<<HTML
-    <a href="dirbrowser.php?dir=$parent_dir_encode&amp;hilitedir=$highlight_dir_encode">[..]</a><br />
-
-HTML;
+if (check_dir($r_dir)) {
+  $dirs  = do_list($r_dir, 'd');
+  $files = do_list($r_dir, 'f');
+} else {
+  $dirs  = false;
+  $files = false;
 }
 
-$files = array();
-if ($dir_array = dirbrowser_scandir($r_dir)) {
-  foreach ($dir_array as $file) {
-    if ($r_dir == '/') {
-      $true_dir = $r_dir . $file;
-    } else {
-      $true_dir = "$r_dir/$file";
-    }
-    if ($file != '.' && $file != '..') {
-      if (dirbrowser_isdir($true_dir)) {
-        $class = (substr($r_hilitedir, 1) == $file ? 'highlight folder' : 'folder');
-        $true_dir_encode = urlencode($true_dir);
-        $highlight_dir_encode = urlencode($r_hilitedir);
-        $file_encode = htmlentities($file, ENT_QUOTES, 'UTF-8');
-        echo <<<HTML
+if ($dirs !== false && $files !== false) {
+  echo <<<HTML
+  <div id="dir-list">
+
+HTML;
+
+  if (!is_root_dir($r_dir)) {
+    $parent_dir = substr($r_dir, 0, strrpos($r_dir, '/', -2));
+    $parent_url = get_url($parent_dir);
+    echo <<<HTML
+    <a href="$parent_url">[..]</a><br />
+
+HTML;
+  }
+
+  foreach ($dirs as $dir_name) {
+    $dir_full = $r_dir . $dir_name;
+    $class = ($r_highlight_dir == $r_dir && $r_highlight_filename == $dir_name
+      ? 'highlight folder'
+      : 'folder');
+    $dir_url = get_url($dir_full);
+    $dir_name_encode = htmlentities($dir_name, ENT_QUOTES, 'UTF-8');
+    echo <<<HTML
     <img src="images/folder.gif">
-    <a href="dirbrowser.php?dir=$true_dir_encode&amp;hilitedir=$highlight_dir_encode" class="$class">
-      $file_encode
-    </a>
+    <a href="$dir_url" class="$class">$dir_name_encode</a>
     <br />
 
 HTML;
-      } else {
-        $files[] = $file;
-      }
-    }
   }
-  foreach ($files as $file) {
-    $file_encode = htmlentities($file, ENT_QUOTES, 'UTF-8');
+  foreach ($files as $file_name) {
+    $class = ($r_highlight_dir == $r_dir && $r_highlight_filename == $file_name
+      ? 'highlight file'
+      : 'file');
+    $file_name_encode = htmlentities($file_name, ENT_QUOTES, 'UTF-8');
     echo <<<HTML
-    <img src="images/file.gif"><span class="file">$file_encode</span><br />
+    <img src="images/file.gif"><span class="$class">$file_name_encode</span><br />
 
 HTML;
   }

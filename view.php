@@ -449,18 +449,25 @@ HTML;
   // --- Storage tab
   // ------------------------------------------------
   if ($r_select == 'storage') {
-    $sel_dir = $this_torrent['directory'];
-    $torrent_dir = '';
+    $torrent_dir = rtrim($this_torrent['directory'], '/');
+    $torrent_filename = $this_torrent['name'];
     if ($this_torrent['is_multi_file']) {
-      $slash_pos   = strrpos($this_torrent['directory'],'/');
-      $sel_dir     = substr( $this_torrent['directory'], 0, $slash_pos);
-      $torrent_dir = substr( $this_torrent['directory'], $slash_pos);
+      $torrent_dir = substr($torrent_dir, 0, strrpos($torrent_dir, '/'));
     }
-    $torrent_dir = htmlentities($torrent_dir, ENT_QUOTES, 'UTF-8');
-    if (isset($r_dir)) $sel_dir = $r_dir;
+    $torrent_dir .= '/';
+
+    $torrent_dir_encode      = urlencode($torrent_dir);
+    $torrent_filename_encode = urlencode($torrent_filename);
+    $torrent_filename_html   = htmlentities($torrent_filename, ENT_QUOTES, 'UTF-8');
+
+    if (isset($r_dir)) {
+      $sel_dir = rtrim($r_dir, '/') . '/';
+    } else {
+      $sel_dir = $torrent_dir;
+    }
 
     $sel_dir_encode = urlencode($sel_dir);
-    $torrent_dir_encode = urlencode($torrent_dir);
+    $sel_dir_html   = htmlentities($sel_dir, ENT_QUOTES, 'UTF-8');
 
     echo <<<HTML
     <div class="container">
@@ -468,7 +475,7 @@ HTML;
         <legend>Current Directory</legend>
 
         <div id="current-dir">
-          <span id="sel-dir">$sel_dir</span><span class="gray">$torrent_dir</span>
+          <span id="sel-dir">$sel_dir_html</span><span id="torrent-filename">$torrent_filename_html</span>
         </div>
 
         <form action="control.php" method="post" name="directory" id="directory-form">
@@ -495,7 +502,7 @@ HTML;
       </fieldset>
 
       <iframe
-        src="dirbrowser.php?dir=$sel_dir_encode&amp;hilitedir=$torrent_dir_encode"
+        src="dirbrowser.php?dir=$sel_dir_encode&amp;highlight_dir=$torrent_dir_encode&amp;highlight_filename=$torrent_filename_encode"
         frameborder="0" width="100%" height="300px">
       </iframe>
 

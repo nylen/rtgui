@@ -66,5 +66,5 @@ $(function() {
 
 function onDirBrowserLoaded(dir) {
   $('#new-dir').val(dir);
-  $('#sel-dir').html(dir);
+  $('#sel-dir').text(dir);
 }

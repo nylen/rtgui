@@ -68,6 +68,10 @@ $download_dir = '/media/htpc/bit.torrents/';
 // Threshold for disk usage alert (%)
 $disk_alert_threshold = 15;
 
+// Directory that serves as the dir browser root - users will not be allowed to
+// browse below here.
+$dir_browser_root = '/media/rtorrent';
+
 // Speeds (in KB) for the download/upload cap in the settings dialog.
 $cap_speeds = array(
   5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90,
@@ -209,23 +213,6 @@ function on_page_requested() {
     }
     $_SESSION['mounted'] = true;
   }
-}
-
-/* Functions to make the directory browser work on a remote PC (the functions provided
- * here rely on the fact that /media/rtorrent is mounted at /media/htpc/rtorrent)
- */
-function dirbrowser_translate($dir) {
-  // Just a helper function - not called by dirbrowser code
-  return str_replace('/media/rtorrent/', '/media/htpc/rtorrent/', rtrim($dir, '/') . '/');
-}
-function dirbrowser_scandir($dir) {
-  return @scandir(dirbrowser_translate($dir));
-}
-function dirbrowser_isdir($dir) {
-  return is_dir(dirbrowser_translate($dir));
-}
-function dirbrowser_isrootdir($dir) {
-  return (rtrim($dir, '/') == '/media/rtorrent');
 }
 
 // Define some links that will be shown in the header

@@ -57,6 +57,10 @@ $disk_usage_dir = '/media/1000/';
 // Threshold for disk usage alert (%)
 $disk_alert_threshold = 15;
 
+// Directory that serves as the dir browser root - users will not be allowed to
+// browse below here.
+$dir_browser_root = '/media/rtorrent';
+
 // Speeds (in KB) for the download/upload cap in the settings dialog.
 $cap_speeds = array(
   5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90,

@@ -7,6 +7,9 @@
   height: 100%;
   border: none;
 }
+.modal a {
+  color: #6198d2;
+}
 
 .modal .tab {
   background: none;
@@ -137,9 +140,22 @@ select.mediumtext {
   color: #aaa;
 }
 
-.dirbrowse {
+#current-dir #torrent-filename {
+  font-style: italic;
+  font-weight: normal;
+  color: #777;
+}
+
+body.dir-browser {
   background: #262626;
   color: #aaa;
+}
+#dir-list {
+  text-align: left;
+}
+#dir-list .highlight {
+  font-style: italic;
+  font-weight: bold;
 }
 
 .tab-bottom {
