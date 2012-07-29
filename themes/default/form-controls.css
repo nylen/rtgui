@@ -27,3 +27,9 @@ input.themed, select.themed {
 input.themed:hover, select.themed:hover {
   background: #8e8e8e url('./images/bg-button-hover.gif') repeat-x top left;
 }
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  select.themed {
+    color: #aaa !important;
+  }
+}

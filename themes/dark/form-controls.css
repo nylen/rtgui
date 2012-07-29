@@ -36,3 +36,9 @@ input.multi {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
 }
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  select.themed {
+    color: #aaa !important;
+  }
+}
