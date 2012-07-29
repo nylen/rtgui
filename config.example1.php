@@ -155,7 +155,4 @@ $create_dir_group = 'rtorrent';
  */
 //function on_page_requested() { ... }
 
-// Define an action to take when adding a torrent
-//function on_add_torrent($name, $hash, $tags, $filename) { ... }
-
 ?>
