@@ -138,7 +138,6 @@ include_script('index.js');
 include_script('context-menu.js');
 
 include_template('torrent');
-include_template('global-data');
 ?>
 <!--[if lt IE 8]>
 <?php
