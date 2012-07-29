@@ -209,7 +209,7 @@ $create_dir_group = 'rtorrent';
  * to make adding torrents and the "date added" feature work.
  */
 function get_local_torrent_path($path) {
-  return preg_replace('@^/media/@', '/media/htpc/', $path);
+  return preg_replace('@^/+media/@', '/media/htpc/', $path);
 }
 
 /* Define a function that will be run every time a page is requested.  For
