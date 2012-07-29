@@ -63,7 +63,7 @@ $default_user_settings = array(
 );
 
 // Path to report disk usage
-$download_dir = '/media/htpc/bit.torrents/';
+$disk_usage_dir = '/media/bit.torrents/';
 
 // Threshold for disk usage alert (%)
 $disk_alert_threshold = 15;

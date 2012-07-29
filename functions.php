@@ -459,6 +459,24 @@ function get_all_torrents($params) {
     return $torrents;
   }
 
+  if (isset($disk_usage_dir)) {
+    $df_output = rtorrent_xmlrpc('execute_capture',
+      array('sh', '-c', "BLOCKSIZE=1 df \"$disk_usage_dir\""));
+    $df_output = explode("\n", $df_output);
+    $df_output = $df_output[1];
+    // Filesystem [1B-blocks Used Available] Use% Mounted on
+    if (preg_match('@\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+@', $df_output, $matches)) {
+      $disk_total = $matches[1];
+      $disk_free  = $matches[3];
+    }
+  }
+  if ($disk_total > 0) {
+    $disk_percent = $disk_free / $disk_total * 100;
+  } else {
+    // avoid divide by zero error if getting total space fails
+    $disk_percent = 0;
+  }
+
   $data = array(
     'torrents' => $torrents,
     'global'   => array(
@@ -469,18 +487,12 @@ function get_all_torrents($params) {
       'total_up_rate'              => format_bytes($total_up_rate  , '0 B/s', '/s'),
       'total_down_limit'           => format_bytes(rtorrent_xmlrpc('get_download_rate'), 'unlim', '/s'),
       'total_up_limit'             => format_bytes(rtorrent_xmlrpc('get_upload_rate'),   'unlim', '/s'),
-      'show_disk_free'             => isset($disk_usage_dir),
-      'disk_free'                  => format_bytes(@disk_free_space($disk_usage_dir)),
-      'disk_total'                 => format_bytes(@disk_total_space($disk_usage_dir)),
+      'show_disk_free'             => (isset($disk_usage_dir) && $disk_total),
+      'disk_free'                  => format_bytes($disk_free),
+      'disk_total'                 => format_bytes($disk_total),
+      'disk_percent'               => round($disk_percent, 2),
     ),
   );
-  if ($data['global']['disk_total'] > 0) {
-    $data['global']['disk_percent'] = $data['global']['disk_free'] / $data['global']['disk_total'] * 100;
-  } else {
-    // avoid divide by zero error if disk_total_space() fails
-    $data['global']['disk_percent'] = 0;
-  }
-  $data['global']['disk_percent'] = round($data['global']['disk_percent'], 2);
 
   return $data;
 }
