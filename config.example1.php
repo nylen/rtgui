@@ -136,9 +136,22 @@ if ($can_hide_unhide) {
  */
 //function get_custom1_from_tags($tags) { ... }
 
-/* Define a function that will be run every time a page is requested.  It can
- * be used to check if rTorrent is running, or to mount the rTorrent
- * directories if rTorrent is running on another machine.
+/* The get_*_from_tags functions above may be implemented in such a way that
+ * they return directories that have not been previously used by rTorrent and
+ * therefore may not exist.  The program can create them, but it needs to know
+ * the appropriate permissions.  Note that both the webserver user and the user
+ * running rTorrent will need to write to the created directory.
+ */
+// The mode to set for newly created directories, or false for no change
+// NOTE: This must be a string containing a mode ('755', not 0755 or 755)!
+$create_dir_mode = '775';
+// The group that should own newly created directories, or false for no change
+// NOTE: The user that runs rTorrent MUST be a member of this group!
+$create_dir_group = 'rtorrent';
+
+/* Define a function that will be run every time a page is requested.  For
+ * example, it can be used to mount the rTorrent directories if rTorrent is
+ * running on another machine.
  */
 //function on_page_requested() { ... }
 

@@ -189,6 +189,19 @@ function get_custom1_from_tags($tags) {
   }
 }
 
+/* The get_*_from_tags functions above may be implemented in such a way that
+ * they return directories that have not been previously used by rTorrent and
+ * therefore may not exist.  The program can create them, but it needs to know
+ * the appropriate permissions.  Note that both the webserver user and the user
+ * running rTorrent will need to write to the created directory.
+ */
+// The mode to set for newly created directories, or false for no change
+// NOTE: This must be a string containing a mode ('755', not 0755 or 755)!
+$create_dir_mode = '775';
+// The group that should own newly created directories, or false for no change
+// NOTE: The user that runs rTorrent MUST be a member of this group!
+$create_dir_group = 'rtorrent';
+
 /* If rTorrent is running on another computer, you can define the
  * get_local_torrent_path($path) function to change a remote path for a
  * .torrent file into a local path (this means the remote directory containing

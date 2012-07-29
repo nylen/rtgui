@@ -106,6 +106,22 @@ function save_add_data($hash, $data) {
   return $data;
 }
 
+// http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/
+function dbl_clawhammer($dir) {
+  global $create_dir_mode, $create_dir_group;
+  if ($dir && !is_dir($dir)) {
+    if (!rtorrent_xmlrpc('execute', array('mkdir', '-p', $dir))) {
+      throw new ErrorException("Failed to create directory '$dir'.");
+    }
+    if ($create_dir_mode && !rtorrent_xmlrpc('chmod', array($create_dir_mode, $dir))) {
+      throw new ErrorException("Failed to change directory mode for '$dir' to '$create_dir_mode'.");
+    }
+    if ($create_dir_group && !rtorrent_xmlrpc('chgrp', array($create_dir_group, $dir))) {
+      throw new ErrorException("Failed to change directory group for '$dir' to '$create_dir_group'.");
+    }
+  }
+}
+
 import_request_variables('gp', 'r_');
 if (!is_array($r_tags)) {
   $r_tags = explode('|', $r_tags);
@@ -129,6 +145,9 @@ switch ($r_action) {
       if (function_exists('get_custom1_from_tags')) {
         $this_custom1 = get_custom1_from_tags($r_tags);
       }
+      dbl_clawhammer($this_torrent_dir);
+      dbl_clawhammer($this_download_dir);
+      dbl_clawhammer($this_custom1);
     } catch (Exception $e) {
       json_error($e->getMessage());
     }
