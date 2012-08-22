@@ -54,6 +54,10 @@ function json_error($msg) {
 }
 
 function get_filename_no_clobber($filename) {
+  // Prevent invalid characters from appearing in .torrent filenames
+  // Otherwise, rTorrent appears to not add them
+  $filename = preg_replace('@[^(\x20-\x7f)]@', '_', $filename);
+
   $basename = substr($filename, 0, strrpos($filename, '.'));
   $ext = substr($filename, strrpos($filename, '.') + 1);
   $i = 0;
