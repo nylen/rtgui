@@ -512,7 +512,7 @@ class Torrent {
       $start++;
     if ( substr( $data, $start, 1 ) == '0' && ( $start != 0 || $end > $start + 1 ) )
       $this->set_error( new Exception( 'Leading zero in integer' ) );
-    if ( ! ctype_digit( substr( $data, $start, $end ) ) )
+    if ( ! ctype_digit( substr( $data, $start, $end - $start ) ) )
       $this->set_error( new Exception( 'Non-digit characters in integer' ) );
     $integer = substr( $data, 0, $end );
     $data = substr( $data, $end + 1 );
