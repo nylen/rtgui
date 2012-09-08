@@ -75,7 +75,8 @@ function process_torrent_data($content, $filename, $create_file=true) {
   try {
     $torrent = new Torrent($content);
     if ($error = $torrent->error()) {
-      return array('error' => $error);
+      return array('error' =>
+        'Error parsing .torrent file: ' . $error);
     }
     $hash = $torrent->hash_info();
 
