@@ -253,7 +253,7 @@ if ($debug_mode) { ?>
       <div id="dialog"></div>
 
       <div id="torrents-header">
-        <div class="headcol column-name-grp">
+        <div class="headcol column-name-tags">
           <a class="sort" href="#" rel="name:asc:true">Name</a>|<a class="sort" href="#" rel="tags_str:asc">Tags</a>
         </div>
         <div class="headcol column-status">
