@@ -88,8 +88,21 @@ function set_user_setting($key, $value) {
   $_COOKIE[$key] = $value;
 }
 
-function file_path_mtime($filename) {
-  return $filename . '?_=' . filemtime($filename);
+function cacheable_file_path($filename) {
+  global $use_filename_caching;
+  if ($use_filename_caching) {
+    $dotpos = strrpos($filename, '.');
+    if ($dotpos === false) {
+      $basename = $filename;
+      $ext = '';
+    } else {
+      $basename = substr($filename, 0, $dotpos);
+      $ext = substr($filename, $dotpos);
+    }
+    return $basename . '.cache-' . filemtime($filename) . $ext;
+  } else {
+    return $filename . '?_=' . filemtime($filename);
+  }
 }
 
 function set_torrent_tags($hashes, $add_tags, $remove_tags) {
@@ -117,7 +130,7 @@ function set_torrent_tags($hashes, $add_tags, $remove_tags) {
 function include_script($script_name) {
   $script_filename = (strpos($script_name, '/') === false ? 'js/' : '') . $script_name;
   echo '<script type="text/javascript" src="'
-    . file_path_mtime($script_filename) . "\"></script>\n";
+    . cacheable_file_path($script_filename) . "\"></script>\n";
 }
 
 function get_theme_filename($filename) {
@@ -136,7 +149,7 @@ function include_stylesheet($stylesheet_filename, $use_theme=false) {
     $stylesheet_filename = get_theme_filename($stylesheet_filename);
   }
   echo '<link rel="stylesheet" type="text/css" href="'
-    . file_path_mtime($stylesheet_filename) . "\" />\n";
+    . cacheable_file_path($stylesheet_filename) . "\" />\n";
 }
 
 function get_template_filename($template_name) {

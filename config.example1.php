@@ -113,6 +113,31 @@ if ($can_hide_unhide) {
   $always_show_tags[] = '_hidden';
 }
 
+/* Set $use_filename_caching to true to include the last-modified timestamp of
+ * JavaScript and CSS files in the filename presented to the web browser.  If
+ * this option is set to true, you must configure your web server to rewrite
+ * URLs that contain ".cache-XYZ" where "XYZ" is one or more numbers or
+ * hexadecimal digits.  Here are the correct configuration lines for Apache
+ * (but, in Apache 2.2.16, they only worked for me when placed into the main
+ * server configuration file, NOT in a .htaccess file):
+
+# Send far-future caching headers for fingerprinted assets
+RewriteEngine on
+RewriteRule ^(.*)\.cache-[0-9a-f]+\.(.*)$ $1.$2 [E=cachedasset:1]
+Header merge Cache-Control max-age=31536000 env=cachedasset
+
+ * (Note that the code above will also cause a far-future Cache-Control header
+ * to be set for files that have a cache fingerprint in their filenames.  This
+ * will ensure that browsers do not re-download assets unnecessarily.)
+ *
+ * If this option is set to false, the default method of appending the
+ * last-modified timestamp to the query string is used.  However, this is an
+ * inferior method in certain situations.  For more details, see:
+ * http://guides.rubyonrails.org/asset_pipeline.html
+ * http://www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/
+ */
+$use_filename_caching = false;
+
 /* If the get_torrent_dir_from_tags() function exists, it will be used to set
  * the .torrent file directory for a newly added torrent.  It takes a single
  * argument which is an array of the tags that the user has added to this
