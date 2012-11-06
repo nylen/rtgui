@@ -198,10 +198,10 @@ switch ($r_action) {
           }
 
           $dht_stats = rtorrent_xmlrpc_cached('dht_statistics');
-          if (true){#$dht_stats['dht'] != 'auto' && $dht_stats['dht'] != 'on') {
+          if ($dht_stats['dht'] != 'auto' && $dht_stats['dht'] != 'on') {
             $to_add[] = array(
               'error' => 'Magnet URLs require DHT to be enabled.  See '
-                + 'LINK{http://libtorrent.rakshasa.no/wiki/RTorrentUsingDHT} for more info.'
+                . 'LINK{http://libtorrent.rakshasa.no/wiki/RTorrentUsingDHT} for more info.'
             );
             continue;
           }
