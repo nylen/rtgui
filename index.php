@@ -42,7 +42,7 @@ $config = array(
 );
 
 $user_settings = array(
-  'refreshInterval' => get_user_setting('refresh_interval'),
+  'refreshInterval' => (int)get_user_setting('refresh_interval'),
   'sortVar' => get_user_setting('sort_var'),
   'sortDesc' => (get_user_setting('sort_desc') == 'yes' ? true : false),
   'theme' => get_current_theme(),
