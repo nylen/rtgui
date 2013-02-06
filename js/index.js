@@ -48,6 +48,8 @@ $(function() {
   for (var hash in data.torrents) {
     data.torrents[hash].visible = data.torrents[hash].server_visible;
   }
+  updateTorrentPositions();
+
   window.clearTimeout(current.refreshTimeoutID);
   if (userSettings.refreshInterval) {
     current.refreshTimeoutID = window.setTimeout(updateTorrentsData, userSettings.refreshInterval);

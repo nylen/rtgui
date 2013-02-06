@@ -3,7 +3,7 @@
     <div class="tracker">
       <a class="filter" href="#" rel="tracker:{{ tracker_hostname }}" style="color: {{ tracker_color }}">{{ tracker_hostname }}</a>
     </div>
-    <input type="checkbox" name="select[]" class="checkbox" value="{{ hash }}" />
+    <input type="checkbox" name="select[]" id="t-{{ hash }}-checkbox" class="checkbox" value="{{ hash }}" />
     <a class="dialog {{ status_class }}" rel="600:550" href="view.php?hash={{ hash }}">{{ name }}</a>
     <span class="tags">
       {% for tag in tags %}
