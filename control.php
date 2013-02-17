@@ -21,7 +21,7 @@ error_reporting(E_ALL & ~E_NOTICE);
 require_once 'config.php';
 require_once 'functions.php';
 require_once 'PersistentObject.php';
-import_request_variables('gp', 'r_');
+extract($_REQUEST, EXTR_PREFIX_ALL, 'r');
 
 // Bulk stop/start/delete torrents...
 if (isset($r_bulkaction) && is_array($r_select)) {

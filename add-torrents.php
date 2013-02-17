@@ -132,7 +132,7 @@ function dbl_clawhammer($dir) {
   }
 }
 
-import_request_variables('gp', 'r_');
+extract($_REQUEST, EXTR_PREFIX_ALL, 'r');
 if (!is_array($r_tags)) {
   $r_tags = explode('|', $r_tags);
 }

@@ -19,7 +19,7 @@
 require_once 'config.php';
 require_once 'functions.php';
 rtgui_session_start();
-import_request_variables('gp', 'r_');
+extract($_REQUEST, EXTR_PREFIX_ALL, 'r');
 
 if ($r_operation == 'save_settings') {
   set_user_setting('refresh_interval', $r_set_refresh);

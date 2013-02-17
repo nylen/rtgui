@@ -19,7 +19,7 @@ $execstart = microtime(true);
 require_once 'config.php';
 require_once 'functions.php';
 rtgui_session_start();
-import_request_variables('gp', 'r_');
+extract($_REQUEST, EXTR_PREFIX_ALL, 'r');
 
 // Try using alternative XMLRPC library from http://sourceforge.net/projects/phpxmlrpc/
 // (see http://code.google.com/p/rtgui/issues/detail?id=19)

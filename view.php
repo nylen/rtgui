@@ -19,7 +19,7 @@
 require_once 'config.php';
 require_once 'functions.php';
 
-import_request_variables('gp', 'r_');
+extract($_REQUEST, EXTR_PREFIX_ALL, 'r');
 
 // Get torrent info...  (get all downloads, then filter out just this one by the hash)
 $all_torrents = get_all_torrents(array('torrents_only' => true));

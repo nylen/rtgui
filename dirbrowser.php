@@ -67,7 +67,7 @@ function get_url($dir) {
     . '&amp;highlight_filename=' . urlencode($r_highlight_filename);
 }
 
-import_request_variables('gp','r_');
+extract($_REQUEST, EXTR_PREFIX_ALL, 'r');
 if (!$r_dir) {
   $r_dir = '';
 }
