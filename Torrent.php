@@ -319,10 +319,13 @@ class Torrent {
       while ( $done = curl_multi_info_read( $curl ) ) {
         $info = curl_getinfo( $done['handle'] );
               $tracker = array_shift( explode( '?', $info['url'], 2 ) );
-              if ( empty( $info['http_code'] ) )
-                continue $scrape[$tracker] = $this->set_error( new Exception( 'Tracker request timeout (' . $timeout . 's)' ), true );
-              elseif ( $info['http_code'] != 200 )
-                continue $scrape[$tracker] = $this->set_error( new Exception( 'Tracker request failed (' . $info['http_code'] . ' code)' ), true );
+              if ( empty( $info['http_code'] ) ) {
+                $scrape[$tracker] = $this->set_error( new Exception( 'Tracker request timeout (' . $timeout . 's)' ), true );
+                continue;
+              } elseif ( $info['http_code'] != 200 ) {
+                $scrape[$tracker] = $this->set_error( new Exception( 'Tracker request failed (' . $info['http_code'] . ' code)' ), true );
+                continue;
+              }
         $stats = $this->decode_data( curl_multi_getcontent( $done['handle']  ) );
         curl_multi_remove_handle( $curl, $done['handle'] );
         $scrape[$tracker] = empty( $stats['files'] ) ?
@@ -417,7 +420,7 @@ class Torrent {
    * @return array decoded torrent data
    */
   protected function decode ( $string ) {
-    $data = is_file( $string ) || self::url_exists( $string ) ?
+    $data = @is_file( $string ) || self::url_exists( $string ) ?
       self::file_get_contents( $string ) :
       $string;
     return (array) $this->decode_data( $data );
@@ -533,7 +536,7 @@ class Torrent {
       return $this->info = $this->files( $data, $piece_length );
     elseif ( is_dir( $data ) )
       return $this->info = $this->folder( $data, $piece_length );
-    elseif ( ( is_file( $data ) || self::url_exists( $data ) ) && ! self::is_torrent( $data ) )
+    elseif ( ( @is_file( $data ) || self::url_exists( $data ) ) && ! self::is_torrent( $data ) )
       return $this->info = $this->file( $data, $piece_length );
     else
       return false;
@@ -639,10 +642,14 @@ class Torrent {
     $length  = $piece_length;
     $piece  = $pieces = '';
     foreach ( $files as $i => $file ) {
-      if ( $path != array_intersect_assoc( $file_path = explode( DIRECTORY_SEPARATOR, $file ), $path ) )
-        continue $this->set_error( new Exception( 'Files must be in the same folder: "' . $file . '" discarded' ) );
-      if ( ! $handle = self::fopen( $file, $filesize = self::filesize( $file ) ) )
-        continue $this->set_error( new Exception( 'Failed to open file: "' . $file . '" discarded' ) );
+      if ( $path != array_intersect_assoc( $file_path = explode( DIRECTORY_SEPARATOR, $file ), $path ) ) {
+        $this->set_error( new Exception( 'Files must be in the same folder: "' . $file . '" discarded' ) );
+        continue;
+      }
+      if ( ! $handle = self::fopen( $file, $filesize = self::filesize( $file ) ) ) {
+        $this->set_error( new Exception( 'Failed to open file: "' . $file . '" discarded' ) );
+        continue;
+      }
       while ( ! feof( $handle ) )
         if ( ( $length = strlen( $piece .= fread( $handle, $length ) ) ) == $piece_length )
           $pieces .= self::pack( $piece );
@@ -707,7 +714,7 @@ class Torrent {
    * @return double|boolean filesize or false if error
    */
   static public function filesize ( $file ) {
-    if ( is_file( $file ) )
+    if ( @is_file( $file ) )
       return (double) sprintf( '%u', @filesize( $file ) );
     else if ( $content_length = preg_grep( $pattern = '#^Content-Length:\s+(\d+)$#i', (array) @get_headers( $file ) ) )
       return (int) preg_replace( $pattern, '$1', reset( $content_length ) );
@@ -767,8 +774,8 @@ class Torrent {
    * @return string|boolean file content or false if error
    */
   public function file_get_contents ( $file, $timeout = self::timeout ) {
-    if ( is_file( $file ) || ini_get( 'allow_url_fopen' ) )
-      return @file_get_contents( $file, false, is_file( $file ) && $timeout ? stream_context_create( array( 'http' => array( 'timeout' => $timeout ) ) ) : null );
+    if ( @is_file( $file ) || ini_get( 'allow_url_fopen' ) )
+      return @file_get_contents( $file, false, @is_file( $file ) && $timeout ? stream_context_create( array( 'http' => array( 'timeout' => $timeout ) ) ) : null );
     elseif ( ! function_exists( 'curl_init' ) )
       return ! $this->errors[] = new Exception( 'Install CURL or enable "allow_url_fopen"' );
     $handle = curl_init( $file );
