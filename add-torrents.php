@@ -207,7 +207,7 @@ switch ($r_action) {
           }
 
           // Parse query string
-          parse_str(substr($url, strlen('magnet:?')), &$params);
+          parse_str(substr($url, strlen('magnet:?')), $params);
           if (!preg_match('@^urn:btih:[a-z0-9]{40}$@i', $params['xt'])) {
             $to_add[] = array(
               'error' => 'Invalid magnet link (info hash not found).'
