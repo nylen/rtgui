@@ -1,0 +1,598 @@
+/**
+    BEWARE : In this module, you can't have any require() out of the functions, nor
+    can you use all of coco's shortcuts : all of these are meant to be used with .toString() !
+**/
+
+exports import do
+
+    /**
+     * Return the absolute value of the argument.
+     */
+    $abs: function (num)
+        return -num if num < 0
+        num
+
+    /**
+     * A filter that batches items. It works pretty much like slice just the other way round. 
+     * It returns a list of lists with the given number of items. 
+     * If you provide a second parameter this is used to fill missing items.
+     */
+    $batch: function (value, linecount, fill_with ? null)
+        result = []
+        for i from 0 to value.length - 1 by linecount
+            tmpres = []
+
+            for j from 0 to linecount - 1
+                if i + j not in value
+                    break if not fill_with?
+                    tmpres.push fill_with
+                else
+                    tmpres.push value[i + j]
+
+            result.push tmpres
+        return result
+
+    /**
+     *  Capitalize a string.
+     */
+    $capitalize: function (str)
+        return str.charAt(0).toUpperCase! + str.slice(1).toLowerCase!
+
+    /**
+     *  Center monospaced text.
+     */
+    $center: function (value, width ? 80)
+        # No need to change anything.
+        return value if value.length >= width - 1
+
+        leading = $repeat(" ", (width - value.length) / 2)
+
+        return leading + value
+
+    $count: function 
+        return exports.length ...
+
+    /**
+     *  Formats a date.
+     *  TODO : not completely done.
+     */
+    $date: function (d, format)
+        _pad = (v) ->
+            if v < 10
+                return "0#v"
+            return v
+
+        return format.replace /%[%cdfHIjmMpSUwWxXyYzZ]/g, (s) ->
+            switch s.1
+            case \c
+                return "#{d.toLocaleDateString!} #{d.toLocaleTimeString!}"
+            case \d
+                return _pad d.getDate!
+            case \f
+                # actually milliseconds, not micro seconds like in python.
+                return d.getMilliseconds!
+            case \H
+                return _pad d.getHours!
+            case \I
+                return _pad d.getHours! % 12
+            case \j
+                # TODO get day from the start of the year
+                return ''
+            case \m
+                return _pad d.getMonth! + 1
+            case \M
+                return _pad d.getMinutes!
+            case \p
+                # TODO locale
+                return ''
+            case \S
+                return _pad d.getSeconds!
+            case \U
+                # TODO week number of the year (sunday first day, from first sunday of the year)
+                return ''
+            case \w
+                return d.getDay!
+            case \W
+                # TODO week number of the year (monday first day, from first monday of the year)
+                return ''
+            case \x
+                return d.toLocaleDateString!
+            case \X
+                return d.toLocalTimeString!
+            case \y
+                y = d.getFullYear!
+                return "" + _pad Math.round (((y / 100) - Math.floor(y / 100)) * 100)
+            case \Y
+                return d.getFullYear!
+            case \z
+                return d.getTimezoneOffset!
+            case \Z
+                try
+                    # only works with times from the time module.
+                    return d.getTimezone!
+                catch
+                    return ''
+            case \%
+                return '%'
+            default
+                return '#error'
+
+    /**
+     *  Alias for default.
+     */
+    $d: function
+        return exports.\default ...
+
+    /**
+     *  Return a default value.
+     *  @param default_value: The value to return
+     *      when `value` is null.
+     */
+    $default: function (value, default_value)
+        return default_value if not value?
+        value
+
+    /**
+     *  Return a list with 
+     */
+    $dictsort: function (value, case_sensitive ? false, _by ? 'key')
+        result = []
+
+        for k, v in value
+            result.push [k, v]
+
+        # Sort the resulting dictionary.
+        result.sort (a, b) ->
+            if _by is \value then i = 1 else i = 0
+
+            a = a[i]
+            b = b[i]
+
+            if not case_sensitive
+                a = a.toString!.toUpperCase!
+                b = b.toString!.toUpperCase!
+
+            return -1 if a < b
+            return 1 if a > b
+            return 0
+
+
+        return result
+    
+    $e: alias: "$escape"
+
+    $escape: function (value)
+        return value.replace /&/g, '&amp;'
+            .replace /</g, '&lt;'
+            .replace />/g, '&gt;'
+            .replace /'/g, '&apos;'
+            .replace /"/g, '&quot;'
+
+    /**
+     *  Escape a string to make it Javascript/JSON compliant.
+     */
+    $escapejs: function (value)
+        _unicode = (s) ->
+            s = s.charCodeAt 0 .toString 16
+            return "\\u" + $repeat("0", (4 - s.length)) + s
+
+        return value.replace /./g, (s) ->
+            if \a <= s <= \z or \A <= s <= \Z or \0 <= s <= \9
+                # regular character, just return it.
+                return s
+            return _unicode s   
+
+    $filesizeformat: function (value)
+        if value < 1024
+            return "#{value}"
+        if value < 1024 * 1024
+            val = val / 1024
+            unit = "Kb"
+        else if value < 1024 * 1024 * 1024
+            val = val / (1024 * 1024)
+            unit = "Mb"
+        else
+            val = val / (1024 * 1024 * 1024)
+            unit = "Gb"
+
+        strval = "#{Math.round val}"
+        return "#{val.toPrecision strval.length + 3}Kb"
+
+    $first: function (arr)
+        return arr?[0]
+
+    $float: function (value)
+        res = parseFloat value
+        return 0.0 if res is NaN
+        return res
+
+    $forceescape: function (value)
+        throw new Error \unimplemented
+
+    $format: function (value, args ? [], kwargs ? {})
+        throw new Error \unimplemented
+
+    /**
+     *  NOTE: only usable in the {% for grouper, list %} notation.
+     *  @param attribute: The attribute to group by.
+     */
+    $groupby: function (arr, attribute)
+        # FIXME : Chain objects in array that have the same attribute.
+        result = {}
+
+        for obj of arr
+            grouper = $resolve_attr obj, attribute
+
+            result[grouper] ?= []
+            result[grouper].push obj
+
+        return result
+
+    $in: function (obj, arr)
+        x = null
+        for x in arr
+            if arr.hasOwnProperty (x) and obj is arr[x]
+                return true
+        return false
+
+    $indent: function (value, width ? 4, indentfirst ? false)
+        first = true
+
+        return value.replace /^/gm, (s) ->
+            if not first or indentfirst
+                return $repeat(" ", width) + s
+            first := false
+            return s
+        
+
+    $join: function (arr, string ? "", attribute ? null)
+        if arr?.length > 0
+            if attribute
+                arr = ($resolve_attr o, attribute .toString! for o of arr)
+            return arr.join string
+        return ""
+
+    $last: function (arr)
+        return null if not arr?.length
+        arr[arr.length - 1]
+
+    $length: function (arr)
+        if not arr?
+            return 0
+        arr.length
+
+    $lower: function (value)
+        value.toString!.toLowerCase ()
+
+    $pprint_: function (node, fmter)
+
+        function real_pprint (node, fmter, met ? [])
+            if node instanceof Function
+                fmter \function, node
+            else if node instanceof RegExp
+                fmter \regexp, node
+            else if node instanceof Object
+                index = met.indexOf node
+                if index != -1
+                    fmter \obj-already, index
+                    return
+
+                met.push node
+                index = met.length - 1
+
+                is_array = node instanceof Array
+                fmter \obj-pre, is_array, index
+
+                props = []
+                for k, v in node
+                    if node.hasOwnProperty k
+                        if v instanceof String
+                            console.log v
+                        props.push lbl: k, node: v
+
+                props.sort (a, b) ->
+                    if a < b then return -1
+                    if a > b then return 1
+                    return 0
+
+                for prop, i of props
+                    if i != 0
+                        fmter \obj-sep
+                    
+                    if not is_array
+                        fmter \obj-label, prop.lbl
+                    real_pprint prop.node, fmter, met
+
+                fmter \obj-post, node instanceof Array
+
+            else if node instanceof String or typeof node is \string
+                fmter \string, node
+            else if node instanceof Number or typeof node is \number
+                fmter \number, node
+            else if node instanceof Boolean or typeof node is \boolean
+                fmter \boolean, node
+            else if not node?
+                fmter \empty
+
+        return real_pprint node, fmter
+
+    $pprint: function (value, verbose ? false, depth ? 0)
+        res = []
+
+        $pprint_ value, (type, node) ->
+
+            switch type
+            case \obj-pre
+                res.push if node then "[ " else "{ "
+            case \obj-post
+                res.push if node then " ]" else " }"
+            case \obj-already
+                res.push "[cycle]"
+            case \obj-sep
+                res.push ", "
+            case \obj-label
+                res.push "#node: "
+            case \string
+                res.push "\"#node\""
+            case \number
+                res.push "#node"
+            case \regexp
+                res.push "/#node/"
+            case \function
+                res.push "[function]"
+            case \boolean
+                res.push "#node"
+            case \empty
+                res.push "\u2205"
+            default
+                res.push node
+
+        return res.join ""
+                
+    $hprint: function (value, verbose ? false, depth ? 0)
+        unique = "hprint-" + Date.now!
+        res = []
+        cur_depth = 0
+        res.push "<span class='hprint-value'>"
+
+        fmt = function (val, type, color, morestyle ? "")
+            return "<span class='hprint-#type' style='color:#color;#morestyle'>#val</span>"
+
+        $pprint_ value, (type, node, index) ->
+            if type is \obj-pre
+                cur_depth := cur_depth + 1
+            if type is \obj-post
+                cur_depth := cur_depth - 1
+
+            if depth > 0 and cur_depth >= depth
+                return
+
+            switch type
+            case \obj-pre
+                res.push fmt (if node then "[ " else "{ "), \open, \gray, "font-weight: bold;"
+                res.push "<span id='#unique-#index' class='hprint-object hprint-depth-#cur_depth'>"
+
+            case \obj-post
+                res.push "</span>"
+                res.push fmt (if node then " ]" else " }"), \close, \gray, "font-weight: bold;"
+
+            case \obj-already
+                res.push fmt "<a href='\##unique-#node'>[cycle]</a>", \cycle, \cyan
+
+            case \obj-sep
+                res.push ", "
+
+            case \obj-label
+                res.push "<span class='hprint-label'>#node: </span>"
+
+            case \string
+                res.push fmt "\"#{$escape node}\"", \string, \goldenrod
+
+            case \number
+                res.push fmt "#node", \number, \magenta
+
+            case \regexp
+                res.push fmt "#{$escape node.toString!}", \regexp, \lightgreen
+
+            case \function
+                res.push fmt "[function]", \function, \salmon
+
+            case \boolean
+                res.push fmt "#node", \boolean, \magenta
+
+            case \empty
+                res.push fmt "\u2205", \empty, \magenta
+
+            default
+                res.push node
+
+        res.push "</span>"
+
+        return res.join ""
+
+
+    $random: function (list)
+        if list?.length > 0
+            index = Math.floor Math.random! * (list.length - 1) + 1
+            return list[index]
+        return ""
+
+    $repeat: function (str, n)
+        r = ''
+        for i from 0 to n - 1
+            r += str
+        return r
+
+    $replace: function (string, regexp, newvalue, count ? null)
+        if typeof regexp is \string
+            regexp = new RegExp regexp, \g
+
+        return string.replace regexp, (s) ->
+            if count? 
+                if count <= 0
+                    # No more replace
+                    return s
+                count := count - 1
+            return s.replace regexp, newvalue
+
+    $resolve_attr: function (obj, att)
+        attrs = att.split \.
+        for a of attrs
+            obj = obj[a]
+        return obj
+
+    $reverse: function (arr)
+        new_arr = arr.splice 0
+        new_arr.reverse()
+        return new_arr
+
+    $round: function (value, precision ? 0, method ? 'common')
+        if method is \common
+            return value.toFixed precision
+        else
+            factor = 10 ** precision
+            value *= factor
+
+            if method is \floor
+                value = Math.floor value
+            if method is \ceil
+                value = Math.ceil value
+            return (value / factor).toFixed precision
+
+    $safe: function (value)
+        throw new Error "Escaping is not yet implemented"
+
+    $slice: function (value, slices, fill_with ? null)
+        result = []
+
+        slice_length = Math.ceil value.length / slices
+
+        for i from 0 to slices - 1
+            tmpres = []
+
+            for j from 0 to slice_length - 1
+                pos = i * slice_length + j
+                if pos not in value
+                    break if not fill_with?
+                    tmpres.push fill_with
+                else
+                    tmpres.push value[pos]
+
+            result.push tmpres
+        return result
+
+    $sort: function (value, reverse ? false, case_sensitive ? false, attribute ? null)
+        new_arr = value.splice 0
+
+        new_arr.sort (a, b) ->
+            if attribute
+                a = $resolve_attr a, attribute
+                b = $resolve_attr b, attribute
+            if not case_sensitive
+                a = a.toString!.toUpperCase!
+                b = b.toString!.toUpperCase!
+            return -1 if a < b
+            return 1 if a > b
+            return 0
+
+        new_arr.reverse! if reverse
+        return new_arr
+
+    $string: function (s)
+        return s.toString!
+
+    $striptags: function (val)
+        return val.replace //<(
+                '(\'|[^'])*'
+            |   "(\"|[^"])*"
+            |   [^>]
+            )+>
+            //g, ''
+
+    $sum: function (container, attribute ? null, start ? 0)
+        res = 0
+
+        for o of container
+            if attribute
+                res += $resolve_attr o, attribute
+            else
+                res += o
+
+        return res + start
+        
+
+    $title: function (s)
+        return ($capitalize o for o of s.split(/\s/)).join " "
+        
+
+    $trim: function (value)
+        value?.trim() ? ""
+
+    $truncate: function (s, length ? 255, killwords ? false, ellipsis ? \...)
+        end = length - 1
+
+        if end < s.length and not killwords
+            while end + 1 < s.length and not /\B/.test s[end + 1]
+                end += 1
+
+        if end == s.length - 1 # there was no truncating
+            ellipsis = ""
+
+        return (s.slice 0, end + 1) + ellipsis
+
+    $upper: function (value)
+        value.toString!.toUpperCase ()
+
+    $urlize: function (value, trim_url_limit ? null, nofollow ? false)
+        
+        return value.replace //  ([a-z]+:\/\/\w([-\w\.]+)*|\w+(\.\w+)+)(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?   //g, (u) ->
+            if trim_url_limit?
+                trimmed_u = u.slice 0, trim_url_limit
+                if trimmed_u.length < u.length
+                    trimmed_u += "..."
+            else
+                trimmed_u = u
+
+            return "<a href=\"#u\"#{if nofollow then " rel=\"nofollow\"" else ""}>#trimmed_u</a>"
+
+    $wordwrap: function (s, width ? 79, break_long_words ? true)
+        res = []
+        actual = ""
+        sp = /^\s+$/ # spaces are ignored at the end of line.
+
+        words = []
+        for w of s.split /\b/
+            if break_long_words and w.length > width
+                for i from 0 to w.length - 1 by width
+                    words.push w.slice i, i + width
+            else
+                words.push w
+
+        for w of words
+            if actual.length + w.length <= width or sp.test w or actual is ""
+                actual += w
+            else
+                res.push actual
+                actual = w
+
+        res.push actual
+        return res.join "\n"
+
+    $xmlattr: function (d, autospace ? true)
+            res = []
+            for k, v in d
+                if v?
+                    res.push "#{if autospace then " " else ""}#k=\"#{$escape v.toString!}\""
+            return res.join ""
+
+exports[\$center].dependencies = [\$repeat]
+exports[\$escapejs].dependencies = [\$repeat]
+exports[\$groupby].dependencies = [\$resolve_attr]
+exports[\$indent].dependencies = [\$repeat]
+exports[\$join].dependencies = [\$resolve_attr]
+exports[\$sort].dependencies = [\$resolve_attr]
+exports[\$sum].dependencies = [\$resolve_attr]
+exports[\$title].dependencies = [\$capitalize]
+exports[\$xmlattr].dependencies = [\$escape]
+exports[\$pprint].dependencies = [\$pprint_, \$escape]
+exports[\$hprint].dependencies = [\$pprint_, \$escape]

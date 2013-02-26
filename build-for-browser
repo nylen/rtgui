@@ -1,0 +1,10 @@
+#!/bin/sh
+
+cd "$(dirname "$0")"
+
+./compile || exit
+./refresh_module_tpl.sh || exit
+node_modules/browserify/bin/cmd.js lib/main.js -o jinjs-browser.js || exit
+
+echo
+echo Built jinjs-browser.js

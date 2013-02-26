@@ -1,0 +1,161 @@
+#!/usr/bin/env coco
+{ parse:make_expression } = require \../lib/expression
+
+{ fail, ok, equal, notEqual, deepEqual, notDeepEqual, strictEqual, notStrictEqual, throws, doesNotThrow, ifError } = require \assert
+
+optimist = require \optimist
+    .usage "$0: run the test suite."
+    .alias \verbose, \v
+    .alias \help, \h
+    .describe \verbose, "Show all the tests"
+    .describe \help, "You're staring at it"
+{ argv } = optimist
+
+make = (str) ->
+    ctx = toto: true, tata: true, a: true, filters: \$g : true, \$f : true, \$default : true
+    return make_expression str, ctx
+
+suite = require \vows .describe "Expressions Test Suite"
+
+suite.addBatch do
+    "Simple operations don't change the operands": do
+        "When adding 2 + 2": -> equal make("2 + 2"), "2 + 2"
+
+    "Strings and Regexps": do
+        "Single quote": ->
+            equal make("'toto'"), "'toto'"
+        "Single quote with escaping": ->
+            equal make("'to\\\'to'"), "'to\\\'to'"
+        "Double quotes": ->
+            equal make('"toto"'), '"toto"'
+        "Double quotes with escaping": ->
+            equal make('"to\\\"to"'), '"to\\\"to"'
+        "Regexp": ->
+            equal make('/regexp/'), '/regexp/'
+        "Regexp with / escaping": ->
+            equal make('/reg\\/exp/'), '/reg\\/exp/'
+        "Regexp with post qualifiers (gim)": ->
+            equal make('/regexp/gi'), '/regexp/gi'
+
+    "Numbers": do
+        "comprise also negative values": ->
+            equal make("-1"), "-1"
+
+    "Function Calls": do
+        "OOC function call": ->
+            equal make("popo(1)"), "$$.popo(1)"
+        "Multiple arguments": ->
+            equal make("toto(1,2,3)"), "$$.toto(1, 2, 3)"
+        "Function calling a function": ->
+            equal make("a(b(1))"), "$$.a($$.b(1))"
+        "Function calling of a function result": ->
+            equal make("a()()"), "$$.a()()"
+
+    "Dot operator tests": do
+        "IC leader is not prefixed, member neither": ->
+            equal make("toto.prout"), "$$.toto.prout"
+        "OOC leader is prefixed, not member": ->
+            equal make("prout.toto"), "$$.prout.toto"
+        "Can do function calls after dotted expression": ->
+            equal make("prout.toto (2)"), "$$.prout.toto(2)"
+        "Function call with multiple argument": ->
+            equal make("toto.prout (2, 3, 4)"), "$$.toto.prout(2, 3, 4)"
+        "Function call added with dotted expression": ->
+            equal make("toto(3) + tata.toto"), "$$.toto(3) + $$.tata.toto"
+        "More complex test mixing functions and dots": ->
+            equal make("tata.toto(3, toto.tata) + tata.toto"), "$$.tata.toto(3, $$.toto.tata) + $$.tata.toto"
+        "Function chaining": ->
+            equal make('toto().a'), '$$.toto().a'
+        "Function chaining II": ->
+            equal make('toto(tata).a(bubu)'), '$$.toto($$.tata).a($$.bubu)'
+
+    "Filters": do
+        "can be named even with reserved words": ->
+            equal make("va|default"), "$default.call($$,$$.va)"
+        "An OOC variable through a filter": ->
+            equal make("variable|f"), "$f.call($$,$$.variable)"
+        "Dotted variable through a filter": ->
+            equal make("toto.tata(4)|f"), "$f.call($$,$$.toto.tata(4))"
+        "Filter taking an argument": ->
+            equal make("variable|f(2)"), "$f.call($$,$$.variable, 2)"
+        "Filter with several arguments, one of which an OOC var": ->
+            equal make("variable|f(2, toto)"), "$f.call($$,$$.variable, 2, $$.toto)"
+        "Simple filter chaining": ->
+            equal make("v|f|g"), "$g.call($$,$f.call($$,$$.v))"
+        "More complex filter chaining + arguments": ->
+            equal make("variable|f(2 + tata, prout * toto)|g"), "$g.call($$,$f.call($$,$$.variable, 2 + $$.tata, $$.prout * $$.toto))"
+        "Another complex filtering expression": ->
+            equal make("variable|f(2 + tata|g, prout * toto)"), "$f.call($$,$$.variable, 2 + $g.call($$,$$.tata), $$.prout * $$.toto)"
+        "Arithmetics with a filter": ->
+            equal make("2 + tata|g"), "2 + $g.call($$,$$.tata)"
+        "More complex arithmetics with filters": ->
+            equal make('toto|f(3) == 2'), '$f.call($$,$$.toto, 3) == 2'
+        "Filtered function call": ->
+            equal make('f()|f'), '$f.call($$,$$.f())'
+
+    "Arrays and indexing": do
+        "Empty Array": ->
+            equal make('[]'), '[]'
+        "Empty Array with spaces": ->
+            equal make(' [  ] '), '[]'
+        "Simple Array": ->
+            equal make('[1, 2, 3]'), '[1, 2, 3]'
+        "Array indexed with variable": ->
+            equal make('toto[tata]'), '$$.toto[$$.tata]'
+        "allow us to use . after them": ->
+            equal make('toto[tata].bubu[tutu]'), '$$.toto[$$.tata].bubu[$$.tutu]'
+        "Allow us to write a[a][a]": ->
+            equal make('a[a][a]'), '$$.a[$$.a][$$.a]'
+
+    "Assignment": do
+        "Complex Test": ->
+            equal make('step=script.steps[node.step_name]'), '$$.step = $$.script.steps[$$.node.step_name]'
+
+    "The 'in' operator": do
+        "Gets replaced by a function": ->
+            equal make('toto in tata'), "__in($$.toto, $$.tata)"
+        "Doesn't mess it up with the ternary operator": ->
+            equal make('toto in tata ? toto : null'), "(__in($$.toto, $$.tata) ? $$.toto : null)"
+
+    "The string operators (in, instanceof, etc..)": do
+        "are not eating up themselves": ->
+            equal make('toto instanceof tata'), "$$.toto instanceof $$.tata"
+        "Can tolerate having ( or ) instead of a space around them": ->
+            equal make('(a)in(b)'), '__in(($$.a), ($$.b))'
+
+    "Object literals": do
+        "Can be empty (without space)": ->
+            equal make('{}'), '{}'
+        "Can be empty (with space)": ->
+            equal make(' {  } '), '{}'
+        "Can be created with regular labels, string labels and complex expressions": ->
+            equal make('{ a: 1, b: "toto", "coucou": f|g }'), '{ a: 1, b: "toto", "coucou": $g.call($$,$$.f) }'
+
+    "More complex tests involving mixing of previous ones": do
+        "Function calls + filtered expression as argument": ->
+            equal make("a(b(1|f))"), "$$.a($$.b($f.call($$,1)))"
+
+    "Expressions": do
+        "Can have space around them": ->
+            equal make('  toto == tata  '), '$$.toto == $$.tata'
+
+        "can be empty": ->
+            equal make('     '), ''
+
+    "Combination tests": do
+        "Chaining a function call and array call": ->
+            equal make('a()[a]'), '$$.a()[$$.a]'
+        "Lots of dots, arrays, and function chaining together": ->
+            equal make('a()[a]()().a().at[at]'), '$$.a()[$$.a]()().a().at[$$.at]'
+        "Filter can't be directly chained with properties": ->
+            throws -> make('a|trim.length')
+                , Error
+
+if argv.help
+    console.log optimist.usage()
+    process.exit 0
+
+if argv.verbose
+    suite.run reporter: require \vows/lib/vows/reporters/spec
+else
+    suite.run()

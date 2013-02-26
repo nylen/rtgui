@@ -1,0 +1,445 @@
+#!/usr/bin/env coco
+{ make_expression } = require \../lib/expression
+
+{ fail, ok, equal, notEqual, deepEqual, notDeepEqual, strictEqual, notStrictEqual, throws, doesNotThrow, ifError } = require \assert
+{ EventEmitter } = require \events
+{ JinJSParseError } = require \../lib/nodes
+
+optimist = require \optimist
+    .usage "$0: run the test suite."
+    .alias \verbose, \v
+    .alias \help, \h
+    .describe \verbose, "Show all the tests"
+    .describe \help, "You're staring at it"
+{ argv } = optimist
+
+{ Environment } = require \../lib/environment
+e = new Environment filters: require("../lib/filters"), utils: require("../lib/utils")
+
+test_context = do
+    foo: "foo"
+    bar: "bar"
+    one: 1
+
+run = (str, ctx) ->
+    try
+        exports = {} # Necessary to get the render() function
+        compiled = e.getTemplateSourceFromString str
+        eval compiled
+        result = exports.render ctx
+        return result
+    catch e
+        if e instanceof SyntaxError
+            console.log compiled
+        throw e
+
+function parse (txt, ctx)
+    return ->
+        if not ctx
+            ctx := {} <<< test_context
+        res = run txt, ctx
+        return txt: res, ctx: ctx
+
+_parse = (txt, ctx) -> (parse txt, ctx)()
+
+function compile (txt)
+    try
+        exports = {}
+        compiled = e.getTemplateSourceFromString txt
+        eval compiled
+        return exports
+    catch e
+        if e instanceof SyntaxError
+            console.log compiled
+        throw e
+
+parseError = (fn) -> throws fn, JinJSParseError
+
+function equaltxt (exp, txt)
+    res = _parse exp
+    equal "'#{res.txt}'", "'#txt'"
+
+suite = require \vows .describe "Expressions Test Suite"
+
+
+suite.addBatch do
+    "The {% let %} tag": do
+        topic: parse "{% let toto = 1 %}TXT"
+
+        "Lets us assign to a variable that is later exported": (res) ->
+            equal res.ctx.toto, 1
+
+        "Does not output anything": (res) ->
+            equal res.txt, 'TXT'
+
+        "does not let us assign to reserved-words variables": (res) ->
+            parseError -> _parse "{% let instanceof = 3 %}"
+
+        "can have their results even across new lines": ->
+            res = _parse "{% let toto\n=\n 1 %}{{ toto }}"
+            equal res.txt, "1"
+
+    ##
+    ##  IF TAG
+    ##
+
+    "The {% if %} and {% elseif %} tags": do
+
+        "displays text when its condition is met": ->
+            res = _parse "{% if one == 1 %}TXT{% endif %}"
+            equal res.txt, 'TXT'
+
+        "does not display text if its condition is not met": ->
+            res = _parse "{% if one == 2 %}TXT{% endif %}"
+            equal res.txt, ''
+
+        "displays its first close if its condition is met": ->
+            res = _parse "{% if one == 1 %}TXT{% else %}FOO{% endif %}"
+            equal res.txt, 'TXT'
+        
+        "displays its else close if its condition is not met": ->
+            res = _parse "{% if one == 2 %}TXT{% else %}FOO{% endif %}"
+            equal res.txt, 'FOO'
+
+        "can have several ifelse clauses": ->
+            res = _parse "{% if one == 2 %}TXT{% elseif one == 1 %}FO1{% elseif one == 3 %}FO3{% else %}FOO{% endif %}"
+            equal res.txt, 'FO1'
+
+        "can have several elif clauses": ->
+            res = _parse "{% if one == 2 %}TXT{% elif one == 1 %}FO1{% elif one == 3 %}FO3{% else %}FOO{% endif %}"
+            equal res.txt, 'FO1'
+
+        "can not be condition-less": ->
+            throws (-> _parse "{% if %}TXT{% endif %}"), JinJSParseError
+            throws (-> _parse "{% if one == 1 %}TXT{% elseif %}{% endif %}"), JinJSParseError
+            throws (-> _parse "{% if one == 1 %}TXT{% elif %}{% endif %}"), JinJSParseError
+
+    ##
+    ##  FOR TAG
+    ##
+
+    "The {% for %} tag": do
+
+        "is of the form <variable> in <array>": ->
+            throws (-> _parse "{% for in toto %}TXT{% endfor %}"), JinJSParseError
+            doesNotThrow -> _parse "{% for value in toto %}TXT{% endfor %}"
+
+        "is used to iterate over an array": ->
+            res = _parse "{% for val in [4, 5, 4] %}{{ val }}{% endfor %}"
+            equal res.txt, '454'
+
+        "has a {{ loop.index0 }} variable": ->
+            res = _parse "{% for val in [4, 5, 4] %}{{ loop.index0 }}{% endfor %}"
+            equal res.txt, '012'
+            
+        "Gives the index0 in the second variable if specified": ->
+            res = _parse "{% for val, ind in [4, 5, 4] %}{{ ind }}{% endfor %}"
+            equal res.txt, '012'
+            
+        "has a {{ loop.index }} variable": ->
+            res = _parse "{% for val in [4, 5, 4] %}{{ loop.index }}{% endfor %}"
+            equal res.txt, '123'
+
+        "has a {{ loop.first }} variable": ->
+            res = _parse "{% for val in [4, 5, 6] %}{% if loop.first %}F{% endif %}{{ loop.index }}{% endfor %}"
+            equal res.txt, 'F123'
+            
+        "has a {{ loop.last }} variable": ->
+            res = _parse "{% for val in [4, 5, 6] %}{% if loop.last %}L{% endif %}{{ loop.index }}{% endfor %}"
+            equal res.txt, '12L3'
+            
+        "is also of the form <key>, <value> in <object>": ->
+            doesNotThrow -> _parse "{% for key, value in toto %}TXT{% endfor %}"
+            
+        "outputs keys and values of objects": ->
+            res = _parse "{% for key, val in {a: 1, b: 2} %}{{ key }}:{{val}} {% endfor %}"
+            equal res.txt, 'a:1 b:2 '
+
+        "accepts the empty object and does not output anything": ->
+            res = _parse "{% for key, val in { } %}{{ key }}:{{val}} {% endfor %}"
+            equal res.txt, ''
+
+        "can have another {% for %} inside without messing up the variables": ->
+            res = _parse "{% for key, val in {a:1, b:2} %}{% for key in [1,2,3] %}{{ key }}{% endfor %}{{ key }}:{{val}}{% endfor %}"
+            equal res.txt, '123a:1123b:2'
+
+        "does not leave its variable in the environment": ->
+            res = _parse "{% for key, val in { } %}{{ key }}:{{val}} {% endfor %}"
+            equal res.ctx.key, undefined
+            equal res.ctx.val, undefined
+
+        "has an else clause that executes when the for loop did not run": ->
+            res = _parse "{% for key, val in { } %}hey{% else %}empty{% endfor %}"
+            equal res.txt, 'empty'
+
+        "has an else clause that does not execute when the for loop did run": ->
+            res = _parse "{% for key in ['hello'] %}{{ key }}{% else %}empty{% endfor %}"
+            equal res.txt, 'hello'
+
+        "Has a continue clause": ->
+            res = _parse "{% for key in ['hello', 'world'] %}{% continue %}{{ key }}{% else %}empty{% endfor %}"
+            equal res.txt, ''
+
+        "Has a break clause": ->
+            res = _parse "{% for key in ['hello', 'world'] %}{{ key }}{% break %}{% else %}empty{% endfor %}"
+            equal res.txt, 'hello'
+
+        "Has a break clause that can be nested in {% if %}": ->
+            res = _parse "{% for key in ['hello', 'world'] %}{{ key }}{% if 0 == 0 %}{% break %}{% endif %}{% else %}empty{% endfor %}"
+            equal res.txt, 'hello'
+
+
+        # Should investigate the whole "callee thing"
+        # "can be called recursively": ->
+
+    ##
+    ##  {{ }}
+    ##
+
+    "The {{ print }} statement": do
+
+        "does not output undefined or null values": ->
+            res = _parse "{{ null }}{{ undefined }}"
+            equal res.txt, ''
+
+        "displays the string result of an expression": ->
+            res = _parse "{{ foo }}"
+            equal res.txt, 'foo'
+
+    "The |filters": do
+        "allow us to pass values through functions differently": ->
+            equaltxt "{{ bobo|default('bobo is not defined') }}", 'bobo is not defined'
+
+        "`abs` returns absolute value": ->
+            equaltxt "{{ 1|abs }} : {{ -1|abs }}", '1 : 1'
+
+        "`batch` batches stuff": ->
+            equaltxt "{% for a in [1, 2, 3, 4, 5]|batch(2, 'a') %}{{ a[0] }}: {{ a[1] }},{% endfor %}", '1: 2,3: 4,5: a,'
+            equaltxt "{% for a in [1, 2, 3, 4, 5]|batch(2) %}{{ a[0] }}: {{ a[1] }},{% endfor %}", '1: 2,3: 4,5: ,'
+
+        "`capitalize` capitalizes a string": ->
+            equaltxt "{{ 'toTO'|capitalize }}", "Toto"
+
+        "`center` centers a string": ->
+            equaltxt "{{ 'aaa'|center(5) }}", " aaa"
+            equaltxt "{{ 'aaa'|center(6) }}", " aaa"
+            equaltxt "{{ 'aaa'|center(7) }}", "  aaa"
+
+        "`date` formats a date": ->
+            res = _parse "{{ d|date('%Y-%m-%d') }}", d: new Date '1970-01-01'
+            equal res.txt, '1970-01-01'
+            res = _parse "{{ d|date('%y-%m-%d') }}", d: new Date '1970-01-01'
+            equal res.txt, '70-01-01'
+
+        "`dictsort` sorts an object": ->
+            equaltxt "{{ {'c': 1, 'b': 3, 'a': 2}|dictsort }}", 'a,2,b,3,c,1'
+            equaltxt "{{ {'C': 1, 'b': 3, 'a': 2}|dictsort }}", 'a,2,b,3,C,1'
+            equaltxt "{{ {'C': 1, 'b': 3, 'a': 2}|dictsort(true) }}", 'C,1,a,2,b,3'
+
+        "`escape` or `e` escape an HTML string": ->
+            equaltxt "{{ '<a href=\"#\" title=\\'\\'>&amp;</a>'|e }}", '&lt;a href=&quot;#&quot; title=&apos;&apos;&gt;&amp;amp;&lt;/a&gt;'
+
+        "`escapejs` escape a string to make it javascript/or JSON safe": ->
+            equaltxt "{{ 'a\"b\\'<{}'|escapejs }}", 'a\\u0022b\\u0027\\u003c\\u007b\\u007d'
+
+        "`groupby` groups items": ->
+            equaltxt "{% for g, l in [ {toto:'hey', s: '1' }, {toto:'ho', s: 'a'}, {toto:'hey', s:'b'}, {toto: 'hi', s:'c'}]|groupby('toto') %}{{ g }}{% for i in l %}-{{ i.s }}-{% endfor %}{% endfor %}", 'hey-1--b-ho-a-hi-c-'
+
+        "`indent` indents a string": ->
+            equaltxt '{{ "hello\\nyou\\nhow\\nare\\nyou"|indent(2) }}', 'hello\n  you\n  how\n  are\n  you'
+            equaltxt '{{ "hello\\nyou\\nhow\\nare\\nyou"|indent(2, true) }}', '  hello\n  you\n  how\n  are\n  you'
+
+        "`join` joins an array of strings or attributes of an object": ->
+            equaltxt '{{ ["hello", "pretty", "world"]|join }}', 'helloprettyworld'
+            equaltxt '{{ ["hello", "pretty", "world"]|join(" ") }}', 'hello pretty world'
+            equaltxt '{{ [ { s:"hello" }, {s: "pretty"}, {s: "world"}]|join("-", "s") }}', 'hello-pretty-world'
+
+        "`random` selects a random item of a list": ->
+            { txt: t } = _parse '{{ ["a", "b", "c", "d"]|random }}'
+            equal true, (t is \a or t is \b or t is \c or t is \d)
+
+        "`replace` replaces text": ->
+            equaltxt '{{ "yooo"|replace("o", "a") }}', 'yaaa'
+            equaltxt '{{ "yooo"|replace("o", "a", 2) }}', 'yaao'
+            equaltxt '{{ "yoaopouoa"|replace(/oa/g, "-") }}', 'y-opou-'
+            equaltxt '{{ "yoaopouoa"|replace(/oa/g, "-", 1) }}', 'y-opouoa'
+
+        "`round` rounds numbers": ->
+            equaltxt '{{ 42.55|round }}', '43'
+            equaltxt '{{ 42.55|round(1) }}', '42.5'
+            equaltxt '{{ 42.55|round(1, "floor") }}', '42.5'
+            equaltxt '{{ 42.55|round(1, "ceil") }}', '42.6'
+
+        "`slice` slices stuff": ->
+            equaltxt "{% for row in [1, 2, 3, 4, 5]|slice(2, 'a') %}{% for col in row %}{{ col }}-{% endfor %}.{% endfor %}", '1-2-3-.4-5-a-.'
+            equaltxt "{% for row in [1, 2, 3, 4, 5]|slice(2) %}{% for col in row %}{{ col }}-{% endfor %}.{% endfor %}", '1-2-3-.4-5-.'
+
+        "`sort` sorts": ->
+            equaltxt "{{ [1, 4, 2, 3]|sort }}", '1,2,3,4'
+            equaltxt "{{ [1, 4, 2, 3]|sort(true) }}", '4,3,2,1'
+            equaltxt "{{ ['a', 'B', 'c', 'D']|sort(false, true) }}", 'B,D,a,c'
+            equaltxt "{{ ['a', 'B', 'c', 'D']|sort(false, false) }}", 'a,B,c,D'
+            equaltxt "{{ ['a', 'B', 'c', 'D']|sort(false) }}", 'a,B,c,D'
+            equaltxt "{% for o in [{ a: { b: 'z' } },{ a: { b: 'y' } },{ a: { b: 'x' } }]|sort(false, false, 'a.b') %}{{ o.a.b }}{% endfor %}", 'xyz'
+
+        "`striptags` removes HTML tags": ->
+            equaltxt "{{ '<a href=\">\"></a>'|striptags }}", ''
+            equaltxt "{{ '<a href=\"\\\">\"></a>'|striptags }}", ''
+            equaltxt "{{ '<a t=\\'\\\\\\'>\\' b=\"\\\"bp>\">ha</a>'|striptags }}", "ha"
+
+        "`start` does some funky sums": ->
+            equaltxt "{{ [1, 2, 3]|sum }}", "6"
+            equaltxt "{{ [1, 2, 3]|sum(null, 4) }}", "10"
+            equaltxt "{{ [{a: 1}, {a: 2}, {a: 3}]|sum('a', 4) }}", "10"
+
+        "`title` titleize text": ->
+            equaltxt "{{ 'britney shaved her head'|title }}", "Britney Shaved Her Head"
+            equaltxt "{{ 'britney    shaVED  her head'|title }}", "Britney    Shaved  Her Head"
+            equaltxt "{{ 'été écolo'|title }}", "Été Écolo"
+
+        "`truncate` truncates text": ->
+            equaltxt "{{ 'Hey hey hey'|truncate(4) }}", "Hey hey..."
+            equaltxt "{{ 'Hey hey hey'|truncate(4, true) }}", "Hey ..."
+            equaltxt "{{ 'Hey hey hey'|truncate(11) }}", "Hey hey hey"
+            equaltxt "{{ 'Hey hey hey'|truncate(11, true) }}", "Hey hey hey"
+
+        "`urlize` converts urls to links": ->
+            equaltxt "{{ 'Go to www.google.com to learn more or https://github.com/ for cool stuff'|urlize(10, true) }}", 'Go to <a href="www.google.com" rel="nofollow">www.google...</a> to learn more or <a href="https://github.com/" rel="nofollow">https://gi...</a> for cool stuff'
+
+        "`wordwrap` wraps words": ->
+            equaltxt "{{ 'Hey hey hey hey hey'|wordwrap(10) }}", 'Hey hey \nhey hey \nhey'
+            equaltxt "{{ 'Hey hey hey hey hey'|wordwrap(7) }}", 'Hey hey \nhey hey \nhey'
+            equaltxt "{{ 'Hey hey hey hey hey'|wordwrap(2, false) }}", 'Hey \nhey \nhey \nhey \nhey'
+            equaltxt "{{ ''|wordwrap(7) }}", ''
+
+        "`xmlattr` makes attributes": ->
+            equaltxt "<ul{{ { id: 'plouf', 'class': 'babo baba' }|xmlattr }}></ul>", '<ul id="plouf" class="babo baba"></ul>'
+
+
+    "The {% extends %} tag": do
+
+        "allows a template to extend another": ->
+            base = compile "base"
+            res = _parse "{% extends base %}should not see me", (base: base)
+            equal res.txt, 'base'
+
+        "does not let us extend null or undefined variables": ->
+            throws -> _parse "{% extends null %}"
+            throws -> _parse "{% extends bloub %}"
+
+
+    "The {% include %} tag": do
+        "allows us to include the contents of a template into another": ->
+            included = compile "hello"
+            res = _parse "{% include included %} world !", included: included
+            equal res.txt, 'hello world !'
+
+        "sends the current context to the included tag": ->
+            included = compile "{{ foo }}"
+            res = _parse "{% include included %}", foo: "foo", included: included
+            equal res.txt, 'foo'
+
+        "gets to modify the context": ->
+            included = compile "{% let foo = 'bar' %}"
+            res = _parse "{% include included %}{{ foo }}", foo: "foo", included: included
+            equal res.txt, 'bar'
+
+    "The {% block %} tag": do
+
+        "can be nested": ->
+            extended = compile "{% block orig %}original{% block nested %} nested{% endblock %}{% endblock %}"
+            res = _parse "{% extends ext %}", ext: extended
+            equal res.txt, "original nested" 
+
+        "can have redefined nested blocks": ->
+            extended = compile "{% block orig %}hello {% block nested %}bold{% endblock %}{% endblock %}"
+            res = _parse "{% extends ext %}{% block nested %}world{% endblock %}", ext: extended
+            equal res.txt, "hello world" 
+
+        "defines a super() function for previous blocks": ->
+            base = compile "{% block b %}hello{% endblock %}"
+            res = _parse "{% extends base %}{% block b %}{{ super() }} world{% endblock %}" base: base
+            equal res.txt, 'hello world'
+
+        "defines a super() function for previous blocks that works with context": ->
+            base = compile "{% block b %}hello {{myvar}}{% endblock %}"
+            res = _parse "{% extends base %}{% block b %}{{ super() }} world{% endblock %}" base: base, myvar: "beautiful"
+            equal res.txt, 'hello beautiful world'
+
+
+        "can be redefined in child templates": ->
+            base = compile ":{% block b %}should not see me{% endblock %}:"
+            res = _parse "{% extends base %}should not see me{% block b %}hello{% endblock %}", base: base
+            equal res.txt, ':hello:'
+
+        "allows us to have blocks redefined in various child templates": ->
+            base = compile ":{% block b %}should not see me{% endblock %}:"
+            base2 = compile "{% extends base %}={% block b %}should still not see me{% endblock %}="
+            res = _parse "{% extends base2 %}should not see me{% block b %}hello{% endblock %}", base: base, base2: base2
+            equal res.txt, ':hello:'
+
+
+    "The {% import %} tag": do
+
+        "allows us to import variables from another template to another": ->
+            imported = compile "{% let foo = 'bar' %}"
+            res = _parse "{% from imported import foo %}{{ foo }}", imported: imported
+            equal res.txt, 'bar'
+
+        "allows us to import a whole template as a module": ->
+            imported = compile "{% let foo = 'bar' %}"
+            res = _parse "{% import imported as imp %}{{ imp.foo }}", imported: imported
+            equal res.txt, 'bar'
+
+        "by default does not expose the current context to the imported module": ->
+            imported = compile "{% let foo = 'bar' %}"
+            res = _parse "{% import imported as toto %}{{ foo }}", imported: imported, foo: 'foo'
+            equal res.txt, 'foo'
+
+        "can pass the context to the imported template": ->
+            imported = compile "{% let foo = bar + 'foo' %}"
+            res = _parse "{% import imported as toto with context %}{{ toto.foo }}", imported: imported, bar: 'bar'
+            equal res.txt, 'barfoo'
+
+    "The {% abspath %} tag": do
+
+        "Outputs the absolute path of the given string": ->
+            res = _parse "{% abspath 'toto' %}"
+            equal res.txt, (require \path .join __dirname, \toto)
+
+    "The {% macro %} tag": do
+
+        "Allows us to define functions": ->
+            res = _parse "{% macro test (a, b) %}{{ a }} {{ b }}.{% endmacro %}{{ test ('Hello', 'World') }}"
+            equal res.txt, "Hello World."
+
+        "Can have arguments with default values": ->
+            res = _parse "{% macro test (a, b='World') %}{{ a }} {{ b }}.{% endmacro %}{{ test ('Hello') }}"
+            equal res.txt, "Hello World."
+
+        "Can have *several* arguments with default values": ->
+            res = _parse "{% macro test (a='Bouzouk', b='World') %}{{ a }} {{ b }}.{% endmacro %}{{ test ('Hello') }}"
+            equal res.txt, "Hello World."
+
+
+        "have arguments which default values are overriden when specified in the function call": ->
+            res = _parse "{% macro test (a, b='Not World') %}{{ a }} {{ b }}.{% endmacro %}{{ test ('Hello', 'World') }}"
+            equal res.txt, "Hello World."
+
+    "The {% call %} tag": do
+        "Allows us to send additional, big content, to macros": ->
+            res = _parse "{% macro test () %}{{ caller() }} World.{% endmacro %}{% call test() %}Hello{% endcall %}"
+            equal res.txt, "Hello World."
+
+        "Allows us to send additional, big content, to macros, adding itself to its arguments": ->
+            res = _parse "{% macro test (a,b) %}{{ caller() }} {{a}}{{b}} World.{% endmacro %}{% call test('the','zoum') %}Hello{% endcall %}"
+            equal res.txt, "Hello thezoum World."
+
+if argv.help
+    console.log optimist.usage()
+    process.exit 0
+
+if argv.verbose
+    suite.run reporter: require \vows/lib/vows/reporters/spec
+else
+    suite.run()
