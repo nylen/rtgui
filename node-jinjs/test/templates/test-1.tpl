@@ -1,1 +1,0 @@
-Should see "defined": "{{ variable }}"

@@ -165,7 +165,7 @@ function updateTorrentsHTML(changes) {
       } else {
         // A torrent was added or modified
         // Render the template to produce the new HTML
-        var html = window.templates.torrent.render(
+        var html = window.templates.torrent(
           window.data.torrents[hash]);
         // Get the element that contains the rendered HTML
         var $container = $('#' + hash);

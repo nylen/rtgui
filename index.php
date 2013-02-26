@@ -127,7 +127,7 @@ include_script('jquery.jeegoocontext.js');
 include_script('jquery.mousewheel.js');
 include_script('underscore.js');
 include_script('backbone.js');
-include_script('jinjs.js');
+include_script('swig.js');
 include_script('json2.min.js');
 include_script('php.min.js');
 

@@ -17,8 +17,7 @@ $(function() {
 
   $('script[id^=template-]').each(function() {
     var id = $(this).attr('id');
-    window.templates[id.replace(/^template-/, '')] =
-      jinjs.getTemplateFromString($(this).html());
+    window.templates[id.replace(/^template-/, '')] = swig.compile($(this).html());
   });
 
   checkDiskPercent();
