@@ -1,6 +1,0 @@
-[submodule "Twig"]
-	path = Twig
-	url = git://github.com/fabpot/Twig.git
-[submodule "node-jinjs"]
-	path = node-jinjs
-	url = git@github.com:nylen/node-jinjs.git
