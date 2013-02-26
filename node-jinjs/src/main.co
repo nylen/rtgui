@@ -1,0 +1,8 @@
+{ defaultEnvironment, Environment } = require \./environment
+{ registerExtension } = require \./helpers
+{ compile } = require \./express
+
+window.jinjs = defaultEnvironment if process.browser
+
+exports <<< { defaultEnvironment, registerExtension, Environment, compile }
+

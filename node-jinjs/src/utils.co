@@ -1,0 +1,13 @@
+function __in (obj, container)
+    if obj instanceof Array
+        return __indexOf.call(container, obj) > -1
+
+    return container[obj]?
+
+function __import (obj, src)
+    own = {}.hasOwnProperty
+    for key in src 
+        obj[key] = src[key] if own.call src, key
+    return obj
+
+exports <<< { __in, __import }
