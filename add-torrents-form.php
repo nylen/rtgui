@@ -3,6 +3,12 @@ require_once 'config.php';
 require_once 'functions.php';
 rtgui_session_start();
 
+if ($_GET['urls']) {
+  $urls = base64_decode($_GET['urls']);
+} else {
+  $urls = '';
+}
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -50,7 +56,7 @@ HTML;
 <table id="upload-form">
   <tr class="controls">
     <td class="left">Paste URL(s):</td>
-    <td class="right input"><textarea name="add_urls" rows="5"></textarea></td>
+    <td class="right input"><textarea name="add_urls" rows="5"><?php echo $urls; ?></textarea></td>
   </tr>
   <tr class="controls">
     <td class="left">Upload file(s):</td>
