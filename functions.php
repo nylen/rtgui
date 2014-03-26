@@ -380,13 +380,21 @@ function get_all_torrents($params) {
       if (function_exists('get_local_torrent_path')) {
         $fn = get_local_torrent_path($fn);
       }
+
+      $s['date_added'] = 0;
       if (file_exists($fn)) {
-        // Yes, this even works for magnet links.  rTorrent creates a ".meta"
-        // file and sets it as "tied_to_file".
         $s['date_added'] = filemtime($fn);
-      } else {
-        $s['date_added'] = 0;
+      } else if (preg_match('@^[a-f0-9]{40}.meta$@i', $t['name'])) {
+        // For magnet links, rTorrent creates a "TORRENT_HASH.meta" file and
+        // sets it as "tied_to_file" when the download starts.  The file still
+        // exists before then though, and it can be found at the torrent's
+        // base_path.
+        $fn = $t['base_path'];
+        if (file_exists($fn)) {
+          $s['date_added'] = filemtime($fn);
+        }
       }
+
       $_SESSION['persistent'][$hash] = $s;
     }
 
