@@ -8,7 +8,7 @@ table#upload-form {
   width: 8em;
 }
 #upload-form td.input textarea, #upload-form td.input input {
-  width: 100%;
+  width: 95%;
 }
 
 #upload-form label {
@@ -16,10 +16,18 @@ table#upload-form {
 }
 #upload-form .tag-checkbox {
   float: left;
+  position: relative;
+  margin: 4px 0;
 }
 #upload-form .tag-checkbox input {
-  position: relative;
-  top: 2px;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+}
+#upload-form .tag-checkbox label {
+  width: 150px;
+  display: block;
+  padding-left: 18px;
 }
 
 img.loading {
