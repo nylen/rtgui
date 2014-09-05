@@ -145,6 +145,7 @@ include_stylesheet('ie.css', true);
 include_script('ie.js');
 ?>
 <![endif]-->
+<script src="//fightforthefuture.github.io/battleforthenet-widget/widget.min.js" async></script>
 </head>
 <body>
   <ul id="context-menu" class="jeegoocontext cm_default">
