@@ -37,6 +37,11 @@ if (isset($r_bulkaction) && is_array($r_select)) {
           break;
 
         case 'delete':
+        case 'purge':
+          if ($r_bulkaction == 'purge') {
+            $path = rtorrent_xmlrpc('d.get_base_path', array($hash));
+            $response = rtorrent_xmlrpc('execute', array('rm', '-r', $path));
+          }
           $response = do_xmlrpc(xmlrpc_encode_request('d.erase', array($hash)));
           break;
 
@@ -111,7 +116,8 @@ switch ($r_cmd) {
   case 'delete':
   case 'purge':
     if ($r_cmd == 'purge') {
-      // TODO: Delete files
+      $path = rtorrent_xmlrpc('d.get_base_path', array($r_hash));
+      $response = rtorrent_xmlrpc('execute', array('rm', '-r', $path));
     }
     $response = do_xmlrpc(xmlrpc_encode_request('d.erase', array($r_hash)));
     break;

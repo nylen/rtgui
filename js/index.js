@@ -111,9 +111,8 @@ $(function() {
       for (var i = 0; i < formData.length; i++) {
         if (formData[i].name == 'bulkaction') {
           // confirm delete
-          if (formData[i].value == 'delete'
-          && !confirm('Are you sure you want to delete the selected '
-            + 'torrents?  Their data will not be deleted.')) {
+          if ((formData[i].value == 'delete' || formData[i].value == 'purge')
+          && !confirmWithMessage(formData[i].value)) {
 
             return false;
           }
