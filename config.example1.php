@@ -104,7 +104,7 @@ $private_storage_dir = 'private';
 
 // Define a list of tags that should always be shown in the tag editing menu and the
 // add torrents dialog, even if no torrents are using them.
-$always_show_tags = array('music', 'other-music', 'linux', 'windows', 'mac', 'other', 'books');
+$always_show_tags = array('music', 'other-music', 'linux', 'windows', 'mac', 'other', 'books', 'audiobooks');
 
 // Determine whether to allow hiding or unhiding torrents.
 $can_hide_unhide = ($_SERVER['REMOTE_USER'] == 'james' || !$_SERVER['REMOTE_USER']);
