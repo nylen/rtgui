@@ -98,9 +98,13 @@ if (isset($r_set_tpriority)) {
 if (isset($r_newdir)) {
   $old_path = rtorrent_xmlrpc('d.get_base_path', array($r_hash));
   if (rtrim(dirname($old_path), '/') !== rtrim($r_newdir, '/')) {
-    if (rtorrent_xmlrpc('execute', array('mv', '-u', $old_path, "$r_newdir/")) === false) {
-      die("Failed to move '$old_path' to '$r_newdir'.  Check rTorrent's execute_log.");
-    }
+    // TODO removed check if this fails because we could be trying to point a
+    // torrent at existing data.  Should only be an error if:
+    //  - $old_path exists, AND:
+    //     - $r_newdir exists but is not a directory, OR:
+    //     - $r_newdir does not exist but moving to it fails
+    //  - neither $old_path nor $r_newdir exist (??)
+    rtorrent_xmlrpc('execute', array('mv', '-u', $old_path, "$r_newdir/"));
     rtorrent_xmlrpc('d.set_directory', array($r_hash, $r_newdir));
     rtorrent_xmlrpc('d.check_hash', array($r_hash));
   }
