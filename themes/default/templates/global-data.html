@@ -18,7 +18,9 @@
   <p>
     Showing <span id="t-count-visible">{{ torrents_count_visible }}</span>
     of <span id="t-count-all">{{ torrents_count_all }}</span> torrents
-    (<span id="t-count-hidden">{{ torrents_count_superhidden }}</span> hidden)
+    {% if torrents_count_supperhidden %}
+      (<span id="t-count-hidden">{{ torrents_count_superhidden }}</span> hidden)
+    {% endif %}
     | <a class="dialog" rel="400:300" href="settings.php">Settings</a>
     | <a class="dialog" rel="700:500" href="add-torrents-form.php">Add torrent(s)</a>
   </p>

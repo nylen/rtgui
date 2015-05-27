@@ -298,8 +298,9 @@ function get_all_torrents($params) {
     if (is_array($_SESSION['tags'][$hash])) {
       $t['tags'] = $_SESSION['tags'][$hash];
       if (in_array('_hidden', $_SESSION['tags'][$hash])) {
-        $torrents_count_superhidden++;
-        if (!$show_hidden) {
+        if ($show_hidden) {
+          $torrents_count_superhidden++;
+        } else {
           unset($torrents[$hash]);
           continue;
         }
